@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="main-template">
+<head>
+    <title>Home</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <table class="table table-striped">
+             Elenco utenti inseriti nel sistema:
+            
+             <tr><th>id utente</th> <th>email utente</th><th>attivo</th><th>ruolo</th><th>ultimo accesso</th><th></th></tr>
+            <tr th:each="utente : ${lista_utenti}">
+                <td th:text="${utente.id}" />
+                <td th:text="${utente.email}" />
+                <td th:text="${utente.getDescrizioneStato()}" />
+                <td th:text="${utente.getDescrizioneRuolo()}" />
+                <td th:text="${utente.ultimoAccesso}" />
+                <td>
+                   <a class="btn btn-primary" th:href="@{'/Utenti/Edit/' + ${utente.id}} " >Modifica</a>
+                </td>
+            </tr>
+        </table>
+</div>
+</body>
+</html>
