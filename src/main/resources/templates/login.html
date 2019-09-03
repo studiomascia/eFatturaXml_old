@@ -25,6 +25,8 @@
         <div class="card card-signin my-5">
           <div class="card-body">
             <h5 class="card-title text-center">Sign In</h5>
+            <div th:if="${param.error}">Nome utente o password errati!</div>
+            <div th:if="${param.logout}">Hai effettuato il logout. A presto!</div>
             <form class="form-signin" action="#" th:action="@{/Login}"  method="POST">
               <div class="form-label-group">
                 <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>

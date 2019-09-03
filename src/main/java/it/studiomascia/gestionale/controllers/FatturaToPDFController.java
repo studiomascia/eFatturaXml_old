@@ -66,15 +66,15 @@ public class FatturaToPDFController {
              
         
             
-            URL xsltURL = getClass().getClassLoader().getResource("c:\foglio.xsl");
-            Source stylesource = new StreamSource(xsltURL.openStream(), xsltURL.toExternalForm());
-            Transformer transformer = TransformerFactory.newInstance().newTransformer(stylesource);
+//            URL xsltURL = getClass().getClassLoader().getResource("c:\foglio.xsl");
+  //          Source stylesource = new StreamSource(xsltURL.openStream(), xsltURL.toExternalForm());
+//            Transformer transformer = TransformerFactory.newInstance().newTransformer(stylesource);
 
 
         
         
             StringWriter stringWriter = new StringWriter();
-            transformer.transform(new DOMSource(xmlDocument), new StreamResult(stringWriter));
+  //          transformer.transform(new DOMSource(xmlDocument), new StreamResult(stringWriter));
             // write to file
             File file = new File("c:/test.html");
         if (!file.exists()) {

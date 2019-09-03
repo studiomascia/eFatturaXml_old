@@ -8,15 +8,18 @@ package it.studiomascia.gestionale.controllers;
 import it.studiomascia.gestionale.models.DBFile;
 import it.studiomascia.gestionale.models.FileDbConfig;
 import it.studiomascia.gestionale.models.XmlFatturaBase;
-import it.studiomascia.gestionale.repository.FileDbConfigRepository;
 import it.studiomascia.gestionale.repository.DBFileRepository;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
 import it.studiomascia.gestionale.service.DBFileStorageService;
 import it.studiomascia.gestionale.service.FileDbConfigStorageService;
 import it.studiomascia.gestionale.xml.FatturaElettronicaType;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,6 +42,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import org.bouncycastle.cms.CMSSignedData;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +63,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
+
 
 /**
  *
@@ -176,9 +182,14 @@ public class FileController {
         
         for (int k=0;k<files.length;k++)
         {
-            StringWriter sw = new StringWriter();
+           
             try 
             {
+                byte[] byteArr = files[k].getBytes();
+                if (files[k].getOriginalFilename().endsWith("p7m")) {
+                    byteArr=getData(files[k].getBytes());
+                }
+                StringWriter sw = new StringWriter();
                 JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
                 
                 // Unmarshaller serve per convertire il file in un oggetto
@@ -187,8 +198,8 @@ public class FileController {
                 
                 Marshaller jaxbMarshaller = context.createMarshaller();
                 jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-                
-                JAXBElement<FatturaElettronicaType> root =jaxbUnMarshaller.unmarshal(new StreamSource(files[k].getInputStream()), FatturaElettronicaType.class);
+                 
+                JAXBElement<FatturaElettronicaType> root =jaxbUnMarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(byteArr)), FatturaElettronicaType.class);
                 FatturaElettronicaType item = root.getValue();
                 jaxbMarshaller.marshal(root, sw);
 
@@ -212,7 +223,7 @@ public class FileController {
                 riga.put("Id", xmlFattura.getId());   
                 riga.put("P.IVA",partitaIVA );
                 riga.put("Denominazione",denominazione );
-                riga.put("Data", dataFattura.toString());
+                riga.put("Data",  LocalDateTime.ofInstant(dataFattura.toInstant(), ZoneId.systemDefault()).toLocalDate());
                 riga.put("Numero", numeroFattura);
                 riga.put("Imponibile", importoFattura);
                 righe.add(riga);
@@ -340,5 +351,20 @@ public class FileController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + dbFile.getFileName() + "\"")
                 .body(new ByteArrayResource(dbFile.getData()));
     }
+    
+    public byte[] getData(final byte[] p7bytes) throws Exception { 
+        ByteArrayOutputStream out = new ByteArrayOutputStream();                 
+        try{
+            CMSSignedData cms = new CMSSignedData(p7bytes);           
+            if(cms.getSignedContent() == null) { 
+                //Error!!! 
+                return null; 
+            } 
+            cms.getSignedContent().write(out);           
+        }catch (Exception ex){}
+
+        return out.toByteArray(); 
+    } 
+   
 
 }
