@@ -16,5 +16,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface UtentiRepository extends JpaRepository<Utenti, Integer> {
       Optional<Utenti>  findByEmailAndPassword(String email, String password);
+      Optional<Utenti>  loadUserByUsername(String email);
 
 }

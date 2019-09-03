@@ -39,17 +39,17 @@ public class UtentiService implements UserDetailsService {
       , Collections.singleton(new SimpleGrantedAuthority("user")));
   }
   
-  @Override
-  public UserDetails loadUserByUsername(String username,String password) throws UsernameNotFoundException {
-    Utenti user = utentiRepository.findByEmailAndPassword(username, password).get();
-
-    if (user == null) {
-      throw new UsernameNotFoundException("Username not found");
-    }
-
-    return new org.springframework.security.core.userdetails.User(
-      username
-      , user.getPassword()
-      , Collections.singleton(new SimpleGrantedAuthority("user")));
-  }
+  
+//  public UserDetails loadUserByUsername(String username,String password) throws UsernameNotFoundException {
+//    Utenti user = utentiRepository.findByEmailAndPassword(username, password).get();
+//
+//    if (user == null) {
+//      throw new UsernameNotFoundException("Username not found");
+//    }
+//
+//    return new org.springframework.security.core.userdetails.User(
+//      username
+//      , user.getPassword()
+//      , Collections.singleton(new SimpleGrantedAuthority("user")));
+//  }
 }
