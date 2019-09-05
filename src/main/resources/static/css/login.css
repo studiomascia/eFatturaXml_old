@@ -9,7 +9,7 @@ and open the template in the editor.
 */
 
 :root {
-  --input-padding-x: 1.5rem;
+  --input-padding-x: 1.5rem; 
   --input-padding-y: .75rem;
 }
 

@@ -36,19 +36,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers("/resources/**").permitAll()
-                .antMatchers("/Admin/**").hasRole("ADMIN")               
-                .antMatchers("/Utenti/**").hasRole("USER")               
-                .antMatchers("/**").hasRole("USER")        
-                .and()
-            .formLogin()
-                .loginPage("/login")
-                .loginProcessingUrl("/perform_login")
-                .defaultSuccessUrl("/Dashboard.html",true)
-                .permitAll()
-                .and()
-            .logout()
-                .permitAll();
+                .antMatchers("/**").permitAll();
+    
+//                .antMatchers("/resources/**").permitAll()
+//                .antMatchers("/Admin/**").hasRole("ADMIN")               
+//                .antMatchers("/Utenti/**").hasRole("USER")               
+//                .antMatchers("/**").hasRole("USER")        
+//                .and()
+//            .formLogin()
+//                .loginPage("/login")
+//                .loginProcessingUrl("/perform_login")
+//                .defaultSuccessUrl("/Dashboard.html",true)
+//                .permitAll()
+//                .and()
+//            .logout()
+//                .permitAll();
     }
 
     @Bean
