@@ -14,6 +14,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -27,6 +29,9 @@ import org.hibernate.annotations.GenericGenerator;
  */
 @Entity
 @Table(name = "xmlfatturabase")
+@NamedQueries({
+    @NamedQuery(name = "XmlFatturaBase.findAllPassive", query = "SELECT x FROM XmlFatturaBase x WHERE x.attiva IS FALSE"),
+    @NamedQuery(name = "XmlFatturaBase.findAllAttive", query = "SELECT x FROM XmlFatturaBase x WHERE x.attiva IS TRUE")})
 
 public class XmlFatturaBase {
     
@@ -55,6 +60,24 @@ public class XmlFatturaBase {
     @Lob
     private String xmlString;
 
+    
+    private boolean attiva;
+    
+    /**
+     * @return the attiva status
+     */
+    public boolean isAttiva() {
+        return this.attiva;
+    }
+
+    /**
+     * @param attiva the id to set
+     */
+    public void setAttiva(boolean x ) {
+        this.attiva = x;
+    }
+    
+    
     /**
      * @return the id
      */
@@ -141,9 +164,11 @@ public class XmlFatturaBase {
     
     public XmlFatturaBase(Integer id) {
         this.id = id;
+        this.attiva=false;
     }
 
     public XmlFatturaBase() {
+        this.attiva=false;
     }
     
 }

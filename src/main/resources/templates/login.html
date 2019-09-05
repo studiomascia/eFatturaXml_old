@@ -1,55 +1,59 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"  xmlns:th = "http://www.thymeleaf.org">
-
-<head>
-
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
-
-  <title>Gestionale Web - Studiomascia.it</title>
-    <link href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Bootstrap core CSS -->
-
-  <!-- Custom styles for this template -->
-  <link href="css/simple-sidebar.css" rel="stylesheet">
-<!--  <link href="css/login.css" rel="stylesheet">-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"><head><head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bootstrap Simple Login Form</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+<style type="text/css">
+	.login-form {
+		width: 340px;
+    	margin: 50px auto;
+	}
+    .login-form form {
+    	margin-bottom: 15px;
+        background: #f7f7f7;
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+        padding: 30px;
+    }
+    .login-form h2 {
+        margin: 0 0 15px;
+    }
+    .form-control, .btn {
+        min-height: 38px;
+        border-radius: 2px;
+    }
+    .btn {        
+        font-size: 15px;
+        font-weight: bold;
+    }
+</style>
 </head>
-
-<body  style="background: #007bff" >
-  <div class="container" >
-    <div class="row">
-      <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-        <div class="card card-signin my-5">
-          <div class="card-body">
-            <h5 class="card-title text-center">Sign In</h5>
-            <div th:if="${param.error}">Nome utente o password errati!</div>
-            <div th:if="${param.logout}">Hai effettuato il logout. A presto!</div>
-            <form class="form-signin" action="#" th:action="@{/Login}"  method="POST">
-              <div class="form-label-group">
-                <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-                <label for="inputEmail">Email address</label>
-              </div>
-
-              <div class="form-label-group">
-                <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
-                <label for="inputPassword">Password</label>
-              </div>
-
-              <div class="custom-control custom-checkbox mb-3">
-                <input name="remember" type="checkbox" class="custom-control-input" id="customCheck1">
-                <label class="custom-control-label" for="customCheck1">Remember password</label>
-              </div>
-              <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign in</button>
-              <hr class="my-4">
-               </form>
-          </div>
+<body>
+<div class="login-form">
+  <form th:action="@{/login}" method="post">
+        <h2 class="text-center">Log in</h2>    
+        <div th:if="${error}">Nome utente o password errati!</div>
+        <div th:if="${logout}">Hai effettuato il logout. A presto!</div>
+        <div class="form-group">
+            <input type="text" class="form-control" name="username" placeholder="Username" required="required">
         </div>
-      </div>
-    </div>
-  </div>
+        <div class="form-group">
+            <input type="password" class="form-control" name ="password" placeholder="Password" required="required">
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">Log in</button>
+        </div>
+        <div class="clearfix">
+            <label class="pull-left checkbox-inline"><input type="checkbox"> Remember me</label>
+            <a href="#" class="pull-right">Forgot Password?</a>
+        </div>        
+    </form>
+</div>
 </body>
-
-</html>
+</html>                                		                            

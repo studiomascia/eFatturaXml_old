@@ -6,7 +6,9 @@
 package it.studiomascia.gestionale.repository;
 
 import it.studiomascia.gestionale.models.XmlFatturaBase;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Repository;
  * @author luigi
  */
 @Repository
-public interface XmlFatturaBaseRepository extends JpaRepository<XmlFatturaBase, Integer> {
+public interface XmlFatturaBaseRepository extends JpaRepository<XmlFatturaBase, Integer> ,JpaSpecificationExecutor<XmlFatturaBase>  {
+    List<XmlFatturaBase> findAllPassive();
+    List<XmlFatturaBase> findAllAttive();
 
 }

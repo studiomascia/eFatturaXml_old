@@ -36,11 +36,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers("/resources/**", "/registration").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("/resources/**").permitAll()
+                .antMatchers("/Admin/**").hasRole("ADMIN")               
+                .antMatchers("/Utenti/**").hasRole("USER")               
+                .antMatchers("/**").hasRole("USER")        
                 .and()
             .formLogin()
                 .loginPage("/login")
+                .loginProcessingUrl("/perform_login")
+                .defaultSuccessUrl("/Dashboard.html",true)
                 .permitAll()
                 .and()
             .logout()

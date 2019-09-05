@@ -1,13 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+////*
+// * To change this license header, choose License Headers in Project Properties.
+// * To change this template file, choose Tools | Templates
+// * and open the template in the editor.
+// */
 package it.studiomascia.gestionale.repository;
 
-import it.studiomascia.gestionale.models.User;
-import java.util.Optional;
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
+import it.studiomascia.gestionale.models.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -16,3 +14,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface RoleRepository extends JpaRepository<Role, Long>{
 
+}

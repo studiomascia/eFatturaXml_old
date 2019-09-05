@@ -1,7 +1,7 @@
 package it.studiomascia.gestionale.validator;
 
-import com.hellokoding.auth.model.User;
-import com.hellokoding.auth.service.UserService;
+import it.studiomascia.gestionale.models.User;
+import it.studiomascia.gestionale.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -35,8 +35,8 @@ public class UserValidator implements Validator {
             errors.rejectValue("password", "Size.userForm.password");
         }
 
-        if (!user.getPasswordConfirm().equals(user.getPassword())) {
-            errors.rejectValue("passwordConfirm", "Diff.userForm.passwordConfirm");
-        }
+//        if (!user.getPasswordConfirm().equals(user.getPassword())) {
+//            errors.rejectValue("passwordConfirm", "Diff.userForm.passwordConfirm");
+//        }
     }
 }

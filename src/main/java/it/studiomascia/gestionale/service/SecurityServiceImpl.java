@@ -1,5 +1,6 @@
 package it.studiomascia.gestionale.services;
 
+import it.studiomascia.gestionale.service.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

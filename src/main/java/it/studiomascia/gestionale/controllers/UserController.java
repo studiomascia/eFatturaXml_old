@@ -1,5 +1,6 @@
-package it.studiomascia.gestionale.web;
+package it.studiomascia.gestionale.controllers;
 
+import it.studiomascia.gestionale.models.Role;
 import  it.studiomascia.gestionale.models.User;
 import  it.studiomascia.gestionale.service.SecurityService;
 import  it.studiomascia.gestionale.service.UserService;
@@ -21,14 +22,27 @@ public class UserController {
     @Autowired
     private UserValidator userValidator;
 
-    @GetMapping("/registration")
+     @GetMapping("/Admin/SetDefaultUsers")
+    public String insertDefaultUsers() {
+                
+        User u1 = new User();
+        u1.setUsername("admin@admin.it");
+        u1.setPassword("123123");
+        u1.setStato(1);
+        userService.save(u1);
+        
+        return "login";
+    }
+    
+    
+    @GetMapping("/Admin/UserRegistration")
     public String registration(Model model) {
         model.addAttribute("userForm", new User());
 
         return "registration";
     }
 
-    @PostMapping("/registration")
+    @PostMapping("/Admin/UserRegistration")
     public String registration(@ModelAttribute("userForm") User userForm, BindingResult bindingResult) {
         userValidator.validate(userForm, bindingResult);
 
@@ -37,25 +51,24 @@ public class UserController {
         }
 
         userService.save(userForm);
-
-        securityService.autoLogin(userForm.getUsername(), userForm.getPasswordConfirm());
+        securityService.autoLogin(userForm.getUsername(), userForm.getPassword());
 
         return "redirect:/welcome";
     }
 
-    @GetMapping("/login")
-    public String login(Model model, String error, String logout) {
-        if (error != null)
-            model.addAttribute("error", "Your username and password is invalid.");
-
-        if (logout != null)
-            model.addAttribute("message", "You have been logged out successfully.");
-
-        return "login";
-    }
-
-    @GetMapping({"/", "/welcome"})
-    public String welcome(Model model) {
-        return "welcome";
-    }
+//    @GetMapping("/login")
+//    public String login(Model model, String error, String logout) {
+//        if (error != null)
+//            model.addAttribute("error", "Your username and password is invalid.");
+//
+//        if (logout != null)
+//            model.addAttribute("message", "You have been logged out successfully.");
+//
+//        return "login2";
+//    }
+////
+//    @GetMapping({"/", "/welcome"})
+//    public String welcome(Model model) {
+//        return "welcome";   
+//    }
 }

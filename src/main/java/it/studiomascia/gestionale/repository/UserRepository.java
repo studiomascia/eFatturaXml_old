@@ -6,8 +6,6 @@
 package it.studiomascia.gestionale.repository;
 
 import it.studiomascia.gestionale.models.User;
-import java.util.Optional;
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

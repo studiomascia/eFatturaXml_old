@@ -11,13 +11,12 @@
     <table class="table table-striped">
              Elenco utenti inseriti nel sistema:
             
-             <tr><th>id utente</th> <th>email utente</th><th>attivo</th><th>ruolo</th><th>ultimo accesso</th><th></th></tr>
+             <tr><th>id utente</th> <th>email utente</th><th>attivo</th><th></th></tr>
             <tr th:each="utente : ${lista_utenti}">
                 <td th:text="${utente.id}" />
-                <td th:text="${utente.email}" />
-                <td th:text="${utente.getDescrizioneStato()}" />
-                <td th:text="${utente.getDescrizioneRuolo()}" />
-                <td th:text="${utente.ultimoAccesso}" />
+                <td th:text="${utente.username}" />
+                <td th:text="${utente.stato}" />
+                
                 <td>
                    <a class="btn btn-primary" th:href="@{'/Utenti/Edit/' + ${utente.id}} " >Modifica</a>
                 </td>

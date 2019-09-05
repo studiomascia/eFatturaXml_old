@@ -8,6 +8,7 @@ package it.studiomascia.gestionale.controllers;
 import it.studiomascia.gestionale.models.DBFile;
 import it.studiomascia.gestionale.models.FileDbConfig;
 import it.studiomascia.gestionale.models.XmlFatturaBase;
+import it.studiomascia.gestionale.models.XmlFatturaBasePredicate;
 import it.studiomascia.gestionale.repository.DBFileRepository;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
 import it.studiomascia.gestionale.service.DBFileStorageService;
@@ -138,7 +139,7 @@ public class FileController {
     private FileDbConfigStorageService fileDbConfigStorageService;
     
     
-     @GetMapping("/Files")
+    @GetMapping("/Files")
     public String FilesList(HttpServletRequest request,Model model){
         
         //INIZIO:: BLOCCO PER LA PAGINAZIONE
@@ -161,6 +162,76 @@ public class FileController {
     return "lista_files";
     }
     
+    @GetMapping("/FatturePassive")
+    public String FatturePassiveList(HttpServletRequest request,Model model){
+        
+        //INIZIO:: BLOCCO PER LA PAGINAZIONE
+        int page = 0; //default page number is 0 (yes it is weird)
+        int size = 100; //default page size is 10
+        
+        if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
+            page = Integer.parseInt(request.getParameter("page")) - 1;
+        }
+
+        if (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
+            size = Integer.parseInt(request.getParameter("size"));
+        }
+        //FINE:: BLOCCO PER LA PAGINAZIONE
+       List<XmlFatturaBase> listaFatture = XmlFatturaBasePredicate.filterXmlFatturaBase(xmlFatturaBaseRepository.findAll(), XmlFatturaBasePredicate.isPassiva());
+        
+        // Perpara la Map da aggiungere alla view 
+        List<String> headers = new  ArrayList<>();
+        headers.add("Id");
+        headers.add("Protocollo");
+        headers.add("Data");
+        headers.add("Nome file");
+        List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
+        for (XmlFatturaBase x:listaFatture) {
+        
+            Map<String, Object> riga = new HashMap<String, Object>(4);
+                riga.put("Id", x.getId());   
+                riga.put("Protocollo",x.getProtocolloFattura() );
+                riga.put("Data",x.getDataFattura() );
+                riga.put("Nome file",x.getFileName());
+                righe.add(riga);
+    }
+       
+       
+       
+       
+       
+       
+       model.addAttribute("headers", headers);
+        model.addAttribute("rows", righe);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("messaggio", "messaggio da mostrare");
+    return "lista_fatture_passive";
+    
+    
+    }
+    @GetMapping("/FattureAttive")
+    public String FattureAttiveList(HttpServletRequest request,Model model){
+        
+        //INIZIO:: BLOCCO PER LA PAGINAZIONE
+        int page = 0; //default page number is 0 (yes it is weird)
+        int size = 100; //default page size is 10
+        
+        if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
+            page = Integer.parseInt(request.getParameter("page")) - 1;
+        }
+
+        if (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
+            size = Integer.parseInt(request.getParameter("size"));
+        }
+        //FINE:: BLOCCO PER LA PAGINAZIONE
+       List<XmlFatturaBase> listaFatture = XmlFatturaBasePredicate.filterXmlFatturaBase(xmlFatturaBaseRepository.findAll(), XmlFatturaBasePredicate.isAttiva());
+        model.addAttribute("lista_fatturepassive", listaFatture);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("messaggio", "messaggio da mostrare");
+    return "lista_fatture_attive";
+    
+    
+    }
     
     
     @GetMapping("/uploadFatturaXml")

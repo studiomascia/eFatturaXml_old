@@ -17,7 +17,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(){
-            return "template_vuoto";
+            return "welcome";
     }
     @GetMapping("/index")
     public String home2(){

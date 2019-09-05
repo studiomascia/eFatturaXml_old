@@ -1,10 +1,16 @@
-package is.studiomascia.gestionale.models;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package it.studiomascia.gestionale.models;
+
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,10 +20,11 @@ public class User {
 
     private String password;
 
-    @Transient
-    private String passwordConfirm;
+    private int stato;
 
-    @ManyToMany
+
+    @ManyToMany (fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name="users_roles", joinColumns = @JoinColumn(name="users_id"),inverseJoinColumns =@JoinColumn(name="role_id") )
     private Set<Role> roles;
 
     public Long getId() {
@@ -44,12 +51,12 @@ public class User {
         this.password = password;
     }
 
-    public String getPasswordConfirm() {
-        return passwordConfirm;
+    public int getStato() {
+        return stato;
     }
 
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
+    public void setStato(int x) {
+        this.stato = x;
     }
 
     public Set<Role> getRoles() {
