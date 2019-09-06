@@ -17,8 +17,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Override
-    public void save(User user) {
+       
+    public void insertNewUser(User user) {
         System.out.println("password prima della codifica = "+ user.getPassword());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         System.out.println("password dopo la codifica     = "+ user.getPassword());

@@ -1,0 +1,465 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package it.studiomascia.gestionale.controllers;
+
+import it.studiomascia.gestionale.models.XmlFatturaBase;
+import it.studiomascia.gestionale.models.XmlFatturaBasePredicate;
+import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
+import it.studiomascia.gestionale.xml.FatturaElettronicaType;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import org.bouncycastle.cms.CMSSignedData;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+
+/**
+ *
+ * @author Admin
+ */
+@Controller
+public class InvoiceController {
+    
+    @Autowired
+    private XmlFatturaBaseRepository xmlFatturaBaseRepository;
+
+    
+    private SimpleDateFormat formattaData = new SimpleDateFormat("dd-MM-yyyy");
+    
+    public byte[] getData(final byte[] p7bytes) throws Exception { 
+        ByteArrayOutputStream out = new ByteArrayOutputStream();                 
+        try{
+            CMSSignedData cms = new CMSSignedData(p7bytes);           
+            if(cms.getSignedContent() == null) { 
+                //Error!!! 
+                return null; 
+            } 
+            cms.getSignedContent().write(out);           
+        }catch (Exception ex){}
+
+        return out.toByteArray(); 
+    } 
+     
+    private static String convertDocumentToString(Document doc) {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer;
+        try {
+            transformer = tf.newTransformer();
+            // below code to remove XML declaration
+            // transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+            // "yes");
+            StringWriter writer = new StringWriter();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+            transformer.transform(new DOMSource(doc), new StreamResult(writer));
+            String output = writer.getBuffer().toString();
+            return output;
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+   
+    private static Document convertStringToDocument(String xmlStr) {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder;
+        Document doc = null;
+        try {
+            builder = factory.newDocumentBuilder();
+            doc = builder.parse(new InputSource(new StringReader(xmlStr)));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return doc;
+    } 
+     
+    private static <ProcessingInstructionImpl> Document addingStylesheet(Document doc) throws TransformerConfigurationException, ParserConfigurationException 
+    {
+        ProcessingInstructionImpl pi = (ProcessingInstructionImpl) doc.createProcessingInstruction("xml-stylesheet","type=\"text/xsl\" href=\"/xsl/foglio.xsl\"");
+        Element root = doc.getDocumentElement();
+        doc.insertBefore((Node) pi, root);
+        //trans.transform(new DOMSource(doc), new StreamResult(new OutputStreamWriter(bout, "utf-8")));
+        return doc;
+    }
+   
+     
+     
+    @GetMapping("/InvoicesIn")
+    public String FatturePassiveList(HttpServletRequest request,Model model){
+        
+        //INIZIO:: BLOCCO PER LA PAGINAZIONE
+        int page = 0; //default page number is 0 (yes it is weird)
+        int size = 100; //default page size is 10
+        
+        if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
+            page = Integer.parseInt(request.getParameter("page")) - 1;
+        }
+
+        if (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
+            size = Integer.parseInt(request.getParameter("size"));
+        }
+        //FINE:: BLOCCO PER LA PAGINAZIONE
+       List<XmlFatturaBase> listaFatture = XmlFatturaBasePredicate.filterXmlFatturaBase(xmlFatturaBaseRepository.findAll(), XmlFatturaBasePredicate.isPassiva());
+     
+        // Prepara la Map da aggiungere alla view 
+        List<String> headers = new  ArrayList<>();
+        headers.add("Id");
+        headers.add("Data Registrazione");
+        headers.add("Numero Registrazione");
+        headers.add("Data Fattura");
+        headers.add("Numero Fattura");
+        headers.add("P.IVA");
+        headers.add("Denominazione");
+        headers.add("Imponibile");     
+       
+        List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
+        int conta=1;
+        for (XmlFatturaBase xmlFattura:listaFatture) {
+        try {
+            System.out.println("conta= " + conta++);
+                byte[] byteArr = xmlFattura.getXmlData().getBytes();
+                StringWriter sw = new StringWriter();
+                JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
+                // Unmarshaller serve per convertire il file in un oggetto
+                Unmarshaller jaxbUnMarshaller = context.createUnmarshaller();
+                // Marshaller serve per convertire l'oggetto ottenuto dal file in una stringa xml
+                Marshaller jaxbMarshaller = context.createMarshaller();
+                jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+                JAXBElement<FatturaElettronicaType> root =jaxbUnMarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(byteArr)), FatturaElettronicaType.class);
+                FatturaElettronicaType item = root.getValue();
+                jaxbMarshaller.marshal(root, sw);
+
+                Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
+                String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
+                String partitaIVA = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice().toString();
+                String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
+                String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
+            
+                Map<String, Object> riga = new HashMap<String, Object>();
+                riga.put("Id", xmlFattura.getId());   
+                riga.put("Data Registrazione",  formattaData.format(xmlFattura.getDataRegistrazione()));
+                riga.put("Numero Registrazione", xmlFattura.getProtocolloFattura());
+                riga.put("Data Fattura",  formattaData.format(dataFattura));
+                riga.put("Numero Fattura", numeroFattura);
+                riga.put("P.IVA",partitaIVA );
+                riga.put("Denominazione",denominazione );
+                riga.put("Imponibile", importoFattura);
+                righe.add(riga);
+                                
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+    }
+       
+       
+       model.addAttribute("headers", headers);
+        model.addAttribute("rows", righe);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("messaggio", "Ci sono: " + righe.size() +" ");
+    return "fatture_passive_lista";
+    
+    
+    }
+   
+    @GetMapping("/InvoicesIn/New")
+    public String nuovaFatturaIn() {
+        return "fatture_passive_new";
+    }
+    
+    @PostMapping("/InvoicesIn/New")
+    public String nuovaFatturaIn(@RequestParam("files") MultipartFile[] files, ModelMap modelMap) {            
+        List<FatturaElettronicaType> lista = new ArrayList<FatturaElettronicaType>();
+        List<String> headers = new  ArrayList<>();
+        headers.add("Id");
+        headers.add("P.IVA");
+        headers.add("Data");
+        headers.add("Denominazione");
+        headers.add("Numero");
+        headers.add("Imponibile");     
+        List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
+        
+        for (int k=0;k<files.length;k++){
+            try {
+                byte[] byteArr = files[k].getBytes();
+                if (files[k].getOriginalFilename().endsWith("p7m")) {
+                    byteArr=getData(files[k].getBytes());
+                }
+                StringWriter sw = new StringWriter();
+                JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
+                // Unmarshaller serve per convertire il file in un oggetto
+                Unmarshaller jaxbUnMarshaller = context.createUnmarshaller();
+                // Marshaller serve per convertire l'oggetto ottenuto dal file in una stringa xml
+                Marshaller jaxbMarshaller = context.createMarshaller();
+                jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+                JAXBElement<FatturaElettronicaType> root =jaxbUnMarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(byteArr)), FatturaElettronicaType.class);
+                FatturaElettronicaType item = root.getValue();
+                jaxbMarshaller.marshal(root, sw);
+
+                Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
+                String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
+                String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
+                String partitaIVA = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice().toString();
+                String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
+        
+                XmlFatturaBase xmlFattura = new XmlFatturaBase();
+                xmlFattura.setDataRegistrazione(dataFattura);
+                xmlFattura.setProtocolloFattura(numeroFattura);
+                xmlFattura.setDataInserimento(new Date());
+                xmlFattura.setFileName(files[k].getOriginalFilename());
+                xmlFattura.setXmlData(sw.toString());
+                xmlFattura = xmlFatturaBaseRepository.save(xmlFattura);
+                xmlFatturaBaseRepository.flush();
+                
+                // Perpara la Map da aggiungere alla view 
+                Map<String, Object> riga = new HashMap<String, Object>(4);
+                riga.put("Id", xmlFattura.getId());   
+                riga.put("P.IVA",partitaIVA );
+                riga.put("Denominazione",denominazione );
+                riga.put("Data",  LocalDateTime.ofInstant(dataFattura.toInstant(), ZoneId.systemDefault()).toLocalDate());
+                riga.put("Numero", numeroFattura);
+                riga.put("Imponibile", importoFattura);
+                righe.add(riga);
+                
+            } catch (JAXBException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            modelMap.addAttribute("headers", headers);
+            modelMap.addAttribute("rows", righe);
+        } //end for
+        return "fatture_passive_caricate";
+    }
+
+    
+    
+    
+    @GetMapping("/InvoicesOut")
+    public String FattureAttiveList(HttpServletRequest request,Model model){
+        
+        //INIZIO:: BLOCCO PER LA PAGINAZIONE
+        int page = 0; //default page number is 0 (yes it is weird)
+        int size = 100; //default page size is 10
+        
+        if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
+            page = Integer.parseInt(request.getParameter("page")) - 1;
+        }
+
+        if (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
+            size = Integer.parseInt(request.getParameter("size"));
+        }
+        //FINE:: BLOCCO PER LA PAGINAZIONE
+        List<XmlFatturaBase> listaFatture = XmlFatturaBasePredicate.filterXmlFatturaBase(xmlFatturaBaseRepository.findAll(), XmlFatturaBasePredicate.isAttiva());
+        
+
+
+        // Prepara la Map da aggiungere alla view 
+        List<String> headers = new  ArrayList<>();
+        headers.add("Id");
+        headers.add("P.IVA");
+        headers.add("Data");
+        headers.add("Denominazione");
+        headers.add("Numero");
+        headers.add("Imponibile");     
+       
+        List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
+        
+        for (XmlFatturaBase xmlFattura:listaFatture) {
+        try {
+                byte[] byteArr = xmlFattura.getXmlData().getBytes();
+                StringWriter sw = new StringWriter();
+                JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
+                // Unmarshaller serve per convertire il file in un oggetto
+                Unmarshaller jaxbUnMarshaller = context.createUnmarshaller();
+                // Marshaller serve per convertire l'oggetto ottenuto dal file in una stringa xml
+                Marshaller jaxbMarshaller = context.createMarshaller();
+                jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+                JAXBElement<FatturaElettronicaType> root =jaxbUnMarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(byteArr)), FatturaElettronicaType.class);
+                FatturaElettronicaType item = root.getValue();
+                jaxbMarshaller.marshal(root, sw);
+
+                Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
+                String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
+                String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
+                String partitaIVA = item.getFatturaElettronicaHeader().getCessionarioCommittente().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice();
+                String denominazione = item.getFatturaElettronicaHeader().getCessionarioCommittente().getDatiAnagrafici().getAnagrafica().getDenominazione();
+            
+                Map<String, Object> riga = new HashMap<String, Object>();
+                riga.put("Id", xmlFattura.getId());   
+                riga.put("P.IVA",partitaIVA );
+                riga.put("Denominazione",denominazione );
+                riga.put("Data",  LocalDateTime.ofInstant(xmlFattura.getDataRegistrazione().toInstant(), ZoneId.systemDefault()).toLocalDate());
+                riga.put("Numero", numeroFattura);
+                riga.put("Imponibile", importoFattura);
+                righe.add(riga);
+                                
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+    }
+       
+       
+       model.addAttribute("headers", headers);
+        model.addAttribute("rows", righe);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("messaggio", "Ci sono: " + righe.size() +" ");
+    return "fatture_attive_lista";
+      
+    
+    }
+    
+    @GetMapping("/InvoicesOut/New")
+    public String nuovaFatturaOut() {
+        return "fatture_attive_new";
+    }
+    
+    @PostMapping("/InvoicesOut/New")
+    public String nuovaFatturaOut(@RequestParam("files") MultipartFile[] files, ModelMap modelMap) {            
+        List<FatturaElettronicaType> lista = new ArrayList<FatturaElettronicaType>();
+        List<String> headers = new  ArrayList<>();
+        headers.add("Id");
+        headers.add("P.IVA");
+        headers.add("Data");
+        headers.add("Denominazione");
+        headers.add("Numero");
+        headers.add("Imponibile");     
+        List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
+        
+        for (int k=0;k<files.length;k++){
+            try {
+                byte[] byteArr = files[k].getBytes();
+                if (files[k].getOriginalFilename().endsWith("p7m")) {
+                    byteArr=getData(files[k].getBytes());
+                }
+                StringWriter sw = new StringWriter();
+                JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
+                // Unmarshaller serve per convertire il file in un oggetto
+                Unmarshaller jaxbUnMarshaller = context.createUnmarshaller();
+                // Marshaller serve per convertire l'oggetto ottenuto dal file in una stringa xml
+                Marshaller jaxbMarshaller = context.createMarshaller();
+                jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+                JAXBElement<FatturaElettronicaType> root =jaxbUnMarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(byteArr)), FatturaElettronicaType.class);
+                FatturaElettronicaType item = root.getValue();
+                jaxbMarshaller.marshal(root, sw);
+
+                Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
+                String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
+                String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
+                String partitaIVA = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice().toString();
+                String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
+        
+                XmlFatturaBase xmlFattura = new XmlFatturaBase(true);
+                xmlFattura.setDataRegistrazione(dataFattura);
+                xmlFattura.setProtocolloFattura(numeroFattura);
+                xmlFattura.setDataInserimento(new Date());
+                xmlFattura.setFileName(files[k].getOriginalFilename());
+                xmlFattura.setXmlData(sw.toString());
+                xmlFattura = xmlFatturaBaseRepository.save(xmlFattura);
+                xmlFatturaBaseRepository.flush();
+                
+                // Perpara la Map da aggiungere alla view 
+                Map<String, Object> riga = new HashMap<String, Object>();
+                riga.put("Id", xmlFattura.getId());   
+                riga.put("P.IVA",partitaIVA );
+                riga.put("Denominazione",denominazione );
+                riga.put("Data",  LocalDateTime.ofInstant(dataFattura.toInstant(), ZoneId.systemDefault()).toLocalDate());
+                riga.put("Numero", numeroFattura);
+                riga.put("Imponibile", importoFattura);
+                righe.add(riga);
+                
+            } catch (JAXBException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            modelMap.addAttribute("headers", headers);
+            modelMap.addAttribute("rows", righe);
+        } //end for
+        return "fatture_attive_caricate";
+    }
+
+    
+    
+    
+    
+    //Invoice/Download
+    @GetMapping("/Invoice/Download/{fileId}")
+    public ResponseEntity<Resource> downloadFattura(@PathVariable String fileId) {
+        // Load file from database
+        Integer id = Integer.valueOf(fileId);
+        XmlFatturaBase item = xmlFatturaBaseRepository.findById(id).get();
+    
+        Document doc2 = convertStringToDocument(item.getXmlData());
+        Document doc1 = null;
+        try {
+            doc1 = addingStylesheet(doc2);
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + item.getFileName() + "\"")
+                .body(new ByteArrayResource(convertDocumentToString(doc1).getBytes()));
+    
+    }
+}

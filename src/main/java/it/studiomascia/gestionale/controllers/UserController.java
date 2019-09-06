@@ -1,6 +1,5 @@
 package it.studiomascia.gestionale.controllers;
 
-import it.studiomascia.gestionale.models.Role;
 import  it.studiomascia.gestionale.models.User;
 import it.studiomascia.gestionale.repository.UserRepository;
 import  it.studiomascia.gestionale.service.SecurityService;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class UserController {
@@ -37,14 +37,14 @@ public class UserController {
         u1.setUsername("admin@admin.it");
         u1.setPassword("123123");
         u1.setStato(1);
-        userService.save(u1);
+        userService.insertNewUser(u1);
         
         return "login";
     }
     
     @GetMapping("/Admin/Users")
     public String UtentiList(HttpServletRequest request,Model model){
-        System.out.println("GetMapping(/Admin/Users) INIZIO");
+//        System.out.println("GetMapping(/Admin/Users) INIZIO");
         //INIZIO:: BLOCCO PER LA PAGINAZIONE
         int page = 0; //default page number is 0 (yes it is weird)
         int size = 3; //default page size is 10
@@ -59,36 +59,35 @@ public class UserController {
         //FINE:: BLOCCO PER LA PAGINAZIONE
        Page<User> lista = userRepository.findAll(PageRequest.of(page, size));
 //       lista.getPageable().getPageNumber()
-        model.addAttribute("utente_lista", lista);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("messaggio", "messaggio da mostrare");
-        System.out.println("GetMapping(/Admin/Users) FINE");
+        model.addAttribute("lista_utenti", lista);
+        model.addAttribute("page", page);
+        model.addAttribute("size", size);
+//        System.out.println("GetMapping(/Admin/Users) FINE");
     return "utente_lista";
     }
   
     @GetMapping("/Admin/User/{id}")
     public String EditUtente(Model model,@PathVariable Long id){
         User x = userRepository.findById(id).get();
-        model.addAttribute("utente",x);
+        model.addAttribute("utente",x);  
         return "/utente_modifica";
     }
     
     @PostMapping("/Admin/User/{id}")
-    public String AggiornaUtente(@Valid @ModelAttribute("utente") User utente, BindingResult bindingResult,Model model)
+    public String AggiornaUtente(@Valid @ModelAttribute("utente") User updateUtente, BindingResult bindingResult,Model model, RedirectAttributes redirectAttributes)
     {
-        System.out.println("Utente.id=" + utente.getId());        
-//model.addAttribute("utente",utente);
-        if (bindingResult.hasErrors()) {
-            return "/utente_modifica";
-        }else{
-//        utente.setUltimoAccesso(new Date());
-        userRepository.save(utente);
-        return "redirect:/Utenti";
-        }
+//        System.out.println("Updading user.id=" + updateUtente.getId());        
+        User vecchioUtente = userRepository.findById(updateUtente.getId()).get();
+        
+        vecchioUtente.setStato(updateUtente.getStato());
+        redirectAttributes.addFlashAttribute("messaggio","L'utente: " +vecchioUtente.getUsername() + " è stato aggiornato");  
+        userRepository.save(vecchioUtente);
+        return "redirect:/Admin/Users";
     }
+   
     
     
-    @GetMapping("Admin/User/Registration")
+    @GetMapping("Admin/User/New")
     public String NuovoUtente(Model model){
         User x = new User();
         model.addAttribute("utente",x);
@@ -98,7 +97,7 @@ public class UserController {
     
   
     
-    @PostMapping("Admin/User/Registration")
+    @PostMapping("Admin/User/New")
     public String NuovoUtente(@Valid @ModelAttribute("utente") User utente, BindingResult bindingResult,Model model)
     {
         userValidator.validate(utente, bindingResult);
@@ -106,7 +105,11 @@ public class UserController {
         if (bindingResult.hasErrors()) {
             return "/utente_registrazione";
         }else{
-        userRepository.save(utente);
+//         User u1 = new User();
+//        u1.setUsername("admin@admin.it");
+//        u1.setPassword("123123");
+//        u1.setStato(1);
+        userService.insertNewUser(utente);
             return "redirect:/Admin/Users";
         }
     }

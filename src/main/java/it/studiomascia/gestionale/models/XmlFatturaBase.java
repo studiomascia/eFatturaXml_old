@@ -50,12 +50,12 @@ public class XmlFatturaBase {
     private Date dataInserimento;
     
     @Size(max = 255)
-    @Column(name = "numero_fattura")
-    private String numeroFattura;
+    @Column(name = "numero_registrazione")
+    private String numeroRegistrazione;
     
     @Temporal(TemporalType.TIMESTAMP)    
-    @Column(name = "data_fattura")
-    private Date dataFattura;
+    @Column(name = "data_registrazione")
+    private Date dataRegistrazione;
     
     @Lob
     private String xmlString;
@@ -121,31 +121,31 @@ public class XmlFatturaBase {
     }
 
     /**
-     * @return the numeroFattura
+     * @return the numeroRegistrazione
      */
     public String getProtocolloFattura() {
-        return numeroFattura;
+        return numeroRegistrazione;
     }
 
     /**
-     * @param protocolloFattura the numeroFattura to set
+     * @param protocolloFattura the numeroRegistrazione to set
      */
     public void setProtocolloFattura(String protocolloFattura) {
-        this.numeroFattura = protocolloFattura;
+        this.numeroRegistrazione = protocolloFattura;
     }
 
     /**
-     * @return the dataFattura
+     * @return the dataRegistrazione
      */
-    public Date getDataFattura() {
-        return dataFattura;
+    public Date getDataRegistrazione() {
+        return dataRegistrazione;
     }
 
     /**
-     * @param dataFattura the dataFattura to set
+     * @param dataRegistrazione the dataRegistrazione to set
      */
-    public void setDataFattura(Date dataFattura) {
-        this.dataFattura = dataFattura;
+    public void setDataRegistrazione(Date dataRegistrazione) {
+        this.dataRegistrazione = dataRegistrazione;
     }
 
     /**
@@ -169,6 +169,10 @@ public class XmlFatturaBase {
 
     public XmlFatturaBase() {
         this.attiva=false;
+    }
+    
+     public XmlFatturaBase(boolean isAttiva) {
+        this.attiva=isAttiva;
     }
     
 }

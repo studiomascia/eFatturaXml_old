@@ -4,12 +4,16 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
     <head>
         <meta charset="utf-8"/>
-        <title layout:title-pattern="$CONTENT_TITLE | $DECORATOR_TITLE">Gesionale CONCRETE  - Studiomascia.it!</title>
+        <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">Gesionale CONCRETE  - Studiomascia.it!</title>
         <!-- Bootstrap core CSS -->
         <!--<link href="../webjars/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">-->
         <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
         <!-- Custom styles for this template -->
-        <link href="/css/simple-sidebar.css" rel="stylesheet">
+        <link href="/css/simple-sidebar.css" rel="stylesheet" />
+              <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     </head>
   <body>
     <div class="d-flex" id="wrapper">
@@ -19,9 +23,10 @@
       <div class="sidebar-heading">Gestionale Concrete </div>
       <div class="list-group list-group-flush">
         <a href="/Dashboard" class="list-group-item list-group-item-action bg-light">Dashboard</a>
-        <a href="/Utenti" class="list-group-item list-group-item-action bg-light">Utenti</a>
-        <a href="/Files" class="list-group-item list-group-item-action bg-light">Lista Files</a>
-        <a href="/uploadFile" class="list-group-item list-group-item-action bg-light">Carica Documento</a>
+        <a href="/Admin/Users" class="list-group-item list-group-item-action bg-light">Area Utenti</a>
+        <a href="/InvoicesIn" class="list-group-item list-group-item-action bg-light">Fatture Passive</a>
+        <a href="/InvoicesOut" class="list-group-item list-group-item-action bg-light">Fatture Emesse</a>
+        <a href="/Documents" class="list-group-item list-group-item-action bg-light">Documenti</a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -61,6 +66,20 @@
    
       <div class="container-fluid">
             <div class="container">
+                <!-- The Modal -->
+                <div  th:if="${messaggio}"  class="modal fade show" id="myModal" tabindex="-1" role="dialog" data-show="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header"><h4 class="modal-title">Notifica</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div>
+                        <!-- Modal body -->
+                        <div class="modal-body" th:text="${messaggio}"></div>
+                        <!-- Modal footer -->
+                        <div class="modal-footer"><button type="button" class="btn btn-danger" data-dismiss="modal">Close</button></div>
+                      </div>
+                    </div>
+                </div>
+                <script>$('.modal').modal('show');</script>
 <!--                <div th:replace="fragments/page-header :: header"></div>-->
                 <div layout:fragment="content"></div>
             </div>

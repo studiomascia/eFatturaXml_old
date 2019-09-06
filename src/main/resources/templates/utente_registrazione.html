@@ -8,7 +8,7 @@
 </head>
 <body>
 <div layout:fragment="content">
-    <form class="form-horizontal" action="#" th:action="@{/Utenti/Nuovo}" th:object="${utente}"  method="POST" >
+    <form class="form-horizontal" action="#" th:action="@{/Admin/User/New}" th:object="${utente}"  method="POST" >
 
 
 <!-- Form Name -->
@@ -18,10 +18,10 @@
 <div class="field">
   <label class="label" for="txtEmail">Email</label>
   <p class="control has-icons-left has-icons-right">
-    <input id="txtEmail"  th:field="*{email}" name="txtEmail" type="text" placeholder="inserisci la mail utente" class="input ">
+    <input id="txtEmail"  th:field="*{username}" name="txtEmail" type="text" placeholder="inserisci la mail utente" class="input ">
     <span class="icon is-small is-left"><i class="fas fa-envelope"></i></span>
     <span class="icon is-small is-right"><i class="fas fa-check"></i></span>
-    <span th:if="${#fields.hasErrors('email')}" class="help is-danger" th:errors="*{email}">Errore</span>   
+    <span th:if="${#fields.hasErrors('username')}" class="help is-danger" th:errors="*{username}">Errore</span>   
  </p>
 </div>
 
@@ -51,7 +51,7 @@
 </div>
 
 <!-- Select Basic -->
-<div class="field">
+<!--<div class="field">
   <label class="label" for="ddlRuolo">Selezionare il ruolo del nuovo utente</label>
   <div class="control">
   	<div class="select">
@@ -61,7 +61,7 @@
 	    </select>
 	</div>
   </div>
-</div>
+</div>-->
 
 <!-- Button -->
 <div class="field">
