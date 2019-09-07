@@ -5,10 +5,12 @@
  */
 package it.studiomascia.gestionale.controllers;
 
+import it.studiomascia.gestionale.models.User;
 import it.studiomascia.gestionale.models.XmlFatturaBase;
 import it.studiomascia.gestionale.models.XmlFatturaBasePredicate;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
 import it.studiomascia.gestionale.xml.FatturaElettronicaType;
+import it.studiomascia.gestionale.xml.IdFiscaleType;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -49,11 +52,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -129,8 +135,6 @@ public class InvoiceController {
         //trans.transform(new DOMSource(doc), new StreamResult(new OutputStreamWriter(bout, "utf-8")));
         return doc;
     }
-   
-     
      
     @GetMapping("/InvoicesIn")
     public String FatturePassiveList(HttpServletRequest request,Model model){
@@ -152,10 +156,10 @@ public class InvoiceController {
         // Prepara la Map da aggiungere alla view 
         List<String> headers = new  ArrayList<>();
         headers.add("Id");
-        headers.add("Data Registrazione");
-        headers.add("Numero Registrazione");
-        headers.add("Data Fattura");
-        headers.add("Numero Fattura");
+        headers.add("Data Reg.");
+        headers.add("N.Reg.");
+        headers.add("Data");
+        headers.add("Numero");
         headers.add("P.IVA");
         headers.add("Denominazione");
         headers.add("Imponibile");     
@@ -165,7 +169,7 @@ public class InvoiceController {
         for (XmlFatturaBase xmlFattura:listaFatture) {
         try {
             System.out.println("conta= " + conta++);
-                byte[] byteArr = xmlFattura.getXmlData().getBytes();
+                byte[] byteArr = xmlFattura.getXmlData().getBytes("UTF-8");
                 StringWriter sw = new StringWriter();
                 JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
                 // Unmarshaller serve per convertire il file in un oggetto
@@ -185,10 +189,10 @@ public class InvoiceController {
             
                 Map<String, Object> riga = new HashMap<String, Object>();
                 riga.put("Id", xmlFattura.getId());   
-                riga.put("Data Registrazione",  formattaData.format(xmlFattura.getDataRegistrazione()));
-                riga.put("Numero Registrazione", xmlFattura.getProtocolloFattura());
-                riga.put("Data Fattura",  formattaData.format(dataFattura));
-                riga.put("Numero Fattura", numeroFattura);
+                riga.put("Data Reg.",  formattaData.format(xmlFattura.getDataRegistrazione()));
+                riga.put("N.Reg.", xmlFattura.getNumeroRegistrazione());
+                riga.put("Data",  formattaData.format(dataFattura));
+                riga.put("Numero", numeroFattura);
                 riga.put("P.IVA",partitaIVA );
                 riga.put("Denominazione",denominazione );
                 riga.put("Imponibile", importoFattura);
@@ -202,13 +206,11 @@ public class InvoiceController {
     }
        
        
-       model.addAttribute("headers", headers);
+        model.addAttribute("headers", headers);
         model.addAttribute("rows", righe);
         model.addAttribute("currentPage", page);
         model.addAttribute("messaggio", "Ci sono: " + righe.size() +" ");
-    return "fatture_passive_lista";
-    
-    
+        return "fatture_passive_lista";
     }
    
     @GetMapping("/InvoicesIn/New")
@@ -253,7 +255,7 @@ public class InvoiceController {
         
                 XmlFatturaBase xmlFattura = new XmlFatturaBase();
                 xmlFattura.setDataRegistrazione(dataFattura);
-                xmlFattura.setProtocolloFattura(numeroFattura);
+                xmlFattura.setNumeroRegistrazione(numeroFattura);
                 xmlFattura.setDataInserimento(new Date());
                 xmlFattura.setFileName(files[k].getOriginalFilename());
                 xmlFattura.setXmlData(sw.toString());
@@ -282,9 +284,26 @@ public class InvoiceController {
         } //end for
         return "fatture_passive_caricate";
     }
-
-    
-    
+   
+    @GetMapping("/InvoicesIn/Register/{id}")
+    public String EditFatturaIn(Model model,@PathVariable Integer id){
+        XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
+        model.addAttribute("fattura",x);  
+        return "fatture_passive_registra";
+    }
+     
+    @PostMapping("/InvoicesIn/Register/{id}")
+    public String aggiornaFatturaIn(@Valid @ModelAttribute("fattura") XmlFatturaBase updateFattura, BindingResult bindingResult,Model model, RedirectAttributes redirectAttributes)
+    {
+        if (bindingResult.hasErrors()) { return "fatture_passive_registra"; }
+        XmlFatturaBase vecchiaFattura = xmlFatturaBaseRepository.findById(updateFattura.getId()).get();
+        
+        vecchiaFattura.setNumeroRegistrazione(updateFattura.getNumeroRegistrazione());
+        vecchiaFattura.setDataRegistrazione(updateFattura.getDataRegistrazione());
+        redirectAttributes.addFlashAttribute("messaggio","La fattura: è stata registrata");  
+        xmlFatturaBaseRepository.save(vecchiaFattura);
+        return "redirect:/InvoicesIn/Register/"+updateFattura.getId();
+    }
     
     @GetMapping("/InvoicesOut")
     public String FattureAttiveList(HttpServletRequest request,Model model){
@@ -318,7 +337,7 @@ public class InvoiceController {
         
         for (XmlFatturaBase xmlFattura:listaFatture) {
         try {
-                byte[] byteArr = xmlFattura.getXmlData().getBytes();
+                byte[] byteArr = xmlFattura.getXmlData().getBytes("UTF-8");
                 StringWriter sw = new StringWriter();
                 JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
                 // Unmarshaller serve per convertire il file in un oggetto
@@ -333,7 +352,7 @@ public class InvoiceController {
                 Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
                 String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
                 String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
-                String partitaIVA = item.getFatturaElettronicaHeader().getCessionarioCommittente().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice();
+                String partitaIVA =  item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice();
                 String denominazione = item.getFatturaElettronicaHeader().getCessionarioCommittente().getDatiAnagrafici().getAnagrafica().getDenominazione();
             
                 Map<String, Object> riga = new HashMap<String, Object>();
@@ -404,7 +423,7 @@ public class InvoiceController {
         
                 XmlFatturaBase xmlFattura = new XmlFatturaBase(true);
                 xmlFattura.setDataRegistrazione(dataFattura);
-                xmlFattura.setProtocolloFattura(numeroFattura);
+                xmlFattura.setNumeroRegistrazione(numeroFattura);
                 xmlFattura.setDataInserimento(new Date());
                 xmlFattura.setFileName(files[k].getOriginalFilename());
                 xmlFattura.setXmlData(sw.toString());
@@ -434,10 +453,6 @@ public class InvoiceController {
         return "fatture_attive_caricate";
     }
 
-    
-    
-    
-    
     //Invoice/Download
     @GetMapping("/Invoice/Download/{fileId}")
     public ResponseEntity<Resource> downloadFattura(@PathVariable String fileId) {

@@ -8,41 +8,25 @@
 </head>
 <body>
 <div layout:fragment="content">
-      <div class="container-fluid">
-         <h1>Elenco fatture emesse:</h1>
+    <div class="container-fluid">
+        <h1>Elenco fatture emesse:</h1>
         <table class="table table-striped">
-           <thead>
-        <tr class="headings">
-            <th th:each="header: ${headers}" class="column-title" th:text="${header}" />
-            <td>azione</td>
-        </tr>
-    </thead>
-
-    <tbody>
-        <tr class="even pointer" th:each="row: ${rows}" id="tablerow">
-            <td th:each="header: ${headers}" th:text="${row.get(header)}" />
-            <td>
-                <a class="btn btn-primary" th:href="@{'/downloadFattura/' + ${row.get('Id')}} " >Apri</a>
-            </td>
-        </tr>
-    </tbody>
-            
-            
-<!--            
-             <tr> <th>piva</th><th>data</th><th>numero</th><th>imponibile</th><th></th></tr>
-            <tr th:each="item : ${files}">
-                <td th:text="${item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice()}"/>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>
-                   <a class="btn btn-primary" th:href="@{'/downloadFile/'}} " >Scarica</a>
-                </td>
-            </tr>-->
+            <thead>
+                <tr class="headings">
+                    <th th:each="header: ${headers}" class="column-title" th:text="${header}" />
+                        <td>azione</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="even pointer" th:each="row: ${rows}" id="tablerow">
+                    <td th:each="header: ${headers}" th:text="${row.get(header)}" />
+                    <td>
+                        <a class="btn btn-primary" th:href="@{'/downloadFattura/' + ${row.get('Id')}} " >Apri</a>
+                    </td>
+                </tr>
+            </tbody>
         </table>
-
-
-  
+    </div>
 </div>
 </body>
 </html>

@@ -17,11 +17,8 @@ import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.hibernate.annotations.GenericGenerator;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  *
@@ -45,7 +42,7 @@ public class XmlFatturaBase {
     @Column(name = "file_name")
     private String fileName;
     
-    @Temporal(TemporalType.TIMESTAMP)    
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     @Column(name = "data_inserimento")
     private Date dataInserimento;
     
@@ -53,7 +50,7 @@ public class XmlFatturaBase {
     @Column(name = "numero_registrazione")
     private String numeroRegistrazione;
     
-    @Temporal(TemporalType.TIMESTAMP)    
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     @Column(name = "data_registrazione")
     private Date dataRegistrazione;
     
@@ -123,14 +120,14 @@ public class XmlFatturaBase {
     /**
      * @return the numeroRegistrazione
      */
-    public String getProtocolloFattura() {
-        return numeroRegistrazione;
+    public String getNumeroRegistrazione() {
+        return this.numeroRegistrazione;
     }
 
     /**
      * @param protocolloFattura the numeroRegistrazione to set
      */
-    public void setProtocolloFattura(String protocolloFattura) {
+    public void setNumeroRegistrazione(String protocolloFattura) {
         this.numeroRegistrazione = protocolloFattura;
     }
 
@@ -138,7 +135,7 @@ public class XmlFatturaBase {
      * @return the dataRegistrazione
      */
     public Date getDataRegistrazione() {
-        return dataRegistrazione;
+        return this.dataRegistrazione;
     }
 
     /**
@@ -152,7 +149,7 @@ public class XmlFatturaBase {
      * @return the stringaXml
      */
     public String getXmlData() {
-        return xmlString;
+        return this.xmlString;
     }
 
     /**
@@ -174,5 +171,6 @@ public class XmlFatturaBase {
      public XmlFatturaBase(boolean isAttiva) {
         this.attiva=isAttiva;
     }
-    
+     
+   
 }
