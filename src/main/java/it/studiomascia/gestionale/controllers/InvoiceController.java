@@ -5,16 +5,14 @@
  */
 package it.studiomascia.gestionale.controllers;
 
-import it.studiomascia.gestionale.models.User;
 import it.studiomascia.gestionale.models.XmlFatturaBase;
 import it.studiomascia.gestionale.models.XmlFatturaBasePredicate;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
 import it.studiomascia.gestionale.xml.FatturaElettronicaType;
-import it.studiomascia.gestionale.xml.IdFiscaleType;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -25,23 +23,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
+import javax.xml.bind.util.JAXBSource;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.tomcat.jni.Library;
+import org.apache.xmlgraphics.util.MimeConstants;
 import org.bouncycastle.cms.CMSSignedData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -59,11 +59,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
 
 /**
  *
@@ -75,7 +72,7 @@ public class InvoiceController {
     @Autowired
     private XmlFatturaBaseRepository xmlFatturaBaseRepository;
 
-    
+    /* INIZIO Metodi comuni per tutti i mapping */
     private SimpleDateFormat formattaData = new SimpleDateFormat("dd-MM-yyyy");
     
     public byte[] getData(final byte[] p7bytes) throws Exception { 
@@ -91,51 +88,82 @@ public class InvoiceController {
 
         return out.toByteArray(); 
     } 
-     
-    private static String convertDocumentToString(Document doc) {
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer;
-        try {
-            transformer = tf.newTransformer();
-            // below code to remove XML declaration
-            // transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-            // "yes");
-            StringWriter writer = new StringWriter();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-            transformer.transform(new DOMSource(doc), new StreamResult(writer));
-            String output = writer.getBuffer().toString();
-            return output;
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+    
+    
+    /* METODO CHE PERMETTE DI VISUALIZZARE LA FATTURA SIA IN CHE OUT */
+    @GetMapping("/Invoice/Download/{fileId}")
+    public ModelAndView downloadFattura(HttpServletRequest request,
+            HttpServletResponse response, @PathVariable String fileId) throws IOException {
+        
+        // Load file from database
+        Integer id = Integer.valueOf(fileId); 
+        XmlFatturaBase item = xmlFatturaBaseRepository.findById(id).get();
+    
+       byte[] byteArr = item.getXmlData().getBytes("UTF-8");
+       Source source = new StreamSource(new ByteArrayInputStream(byteArr) );
+ 
+        // adds the XML source file to the model so the XsltView can detect
+        ModelAndView model = new ModelAndView("XSLTView");
+        model.addObject("xmlSource", source);
+         
+        return model;
     }
+        
+      
+    @GetMapping("/downloadFatturaPdf/{fileId}")
+    public ResponseEntity<Resource> downloadFatturaPdf(@PathVariable String fileId) {
+         try{
+            FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+
+            //Setup a buffer to obtain the content length
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer transformer = factory.newTransformer(new StreamSource("c:\\foglio.xsl"));
+            //Make sure the XSL transformation's result is piped through to FOP
+            Result res = new SAXResult(fop.getDefaultHandler());
+
+            //Setup input
+            Source src = new StreamSource(new File("c:\\foglio.xml"));
+
+            //Start the transformation and rendering process
+            transformer.transform(src, res);
+
+//            Prepare response
+//            response.setContentType("application/pdf");
+//            response.setContentLength(out.size());
+//
+//            //Send content to Browser
+//            response.getOutputStream().write(out.toByteArray());
+//            response.getOutputStream().flush();
    
-    private static Document convertStringToDocument(String xmlStr) {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder;
-        Document doc = null;
-        try {
-            builder = factory.newDocumentBuilder();
-            doc = builder.parse(new InputSource(new StringReader(xmlStr)));
-
-        } catch (Exception e) {
+            return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"test.pdf\"")
+                .body(new ByteArrayResource(out.toByteArray()));
+    
+                    
+                    
+                    
+        }catch(Exception e){
             e.printStackTrace();
+            return null;
         }
-        return doc;
-    } 
-     
-    private static <ProcessingInstructionImpl> Document addingStylesheet(Document doc) throws TransformerConfigurationException, ParserConfigurationException 
-    {
-        ProcessingInstructionImpl pi = (ProcessingInstructionImpl) doc.createProcessingInstruction("xml-stylesheet","type=\"text/xsl\" href=\"/xsl/foglio.xsl\"");
-        Element root = doc.getDocumentElement();
-        doc.insertBefore((Node) pi, root);
-        //trans.transform(new DOMSource(doc), new StreamResult(new OutputStreamWriter(bout, "utf-8")));
-        return doc;
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
     }
-     
+
+    /* METODI PER LE FATTURE IN */
+    
     @GetMapping("/InvoicesIn")
     public String FatturePassiveList(HttpServletRequest request,Model model){
         
@@ -305,6 +333,8 @@ public class InvoiceController {
         return "redirect:/InvoicesIn/Register/"+updateFattura.getId();
     }
     
+    /* METODI PER LE FATTURE OUT */
+    
     @GetMapping("/InvoicesOut")
     public String FattureAttiveList(HttpServletRequest request,Model model){
         
@@ -453,28 +483,7 @@ public class InvoiceController {
         return "fatture_attive_caricate";
     }
 
-    //Invoice/Download
-    @GetMapping("/Invoice/Download/{fileId}")
-    public ResponseEntity<Resource> downloadFattura(@PathVariable String fileId) {
-        // Load file from database
-        Integer id = Integer.valueOf(fileId);
-        XmlFatturaBase item = xmlFatturaBaseRepository.findById(id).get();
+  
     
-        Document doc2 = convertStringToDocument(item.getXmlData());
-        Document doc1 = null;
-        try {
-            doc1 = addingStylesheet(doc2);
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-        
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + item.getFileName() + "\"")
-                .body(new ByteArrayResource(convertDocumentToString(doc1).getBytes()));
-    
-    }
+   
 }

@@ -22,7 +22,7 @@
         <tr class="even pointer" th:each="row: ${rows}" id="tablerow">
             <td th:each="header: ${headers}" th:text="${row.get(header)}" />
             <td>
-                <a class="btn btn-primary" th:href="@{'/downloadFattura/' + ${row.get('Id')}} " >Apri</a>
+                <a class="btn btn-primary" th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " >Apri</a>
             </td>
         </tr>
     </tbody>
