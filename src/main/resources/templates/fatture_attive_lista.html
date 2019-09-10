@@ -21,7 +21,8 @@
                 <tr class="even pointer" th:each="row: ${rows}" id="tablerow">
                     <td th:each="header: ${headers}" th:text="${row.get(header)}" />
                     <td>
-                        <a class="btn btn-primary" th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " >Apri</a>
+<!--                        <a class="btn btn-primary" th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " >Apri</a>-->
+                        <a class="btn btn-info btn-xs" th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " target="nuovoframe" >Apri</a>
                     </td>
                 </tr>
             </tbody>
