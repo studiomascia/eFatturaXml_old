@@ -194,18 +194,26 @@ public class InvoiceController {
        
         List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
         int conta=1;
-        
-        try {
-            for (XmlFatturaBase xmlFattura:listaFatture) {
-            System.out.println("conta= " + conta++);
-                byte[] byteArr = xmlFattura.getXmlData().getBytes("UTF-8");
-                StringWriter sw = new StringWriter();
+        byte[] byteArr;
+                 try {
+                     StringWriter sw = new StringWriter();
                 JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
                 // Unmarshaller serve per convertire il file in un oggetto
                 Unmarshaller jaxbUnMarshaller = context.createUnmarshaller();
                 // Marshaller serve per convertire l'oggetto ottenuto dal file in una stringa xml
                 Marshaller jaxbMarshaller = context.createMarshaller();
                 jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+       
+            for (XmlFatturaBase xmlFattura:listaFatture) {
+                System.out.println("conta= " + conta++);
+                byteArr = xmlFattura.getXmlData().getBytes("UTF-8");
+                sw = new StringWriter();
+            ///    JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
+                // Unmarshaller serve per convertire il file in un oggetto
+            ///    Unmarshaller jaxbUnMarshaller = context.createUnmarshaller();
+                // Marshaller serve per convertire l'oggetto ottenuto dal file in una stringa xml
+            ///    Marshaller jaxbMarshaller = context.createMarshaller();
+            ///    jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
                 JAXBElement<FatturaElettronicaType> root =jaxbUnMarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(byteArr)), FatturaElettronicaType.class);
                 FatturaElettronicaType item = root.getValue();
                 jaxbMarshaller.marshal(root, sw);
