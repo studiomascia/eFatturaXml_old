@@ -194,8 +194,9 @@ public class InvoiceController {
        
         List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
         int conta=1;
-        for (XmlFatturaBase xmlFattura:listaFatture) {
+        
         try {
+            for (XmlFatturaBase xmlFattura:listaFatture) {
             System.out.println("conta= " + conta++);
                 byte[] byteArr = xmlFattura.getXmlData().getBytes("UTF-8");
                 StringWriter sw = new StringWriter();
@@ -225,14 +226,14 @@ public class InvoiceController {
                 riga.put("Denominazione",denominazione );
                 riga.put("Imponibile", importoFattura);
                 righe.add(riga);
-                                
+                      }
+                     
         } catch (JAXBException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         } 
-    }
-       
+
        
         model.addAttribute("headers", headers);
         model.addAttribute("rows", righe);
