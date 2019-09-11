@@ -30,20 +30,18 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.util.JAXBSource; 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
-import org.apache.tomcat.jni.Library;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.bouncycastle.cms.CMSSignedData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -68,6 +66,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @Controller
 public class InvoiceController {
+     
+    @Value("${max.rows.table}")
+    private int MAX_ROWS_TABLE;
+    
     
     @Autowired
     private XmlFatturaBaseRepository xmlFatturaBaseRepository;
@@ -169,7 +171,7 @@ public class InvoiceController {
         
         //INIZIO:: BLOCCO PER LA PAGINAZIONE
         int page = 0; //default page number is 0 (yes it is weird)
-        int size = 100; //default page size is 10
+        int size = MAX_ROWS_TABLE;  
         
         if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
             page = Integer.parseInt(request.getParameter("page")) - 1;
@@ -291,8 +293,8 @@ public class InvoiceController {
                 String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
         
                 XmlFatturaBase xmlFattura = new XmlFatturaBase();
-                xmlFattura.setDataRegistrazione(dataFattura);
-                xmlFattura.setNumeroRegistrazione(numeroFattura);
+                //xmlFattura.setDataRegistrazione(dataFattura);
+                //xmlFattura.setNumeroRegistrazione(numeroFattura);
                 xmlFattura.setDataInserimento(new Date());
                 xmlFattura.setFileName(files[k].getOriginalFilename());
                 xmlFattura.setXmlData(sw.toString());

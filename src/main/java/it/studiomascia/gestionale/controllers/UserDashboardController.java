@@ -5,8 +5,10 @@
  */
 package it.studiomascia.gestionale.controllers;
 
+import it.studiomascia.gestionale.models.XmlFatturaBase;
 import it.studiomascia.gestionale.repository.UserRepository;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,7 +33,11 @@ public class UserDashboardController {
         model.addAttribute("numUtenti", utenti_repository.findAll().size());
         model.addAttribute("nFatturePassive", xmlfattura_repository.findAllPassive().size());
         model.addAttribute("nFattureAttive", xmlfattura_repository.findAllAttive().size());  
-            return "user_dashboard";
+
+        model.addAttribute("nFatturePassiveNR", xmlfattura_repository.findPassiveNotRegistered().size());
+        model.addAttribute("nFattureAttiveNR", xmlfattura_repository.findAttiveNotRegistered().size());
+
+        return "user_dashboard";
     }
     
 }

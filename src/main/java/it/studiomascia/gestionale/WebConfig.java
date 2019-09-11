@@ -24,5 +24,5 @@ public class WebConfig implements WebMvcConfigurer {
                     .addResourceLocations("/public", "classpath:/static/")
                     .setCachePeriod(31556926);
         }
-
+        
 }

@@ -26,9 +26,17 @@ public class XmlFatturaBasePredicate
         return p -> p.isAttiva()==false;
     }
     
+      public static Predicate<XmlFatturaBase> isNotRegistered() {
+        return p -> p.getNumeroRegistrazione() == null ;
+    }
+    
     public static List<XmlFatturaBase> filtraFatturePassive(List<XmlFatturaBase> fatture)
     {
       return fatture.stream().filter((fattura)-> fattura.isAttiva() == false).collect(Collectors.<XmlFatturaBase>toList());
+    }
+     public static List<XmlFatturaBase> filtraFattureNonRegistrate(List<XmlFatturaBase> fatture)
+    {
+      return fatture.stream().filter((fattura)-> fattura.getNumeroRegistrazione()== null).collect(Collectors.<XmlFatturaBase>toList());
     }
      
     public static List<XmlFatturaBase> filterXmlFatturaBase (List<XmlFatturaBase> fatture, Predicate<XmlFatturaBase> predicate)
