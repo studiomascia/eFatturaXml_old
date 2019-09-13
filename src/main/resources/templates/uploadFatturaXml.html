@@ -17,7 +17,7 @@
                 <div class="multiple-upload">
                     <h3>Upload Fature in formato XML</h3>
                     <form id="multipleUploadForm" name="multipleUploadForm" action="#" th:action="@{/uploadFatturaXml}" method="POST" enctype="multipart/form-data">
-                        <input id="multipleFileUploadInput" type="file" name="files" class="file-input" multiple required />
+                        <input id="multipleFileUploadInput" type="file" name="files" class="file-input" multiple="true" required="true" />
                         <button type="submit" class="primary submit-btn">Submit</button>
                     </form>
                     <div class="upload-response">

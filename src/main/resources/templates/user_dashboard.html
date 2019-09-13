@@ -7,71 +7,68 @@
     <title>Gesionale CONCRETE  - Studiomascia.it!</title>
 </head>
 <body>
-<div layout:fragment="content">
-    <div class="container">
-        <h2></h2>
-    <div class="row">
-   <div class="col-sm-4">
-        <div class="card card-nav-tabs">
-            <h4 class="card-header card-header-danger">Area Utenti</h4>
-            <div class="card-body">
-        <p class="card-text" th:text="'Nel sistema sono attivi ' + ${numUtenti} + ' utenti'">Contenuto.</p>
-        <a href="/Utenti" class="btn btn-primary">Lista Utenti</a>
-      </div>
-    </div>
-  </div>
-    <div class="col-sm-4">
-        <div class="card card-nav-tabs">
-            <h4 class="card-header card-header-info">Area Fatture Passive</h4>
-            <div class="card-body">
-                <p class="card-text" th:text="'Nel sistema sono state inserite ' + ${nFatturePassive} + ' fatture passive'">Contenuto.</p>
-                <p class="card-text" th:text="'di cui  ' + ${nFatturePassiveNR} + ' sono prive di registrazione'">Contenuto.</p>
-                <a href="/InvoicesIn" class="btn btn-primary">Lista Fatture</a><a href="/InvoicesIn/New" class="btn btn-info">+</a>
-            </div>                                                               
-        </div>
-    </div>
-    <div class="col-sm-4">
-        <div class="card card-nav-tabs">
-            <h4 class="card-header card-header-success">Area Fatture Attive</h4>
-            <div class="card-body">
-                <p class="card-text" th:text="'Nel sistema sono state inserite ' + ${nFattureAttive} + ' fatture attive'">Contenuto.</p>
-                <p class="card-text" th:text="'di cui  ' + ${nFattureAttiveNR} + ' sono prive di registrazione'">Contenuto.</p>
-                <a href="/InvoicesOut" class="btn btn-primary">Lista Fatture</a><a href="/InvoicesOut/New"  class="btn btn-info">+</a>
+    <div layout:fragment="content">
+        <div class="container">
+            <h2></h2>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="card card-nav-tabs">
+                        <h4 class="card-header card-header-danger">Area Utenti</h4>
+                        <div class="card-body">
+                            <p class="card-text" th:text="'Nel sistema sono attivi ' + ${numUtenti} + ' utenti'">Contenuto.</p>
+                            <a href="/Utenti" class="btn btn-primary">Lista Utenti</a>
+                        </div>
+                    </div>
+               </div>
+            <div class="col-sm-4">
+                <div class="card card-nav-tabs">
+                    <h4 class="card-header card-header-info">Area Fatture Passive</h4>
+                    <div class="card-body">
+                        <p class="card-text" th:text="'Nel sistema sono state inserite ' + ${nFatturePassive} + ' fatture passive'">Contenuto.</p>
+                        <p class="card-text" th:text="'di cui  ' + ${nFatturePassiveNR} + ' sono prive di registrazione'">Contenuto.</p>
+                        <a href="/InvoicesIn" class="btn btn-primary">Lista Fatture</a><a href="/InvoicesIn/New" class="btn btn-info">+</a>
+                    </div>                                                               
+                </div>
             </div>
+            <div class="col-sm-4">
+                <div class="card card-nav-tabs">
+                    <h4 class="card-header card-header-success">Area Fatture Attive</h4>
+                    <div class="card-body">
+                        <p class="card-text" th:text="'Nel sistema sono state inserite ' + ${nFattureAttive} + ' fatture attive'">Contenuto.</p>
+                        <p class="card-text" th:text="'di cui  ' + ${nFattureAttiveNR} + ' sono prive di registrazione'">Contenuto.</p>
+                        <a href="/InvoicesOut" class="btn btn-primary">Lista Fatture</a><a href="/InvoicesOut/New"  class="btn btn-info">+</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card card-nav-tabs">
+                    <h4 class="card-header card-header-warning">Area Risorse Umane</h4>
+                    <div class="card-body">
+                        <p class="card-text" th:text="'La società ha: '  + ' dipendenti'">Contenuto.</p>
+                        <a href="#" class="btn btn-primary">Lista Dipendenti</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Area Costi</h5>
+                        <p class="card-text">Gestione centri di costo e commesse.</p>
+                        <a href="#" class="btn btn-primary">Lista</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Special title treatment</h5>
+                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+           </div>
         </div>
-  </div>
-<!--    </div> 
-        <div class="row"></br></div>
-<div class="row">-->
-   <div class="col-sm-4">
-        <div class="card card-nav-tabs">
-            <h4 class="card-header card-header-warning">Area Risorse Umane</h4>
-            <div class="card-body">
-        <p class="card-text" th:text="'La società ha: '  + ' dipendenti'">Contenuto.</p>
-        <a href="#" class="btn btn-primary">Lista Dipendenti</a>
-      </div>
-    </div>
-  </div>
-    <div class="col-sm-4">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Area Costi</h5>
-        <p class="card-text">Gestione centri di costo e commesse.</p>
-        <a href="#" class="btn btn-primary">Lista</a>
-      </div>
-    </div>
-  </div>
-    <div class="col-sm-4">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Special title treatment</h5>
-        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
+        </div>
     </div>
 </body>
 </html>

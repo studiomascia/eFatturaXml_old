@@ -7,27 +7,27 @@
     <title>Home</title>
 </head>
 <body>
-<div layout:fragment="content">
-    <div class="container-fluid">   
-        <h1>Elenco fatture emesse:</h1>
-        <table class="table table-striped">
-            <thead>
-                <tr class="headings">
-                    <th th:each="header: ${headers}" class="column-title" th:text="${header}" />
-                        <td>azione</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="even pointer" th:each="row: ${rows}" id="tablerow">
-                    <td th:each="header: ${headers}" th:text="${row.get(header)}" />
-                    <td>
-<!--                        <a class="btn btn-primary" th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " >Apri</a>-->
-                        <a class="btn btn-info btn-xs" th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " target="nuovoframe" >Apri</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div layout:fragment="content">
+        <div class="container-fluid">   
+            <h1>Elenco fatture emesse:</h1>
+            <table class="table table-striped">
+                <thead>
+                    <tr class="headings">
+                        <th th:each="header: ${headers}" class="column-title" th:text="${header}" />
+                            <th>azione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="even pointer" th:each="row: ${rows}" id="tablerow">
+                        <td th:each="header: ${headers}" th:text="${row.get(header)}" />
+                        <td>
+    <!--                        <a class="btn btn-primary" th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " >Apri</a>-->
+                            <a class="btn btn-info btn-xs" th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " target="nuovoframe" >Apri</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 </body>
 </html>

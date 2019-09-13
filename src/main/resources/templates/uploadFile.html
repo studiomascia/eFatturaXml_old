@@ -7,8 +7,8 @@
     <title>Upload Documento</title>
 </head>
 <body>
-<div layout:fragment="content">
-            <div class="upload-container">
+    <div layout:fragment="content">
+        <div class="upload-container">
             <div class="upload-header">
                 <h2>Inserimento documenti:</h2>
             </div>
@@ -27,7 +27,7 @@
                 <div class="multiple-upload">
                     <h3>Upload Multiple Files</h3>
                     <form id="multipleUploadForm" name="multipleUploadForm" action="#" th:action="@{/uploadFile}" method="POST" enctype="multipart/form-data">
-                        <input id="multipleFileUploadInput" type="file" name="files" class="file-input" multiple required />
+                        <input id="multipleFileUploadInput" type="file" name="files" class="file-input" multiple="true" required="true" />
                         <button type="submit" class="primary submit-btn">Submit</button>
                     </form>
                     <div class="upload-response">
@@ -37,6 +37,6 @@
                 </div>
             </div>
         </div>
-</div>
+    </div>
 </body>
 </html>

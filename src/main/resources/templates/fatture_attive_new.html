@@ -7,13 +7,12 @@
     <title>Caricamento fatture emesse</title>
 </head>
 <body>
-<div layout:fragment="content">
-            <div class="upload-container">
+    <div layout:fragment="content">
+        <div class="upload-container">
             <div class="upload-header">
                 <h2>Caricamento Fatture Emesse</h2>
             </div>
             <div class="upload-content">
-               
                 <div class="multiple-upload">
                     <h3>Upload Fature in formato XML</h3>
                     <form id="multipleUploadForm" name="multipleUploadForm" action="#" th:action="@{/InvoicesOut/New}" method="POST" enctype="multipart/form-data">
@@ -27,6 +26,6 @@
                 </div>
             </div>
         </div>
-</div>
+    </div>
 </body>
 </html>

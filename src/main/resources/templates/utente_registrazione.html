@@ -18,7 +18,7 @@
 <div class="field">
   <label class="label" for="txtEmail">Email</label>
   <p class="control has-icons-left has-icons-right">
-    <input id="txtEmail"  th:field="*{username}" name="txtEmail" type="text" placeholder="inserisci la mail utente" class="input ">
+    <input id="txtEmail"  th:field="*{username}" name="txtEmail" type="text" placeholder="inserisci la mail utente" class="input "/>
     <span class="icon is-small is-left"><i class="fas fa-envelope"></i></span>
     <span class="icon is-small is-right"><i class="fas fa-check"></i></span>
     <span th:if="${#fields.hasErrors('username')}" class="help is-danger" th:errors="*{username}">Errore</span>   
@@ -30,7 +30,7 @@
   <label class="label" for="txtPassword">Password</label>
   <div class="control">
       <p class="control has-icons-left">
-    <input id="txtPassword" th:field="*{password}" name="txtPassword" type="password" placeholder="inserisci la password utente" class="input " required="">
+    <input id="txtPassword" th:field="*{password}" name="txtPassword" type="password" placeholder="inserisci la password utente" class="input " required=""/>
      <span class="icon is-small is-left"><i class="fas fa-lock"></i></span>
     <p class="help">minimo 6 caratteri</p> <span th:if="${#fields.hasErrors('password')}"  class="help is-danger" th:errors="*{password}">Errore</span>
       </p>

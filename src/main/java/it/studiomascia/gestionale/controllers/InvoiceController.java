@@ -134,7 +134,7 @@ public class InvoiceController {
 
 //            Prepare response
 //            response.setContentType("application/pdf");
-//            response.setContentLength(out.size());
+//            response.setContentLength(out.size()); 
 //
 //            //Send content to Browser
 //            response.getOutputStream().write(out.toByteArray());
@@ -196,6 +196,7 @@ public class InvoiceController {
        
         List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
         int conta=1;
+        String  strData = null;
         byte[] byteArr;
                  try {
                      StringWriter sw = new StringWriter();
@@ -209,6 +210,7 @@ public class InvoiceController {
             for (XmlFatturaBase xmlFattura:listaFatture) {
                 System.out.println("conta= " + conta++);
                 byteArr = xmlFattura.getXmlData().getBytes("UTF-8");
+                strData = "";
                 sw = new StringWriter();
             ///    JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
                 // Unmarshaller serve per convertire il file in un oggetto
@@ -226,9 +228,18 @@ public class InvoiceController {
                 String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
                 String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
             
+                if (xmlFattura.getDataRegistrazione()!= null) tmpData=;
+                
+                
+                strData = ((xmlFattura.getDataRegistrazione() == null)) ? "N/A" : formattaData.format(xmlFattura.getDataRegistrazione());
+
+                
+                
+                
+                
                 Map<String, Object> riga = new HashMap<String, Object>();
                 riga.put("Id", xmlFattura.getId());   
-                riga.put("Data Reg.",  formattaData.format(xmlFattura.getDataRegistrazione()));
+                riga.put("Data Reg.",  strData);
                 riga.put("N.Reg.", xmlFattura.getNumeroRegistrazione());
                 riga.put("Data",  formattaData.format(dataFattura));
                 riga.put("Numero", numeroFattura);

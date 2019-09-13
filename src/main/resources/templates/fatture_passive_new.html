@@ -7,38 +7,23 @@
     <title>Caricamento Fatture Passive </title>
 </head>
 <body>
-<div layout:fragment="content">
-    <div class="upload-container">
-        <div class="upload-header"><h2>Caricamento Fatture Passive</h2></div>
-        <div class="upload-content">
-            <div class="multiple-upload">
-                <h3>Upload files in formato XML</h3>
-                <form id="multipleUploadForm" name="multipleUploadForm" action="#" th:action="@{/InvoicesIn/New}" method="POST" enctype="multipart/form-data">
-                    <input id="multipleFileUploadInput" type="file" name="files" class="file-input" multiple required />
-                    <button type="submit" class="primary submit-btn">Submit</button>
-                </form>
-                <div class="upload-response">
-                    <div id="multipleFileUploadError"></div>
-                    <div id="multipleFileUploadSuccess"></div>
+    <div layout:fragment="content">
+        <div class="upload-container">
+            <div class="upload-header"><h2>Caricamento Fatture Passive</h2></div>
+            <div class="upload-content">
+                <div class="multiple-upload">
+                    <h3>Upload files in formato XML</h3>
+                    <form id="multipleUploadForm" name="multipleUploadForm" action="#" th:action="@{/InvoicesIn/New}" method="POST" enctype="multipart/form-data">
+                        <input id="multipleFileUploadInput" type="file" name="files" class="file-input" multiple required />
+                        <button type="submit" class="primary submit-btn">Submit</button>
+                    </form>
+                    <div class="upload-response">
+                        <div id="multipleFileUploadError"></div>
+                        <div id="multipleFileUploadSuccess"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-<!--    <form id="multipleUploadForm" name="multipleUploadForm" action="#" th:action="@{/InvoicesIn/New}" method="POST" enctype="multipart/form-data">
-
-        <div class="form-group form-file-upload form-file-multiple">
-            <input type="file" multiple="" class="inputFileHidden"/>
-            <div class="input-group">
-                <input type="text" class="form-control inputFileVisible" placeholder="Multiple Files" multiple>
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-fab btn-round btn-info">
-                        <i class="material-icons">layers</i>
-                    </button>
-                </span>
-            </div>
-        </div>
-    </form>-->
-    
-</div>
 </body>
 </html>
