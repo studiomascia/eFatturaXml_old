@@ -21,8 +21,14 @@
                     <tr class="even pointer w-50 p-3" th:each="row: ${rows}" id="tablerow">
                         <td th:each="header: ${headers}" th:text="${row.get(header)}" />
                         <td>
-                            <a class="btn btn-info btn-xs" th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " target="nuovoframe" >Apri</a>
-                            <a class="btn btn-info btn-xs" th:href="@{'/InvoicesIn/Register/' + ${row.get('Id')}} " >Registra</a>
+<!--                            <a class="btn btn-info btn-xs" th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " target="nuovoframe" >Apri</a>
+                            <a class="btn btn-info btn-xs" th:href="@{'/InvoicesIn/Register/' + ${row.get('Id')}} " >Registra</a>-->
+
+                            <div class="btn-group">
+                                <a class="btn btn-success"  th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " target="nuovoframe" ><i class="fas fa-file-pdf indigo-text pr-3" aria-hidden="true" ></i></a>
+                                <a class="btn btn-danger"  th:href="@{'/Invoice/RegisterPayment/' + ${row.get('Id')}} " target="nuovoframe" ><i class="fas fa-euro-sign red-text pr-3" aria-hidden="true"></i></a>
+                                <a class="btn btn-primary"  th:href="@{'/Invoice/Register/' + ${row.get('Id')}} " target="nuovoframe" ><i class="fas fa-edit green-text pr-3" aria-hidden="true"></i></a>
+                            </div>
                         </td>
                     </tr>
                 </tbody>

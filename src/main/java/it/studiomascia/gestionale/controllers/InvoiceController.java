@@ -228,7 +228,7 @@ public class InvoiceController {
                 String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
                 String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
             
-                if (xmlFattura.getDataRegistrazione()!= null) tmpData=;
+               //if (xmlFattura.getDataRegistrazione()!= null) tmpData= formattaData.format(xmlFattura.getDataRegistrazione());
                 
                 
                 strData = ((xmlFattura.getDataRegistrazione() == null)) ? "N/A" : formattaData.format(xmlFattura.getDataRegistrazione());
@@ -247,8 +247,8 @@ public class InvoiceController {
                 riga.put("Denominazione",denominazione );
                 riga.put("Imponibile", importoFattura);
                 righe.add(riga);
-                      }
-                     
+                }
+                        
         } catch (JAXBException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -276,7 +276,7 @@ public class InvoiceController {
         headers.add("P.IVA");
         headers.add("Data");
         headers.add("Denominazione");
-        headers.add("Numero");
+        headers.add("Numero"); 
         headers.add("Imponibile");     
         List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
         
