@@ -248,7 +248,7 @@ public class InvoiceController {
                 riga.put("Imponibile", importoFattura);
                 righe.add(riga);
                 }
-                        
+                          
         } catch (JAXBException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -335,14 +335,14 @@ public class InvoiceController {
         return "fatture_passive_caricate";
     }
    
-    @GetMapping("/InvoicesIn/Register/{id}")
+    @GetMapping("/InvoiceIn/Register/{id}")
     public String EditFatturaIn(Model model,@PathVariable Integer id){
         XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
         model.addAttribute("fattura",x);  
         return "fatture_passive_registra";
     }
      
-    @PostMapping("/InvoicesIn/Register/{id}")
+    @PostMapping("/InvoiceIn/Register/{id}")
     public String aggiornaFatturaIn(@Valid @ModelAttribute("fattura") XmlFatturaBase updateFattura, BindingResult bindingResult,Model model, RedirectAttributes redirectAttributes)
     {
         if (bindingResult.hasErrors()) { return "fatture_passive_registra"; }
@@ -352,9 +352,28 @@ public class InvoiceController {
         vecchiaFattura.setDataRegistrazione(updateFattura.getDataRegistrazione());
         redirectAttributes.addFlashAttribute("messaggio","La fattura: è stata registrata");  
         xmlFatturaBaseRepository.save(vecchiaFattura);
-        return "redirect:/InvoicesIn/Register/"+updateFattura.getId();
+        return "redirect:/InvoiceIn/Register/"+updateFattura.getId();
     }
     
+    @GetMapping("/InvoiceIn/RegisterPayment/{id}")
+    public String refistraPagamentoFatturaIn(Model model,@PathVariable Integer id){
+        XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
+        model.addAttribute("fattura",x);  
+        return "fatture_passive_registra_pagamento";
+    }
+    
+    @PostMapping("/InvoiceIn/RegisterPayment/{id}")
+    public String registraPagamentoFatturaIn(@Valid @ModelAttribute("fattura") XmlFatturaBase updateFattura, BindingResult bindingResult,Model model, RedirectAttributes redirectAttributes)
+    {
+        if (bindingResult.hasErrors()) { return "fatture_passive_registra_pagamento"; }
+        XmlFatturaBase vecchiaFattura = xmlFatturaBaseRepository.findById(updateFattura.getId()).get();
+        
+        vecchiaFattura.setNumeroRegistrazione(updateFattura.getNumeroRegistrazione());
+        vecchiaFattura.setDataRegistrazione(updateFattura.getDataRegistrazione());
+        redirectAttributes.addFlashAttribute("messaggio","La fattura: è stata registrata");  
+        xmlFatturaBaseRepository.save(vecchiaFattura);
+        return "redirect:/InvoiceIn/RegisterPayment/"+updateFattura.getId();
+    }
     /* METODI PER LE FATTURE OUT */
     
     @GetMapping("/InvoicesOut")
