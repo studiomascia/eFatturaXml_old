@@ -8,7 +8,7 @@
 </head>
 <body>
     <div layout:fragment="content">
-        <form class="form-horizontal" th:action="@{'/InvoicesIn/Register/' + ${fattura.id}}" th:object="${fattura}"  method="POST" >
+        <form class="form-horizontal" th:action="@{'/InvoiceIn/Register/' + ${fattura.id}}" th:object="${fattura}"  method="POST" >
             <fieldset>
                 <!-- Dati Registrazione Fattura -->
                 <legend>Inserisci i dati di registrazione della fattura:</legend>

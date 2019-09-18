@@ -7,7 +7,9 @@ package it.studiomascia.gestionale.models;
 
 
 import java.util.Date;
+import java.util.Set;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -33,6 +36,11 @@ import org.springframework.format.annotation.DateTimeFormat;
     @NamedQuery(name = "XmlFatturaBase.findAllAttive", query = "SELECT x FROM XmlFatturaBase x WHERE x.attiva IS TRUE")})
 
 public class XmlFatturaBase {
+
+    
+
+ 
+    
     
   @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,6 +67,25 @@ public class XmlFatturaBase {
     @Lob
     private String xmlString;
 
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<Pagamento> pagamenti;
+    
+     
+    /**
+     * @return the pagamenti
+     */
+    public Set<Pagamento> getPagamenti() {
+        return pagamenti;
+    }
+    /**
+     * @param pagamenti the pagamenti to set
+     */
+    public void setPagamenti(Set<Pagamento> listaPagamenti) {
+        this.pagamenti = listaPagamenti;
+    }
+     
+    
+    
     
     private boolean attiva;
     

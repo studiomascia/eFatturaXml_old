@@ -19,6 +19,8 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table(name = "files")
 public class DBFile {
+
+   
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
@@ -27,6 +29,8 @@ public class DBFile {
     private String fileName;
 
     private String fileType;
+    
+    private String fileDescription;
 
     @Lob
     private byte[] data;
@@ -42,6 +46,13 @@ public class DBFile {
         this.fileName = fileName;
         this.fileType = fileType;
         this.data = data;
+    }
+
+        public DBFile(String fileName, String fileType,String fileDescription, byte[] data) {
+        this.fileName = fileName;
+        this.fileType = fileType;
+        this.data = data;
+        this.fileDescription = fileDescription;
     }
 
     /**
@@ -115,4 +126,17 @@ public class DBFile {
         this.idFolder = idFolder;
     }
     
+     /**
+     * @return the fileDescription
+     */
+    public String getFileDescription() {
+        return fileDescription;
+    }
+
+    /**
+     * @param fileDescription the fileDescription to set
+     */
+    public void setFileDescription(String fileDescription) {
+        this.fileDescription = fileDescription;
+    }
 }

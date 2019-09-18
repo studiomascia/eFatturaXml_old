@@ -43,7 +43,7 @@ public class DipendenteContratto {
         this.fileContratto = fileContratto;
     }
 
-        @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")

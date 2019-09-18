@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/0layout"
+      layout:decorator="main-template">
+<head>
+    <title>Home</title>
+
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid">
+            <h2>Dettaglio Pagamenti Fattura:</h2>
+            <table class="table table-sm table-condensed table-hover w-auto">
+                <thead>
+                    <tr class="headings">
+                        <th th:each="header: ${headers}" class="column-title th-sm" th:text="${header}" />
+                        <th>azione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="even pointer" id="tablerow">
+                        <td th:each="header: ${headers}" th:text="${fattura.get(header)}" />
+                        <td class="td-actions text-left">
+                            <a  th:href="@{'/Invoice/Download/' + ${fattura.get('Id')}} " target="_blank" type="button" rel="tooltip" class="btn btn-info" >
+                                <i class="material-icons">file_download</i>
+                            </a>
+                        </td>                        
+                    </tr>
+                </tbody>
+            </table>   
+        </br>
+            <h2>Elenco movimenti:</h2>
+            
+                <table class="table table-sm table-condensed table-hover w-auto">
+                <thead>
+                    <tr class="headings">
+  
+                        <th class="column-title th-sm">id</th>  
+                        <th class="column-title th-sm">data</th>  
+                        <th class="column-title th-sm">importo</th>  
+                        <th class="column-title th-sm">note</th>  
+                        <th class="column-title th-sm">saldato</th>  
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="even pointer w-50 p-3" th:each="x :${listapagamenti}"  id="tablerow">
+                         <td th:text="${x.id}" />
+                         <td th:text="${x.dataVersamento}" />
+                         <td th:text="${x.importoVersamento}" />
+                         <td th:text="${x.note}" />
+                         <td th:text="${x.isSaldata()}" />
+                         
+                    </tr>
+                </tbody>
+            </table>
+            
+            </br>
+            <h2>Elenco allegati:</h2>
+            
+             <div class="row col-md-12 table-responsive">
+                <table id="customerTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nome File</th>
+                            <th>Descrizione</th>
+                            <th> </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${listafiles}" >
+                            <td th:text="${item.id}">1</td>
+                            <td th:text="${item.fileName}">Jack</td>
+                            <td th:text="${item.fileDescription}">23</td>
+                            <td>
+                                <a type="button" class="btn btn-info" th:href="@{'/downloadFile/' + ${item.id}} " >Scarica</a>
+                                    <i class="material-icons">file_download</i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div> 
+</body>
+</html>
