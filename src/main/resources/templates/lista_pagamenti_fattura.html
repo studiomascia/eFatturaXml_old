@@ -29,60 +29,52 @@
                     </tr>
                 </tbody>
             </table>   
-        </br>
             <h2>Elenco movimenti:</h2>
             
                 <table class="table table-sm table-condensed table-hover w-auto">
-                <thead>
-                    <tr class="headings">
-  
-                        <th class="column-title th-sm">id</th>  
-                        <th class="column-title th-sm">data</th>  
-                        <th class="column-title th-sm">importo</th>  
-                        <th class="column-title th-sm">note</th>  
-                        <th class="column-title th-sm">saldato</th>  
-                        
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="even pointer w-50 p-3" th:each="x :${listapagamenti}"  id="tablerow">
-                         <td th:text="${x.id}" />
-                         <td th:text="${x.dataVersamento}" />
-                         <td th:text="${x.importoVersamento}" />
-                         <td th:text="${x.note}" />
-                         <td th:text="${x.isSaldata()}" />
-                         
-                    </tr>
-                </tbody>
-            </table>
-            
-            </br>
-            <h2>Elenco allegati:</h2>
-            
-             <div class="row col-md-12 table-responsive">
-                <table id="customerTable" class="table">
                     <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Nome File</th>
-                            <th>Descrizione</th>
-                            <th> </th>
+                        <tr class="headings">
+                            <th class="column-title th-sm">id</th>  
+                            <th class="column-title th-sm">data</th>  
+                            <th class="column-title th-sm">importo</th>  
+                            <th class="column-title th-sm">note</th>  
+                            <th class="column-title th-sm">saldato</th>  
+                            <th class="column-title th-sm">allegati</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="item : ${listafiles}" >
-                            <td th:text="${item.id}">1</td>
-                            <td th:text="${item.fileName}">Jack</td>
-                            <td th:text="${item.fileDescription}">23</td>
+                        <tr class="even pointer w-50 p-3" th:each="x :${listapagamenti}"  id="table2row">
+                            <td th:text="${x.id}" />
+                            <td th:text="${#dates.format(x.dataVersamento, 'dd-MM-yyyy')}" />
+                            <td th:text="${x.importoVersamento}" />
+                            <td th:text="${x.note}" />
+                            <td th:text="${x.isSaldata()} ?  'Si' : 'No'">yes</td>
+
                             <td>
-                                <a type="button" class="btn btn-info" th:href="@{'/downloadFile/' + ${item.id}} " >Scarica</a>
-                                    <i class="material-icons">file_download</i>
-                                </a>
+<!--                                 <table>
+                                     <tr th:each="item : ${x.getListaFilesPagamenti()}" >
+                                        <td th:text="${item.id}">1</td>
+                                        <td th:text="${item.fileName}">Jack</td>
+                                        <td th:text="${item.fileDescription}">23</td>
+                                        <td>
+                                            <a type="button" class="btn btn-info" th:href="@{'/downloadFile/' + ${item.id}} " >
+                                                <i class="material-icons">file_download</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>-->
+                                <div class="list-group">
+<!--                                    <li th:each="item : ${x.getListaFilesPagamenti()}" th:text="${item.fileDescription}+ ' - ' + ${item.fileName}">
+                                        <a type="button" class="btn btn-info" th:href="@{'/downloadFile/' + ${item.id}} " >
+                                                <i class="material-icons">file_download</i>
+                                        </a>
+                                    </li>-->
+                                    <a th:each="item : ${x.getListaFilesPagamenti()}" th:href="@{'/downloadFile/' + ${item.id}}"  th:text="${item.fileDescription}+ ' - ' + ${item.fileName}" class="list-group-item list-group-item-action">Dapibus ac facilisis in</a>
+                                </div>
                             </td>
                         </tr>
-                    </tbody>
-                </table>
-            </div>
+                </tbody>
+            </table>
         </div>
     </div> 
 </body>

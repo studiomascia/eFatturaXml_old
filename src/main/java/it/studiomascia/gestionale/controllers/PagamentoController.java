@@ -118,13 +118,13 @@ public class PagamentoController {
         
         List<DBFile> listaFile = new ArrayList<DBFile>();
         for (Pagamento x : listapagamenti){
-            List<DBFile> files = dbFileRepository.findAll();
-            int k = files.size();
-            for (DBFile f:  files)
-            {
-                listaFile.add(f);
-            }
-            
+//            List<DBFile> files = dbFileRepository.findAll();
+//            int k = files.size();
+//            for (DBFile f:  x.getFilesPagamenti())
+//            {
+//                listaFile.add(f);
+//            }
+            listaFile.addAll(x.getFilesPagamenti());
         	
         }
         
