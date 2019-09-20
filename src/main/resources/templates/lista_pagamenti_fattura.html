@@ -11,6 +11,7 @@
     <div layout:fragment="content">
         <div class="container-fluid">
             <h2>Dettaglio Pagamenti Fattura:</h2>
+            
             <table class="table table-sm table-condensed table-hover w-auto">
                 <thead>
                     <tr class="headings">
@@ -30,7 +31,7 @@
                 </tbody>
             </table>   
             <h2>Elenco movimenti:</h2>
-            
+            <a class="btn btn-info btn-xs" th:href="@{'/Invoice/${fattura.get('Id')}/Payments/Add' + } " target="nuovoframe" >Aggiungi nuovo pagamento</a>
                 <table class="table table-sm table-condensed table-hover w-auto">
                     <thead>
                         <tr class="headings">
@@ -69,7 +70,8 @@
                                                 <i class="material-icons">file_download</i>
                                         </a>
                                     </li>-->
-                                    <a th:each="item : ${x.getListaFilesPagamenti()}" th:href="@{'/downloadFile/' + ${item.id}}"  th:text="${item.fileDescription}+ ' - ' + ${item.fileName}" class="list-group-item list-group-item-action">Dapibus ac facilisis in</a>
+                                    <a th:each="item : ${x.getListaFilesPagamenti()}" th:href="@{'/downloadFile/' + ${item.id}}"  th:text="${item.fileDescription}+ ' - ' + ${item.fileName}" class="btn btn-light btn-xs" >Dapibus ac facilisis in</a>
+                                    <a class="btn btn-info btn-xs" th:href="@{'/uploadFile' + } " target="nuovoframe" >Aggiungi allegato</a>
                                 </div>
                             </td>
                         </tr>

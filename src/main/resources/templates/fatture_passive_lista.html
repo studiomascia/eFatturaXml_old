@@ -5,13 +5,20 @@
       layout:decorator="main-template">
 <head>
     <title>Home</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
+	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 
-</head>
+   
+         <script src="/resources/static/js/dataTableFattura.js"></script>
+ </head>
 <body>
     <div layout:fragment="content">
         <div class="container-fluid">
             <h1>Elenco fatture passive:</h1><a class="btn btn-info btn-xs" th:href="@{'/InvoicesIn/New'} " target="nuovoframe" >+</a>
-            <table class="table table-sm table-condensed table-hover w-auto">
+            <table id="tabella" class="table table-sm table-condensed table-hover w-auto">
                 <thead>
                     <tr class="headings">
                         <th th:each="header: ${headers}" class="column-title th-sm" th:text="${header}" />

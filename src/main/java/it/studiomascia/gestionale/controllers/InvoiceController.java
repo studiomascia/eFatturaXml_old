@@ -181,7 +181,7 @@ public class InvoiceController {
             size = Integer.parseInt(request.getParameter("size"));
         }
         //FINE:: BLOCCO PER LA PAGINAZIONE
-       List<XmlFatturaBase> listaFatture = XmlFatturaBasePredicate.filterXmlFatturaBase(xmlFatturaBaseRepository.findAll(), XmlFatturaBasePredicate.isPassiva());
+        List<XmlFatturaBase> listaFatture = XmlFatturaBasePredicate.filterXmlFatturaBase(xmlFatturaBaseRepository.findAll(), XmlFatturaBasePredicate.isPassiva());
      
         // Prepara la Map da aggiungere alla view 
         List<String> headers = new  ArrayList<>();
@@ -198,26 +198,21 @@ public class InvoiceController {
         int conta=1;
         String  strData = null;
         byte[] byteArr;
-                 try {
-                     StringWriter sw = new StringWriter();
-                JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
-                // Unmarshaller serve per convertire il file in un oggetto
-                Unmarshaller jaxbUnMarshaller = context.createUnmarshaller();
-                // Marshaller serve per convertire l'oggetto ottenuto dal file in una stringa xml
-                Marshaller jaxbMarshaller = context.createMarshaller();
-                jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+        try {
+            StringWriter sw = new StringWriter();
+            JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
+            // Unmarshaller serve per convertire il file in un oggetto
+            Unmarshaller jaxbUnMarshaller = context.createUnmarshaller();
+            // Marshaller serve per convertire l'oggetto ottenuto dal file in una stringa xml
+            Marshaller jaxbMarshaller = context.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
        
             for (XmlFatturaBase xmlFattura:listaFatture) {
                 System.out.println("conta= " + conta++);
                 byteArr = xmlFattura.getXmlData().getBytes("UTF-8");
                 strData = "";
                 sw = new StringWriter();
-            ///    JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
-                // Unmarshaller serve per convertire il file in un oggetto
-            ///    Unmarshaller jaxbUnMarshaller = context.createUnmarshaller();
-                // Marshaller serve per convertire l'oggetto ottenuto dal file in una stringa xml
-            ///    Marshaller jaxbMarshaller = context.createMarshaller();
-            ///    jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+            
                 JAXBElement<FatturaElettronicaType> root =jaxbUnMarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(byteArr)), FatturaElettronicaType.class);
                 FatturaElettronicaType item = root.getValue();
                 jaxbMarshaller.marshal(root, sw);
@@ -227,16 +222,9 @@ public class InvoiceController {
                 String partitaIVA = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice().toString();
                 String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
                 String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
-            
-               //if (xmlFattura.getDataRegistrazione()!= null) tmpData= formattaData.format(xmlFattura.getDataRegistrazione());
-                
-                
+             
                 strData = ((xmlFattura.getDataRegistrazione() == null)) ? "N/A" : formattaData.format(xmlFattura.getDataRegistrazione());
 
-                
-                
-                
-                
                 Map<String, Object> riga = new HashMap<String, Object>();
                 riga.put("Id", xmlFattura.getId());   
                 riga.put("Data Reg.",  strData);
@@ -247,8 +235,7 @@ public class InvoiceController {
                 riga.put("Denominazione",denominazione );
                 riga.put("Imponibile", importoFattura);
                 righe.add(riga);
-                }
-                          
+            }
         } catch (JAXBException e) {
             e.printStackTrace();
         } catch (Exception e) {
