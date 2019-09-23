@@ -6,18 +6,37 @@
 <head>
     <title>Home</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
-	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-
-   
-         <script src="/resources/static/js/dataTableFattura.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready( function () {
+            $('#tabella').DataTable();
+        } );
+        function openModalRegisterInovice(id){
+            $.ajax({
+                url:"/InvoiceIn/ModalRegister/"+id,
+                success: function(response){
+                    //alert(response);
+                    $("#modalRegisterInvoiceHolder").html(response);
+                    $("#modalRegisterInvoiceHolder").modal("show");
+                            
+                }
+            });
+                     
+//        $('#modalRegisterInvoce').html("/InvoiceIn/ModalRegister/"+id);
+//        $("#modalRegisterInvoce").show();
+        }
+    </script>
+    
  </head> 
 <body>
     <div layout:fragment="content">
+        <div id="modalRegisterInvoiceHolder"></div>
         <div class="container-fluid">
             <h1>Elenco fatture passive:</h1><a class="btn btn-info btn-xs" th:href="@{'/InvoicesIn/New'} " target="nuovoframe" >+</a>
+            
             <table id="tabella" class="table table-sm table-condensed table-hover w-auto">
                 <thead>
                     <tr class="headings">
@@ -29,29 +48,22 @@
                     <tr class="even pointer w-50 p-3" th:each="row: ${rows}" id="tablerow">
                         <td th:each="header: ${headers}" th:text="${row.get(header)}" />
                         <td>
-<!--                            <a class="btn btn-info btn-xs" th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " target="nuovoframe" >Apri</a>
-                            <a class="btn btn-info btn-xs" th:href="@{'/InvoicesIn/Register/' + ${row.get('Id')}} " >Registra</a>-->
-
-                            <!--<div class="btn-group">-->
-                                <!--<a class="btn btn-success"  th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " target="_blank" ><i class="material-icons">file_download</i></a>-->
-                                
-                                <!--<a class="btn btn-danger"  th:href="@{'/InvoiceIn/' + ${row.get('Id')}}+'/Payments' " target="_blank" ><i class="material-icons">attach_money</i></a>-->
-                                <!--<a class="btn btn-primary"  th:href="@{'/InvoiceIn/Register/' + ${row.get('Id')}} " target="_blank" ><i class="material-icons">mode_edit</i></a>-->
-                                <a type="button" class="btn btn-info" th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " target="_blank" >
-                                    <i class="material-icons">file_download</i>
-                                </a>
-                                <a type="button" class="btn btn-danger" th:href="@{'/InvoiceIn/' + ${row.get('Id')}}+'/Payments' "  target="_blank" >
-                                    <i class="material-icons">attach_money</i>
-                                </a>
-                                <a type="button" class="btn btn-primary" th:href="@{'/InvoiceIn/Register/' + ${row.get('Id')}} " target="_blank" >
-                                    <i class="material-icons">mode_edit</i>
-                                </a>
-
-                            <!--</div>-->
+                            <a type="button" class="btn btn-info" th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " target="_blank" >
+                                <i class="material-icons">file_download</i>
+                            </a>
+                            <a type="button" class="btn btn-danger" th:href="@{'/InvoiceIn/' + ${row.get('Id')}}+'/Payments' "  target="_blank" >
+                                <i class="material-icons">attach_money</i>
+                            </a>
+<!--                            <a type="button" class="btn btn-primary" th:href="@{'/InvoiceIn/Register/' + ${row.get('Id')}} " target="_blank" >
+                                <i class="material-icons">mode_edit</i>
+                            </a>-->
+                            <a type="button" class="btn btn-primary" th:onclick="'javascript:openModalRegisterInovice(\'' + ${row.get('Id')} +'\');'" >
+                                <i class="material-icons">mode_edit</i>
+                            </a>
                         </td>
                     </tr>
                 </tbody>
-            </table>
+            </table> 
         </div>
     </div> 
 </body>

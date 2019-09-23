@@ -95,7 +95,7 @@ public class InvoiceController {
     /* METODO CHE PERMETTE DI VISUALIZZARE LA FATTURA SIA IN CHE OUT */
     @GetMapping("/Invoice/Download/{fileId}")
     public ModelAndView downloadFattura(HttpServletRequest request,
-            HttpServletResponse response, @PathVariable String fileId) throws IOException {
+        HttpServletResponse response, @PathVariable String fileId) throws IOException {
         
         // Load file from database
         Integer id = Integer.valueOf(fileId); 
@@ -246,7 +246,7 @@ public class InvoiceController {
         model.addAttribute("headers", headers);
         model.addAttribute("rows", righe);
         model.addAttribute("currentPage", page);
-        model.addAttribute("messaggio", "Ci sono: " + righe.size() +" ");
+//        model.addAttribute("messaggio", "Ci sono: " + righe.size() +" ");
         return "fatture_passive_lista";
     }
    
@@ -322,6 +322,13 @@ public class InvoiceController {
         return "fatture_passive_caricate";
     }
    
+    @GetMapping("/InvoiceIn/ModalRegister/{id}")
+    public String ModalEditFatturaIn(ModelMap model,@PathVariable Integer id){
+        XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
+        model.addAttribute("fattura",x);  
+        return "modalContents :: registerInvoice";
+    }
+    
     @GetMapping("/InvoiceIn/Register/{id}")
     public String EditFatturaIn(Model model,@PathVariable Integer id){
         XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
@@ -339,7 +346,8 @@ public class InvoiceController {
         vecchiaFattura.setDataRegistrazione(updateFattura.getDataRegistrazione());
         redirectAttributes.addFlashAttribute("messaggio","La fattura: è stata registrata");  
         xmlFatturaBaseRepository.save(vecchiaFattura);
-        return "redirect:/InvoiceIn/Register/"+updateFattura.getId();
+        //return "redirect:/InvoiceIn/Register/"+updateFattura.getId();
+        return "redirect:/InvoicesIn";
     }
     
     @GetMapping("/InvoiceIn/RegisterPayment/{id}")

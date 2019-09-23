@@ -3,22 +3,36 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
-$(document).ready( function () {
-	 var table = $('#tabella').DataTable({
-			"sAjaxSource": "/getFattureIn",
+// $(document).ready( 
+//            function () {
+//                var table = $('#tabella').DataTable({
+//                     "ajax": "/getFattureIn",
+//        "columns": [
+//            { "data": "dataReg" },
+//            { "data": "numeroReg" },
+//            { "data": "dataFatt" },
+//            { "data": "numeroFatt" },
+//            { "data": "pIva" },
+//            { "data": "denominazione" },
+//            { "data": "imponibile" }
+//        ]
+//    } );
+//} );
+        
+        $(document).ready( function () {
+	 var table = $('#employeesTable').DataTable({
+			"sAjaxSource": "/employees",
 			"sAjaxDataProp": "",
 			"order": [[ 0, "asc" ]],
 			"aoColumns": [
-			    { "mData": "Id"},
-                            { "mData": "Data Reg." },
-                            { "mData": "N.Reg." },
-                            { "mData": "Data" },
-                            { "mData": "Numero" },
-                            { "mData": "P.IVA" },
-                            { "mData": "Denominazione" },
-                            { "mData": "Imponibile" }
+			    { "mData": "id"},
+                            { "mData": "dataReg" },
+                            { "mData": "numeroReg" },
+                            { "mData": "dataFatt" },
+                            { "mData": "numeroFatt" },
+                            { "mData": "pIva" },
+                            { "mData": "denominazione" },
+                            { "mData": "imponibile" }
 			]
 	 })
 });

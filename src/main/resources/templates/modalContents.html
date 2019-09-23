@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Template vuoto</title>
+</head>
+<body>
+
+
+    
+<div  class="modal fade show" id="formModalRegisterInvoice" th:fragment="registerInvoice" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+        <form class="form-horizontal" th:action="@{'/InvoiceIn/Register/' + ${fattura.id}}" th:object="${fattura}"  method="POST" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Inserisci i dati di registrazione della fattura:</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                   
+                    <div class="form-group">
+                        <label for="txtId" class="control-label">Id</label>
+                        <input readonly="true" type="text" class="form-control" name="txtId" id="txtId" th:field="*{id}">
+                    </div>    
+                    <div class="form-group">
+                        <label for="txtNumero" class="control-label">Numero Protocollo IVA</label>
+                        <input  type="text" class="form-control" name="txtNumero" id="txtNumero" th:field="*{numeroRegistrazione}">
+                    </div> 
+                    <div class="form-group">
+                        <label for="txtDataRegistrazione" class="control-label">Data Registrazione</label>
+                        <input  type="text" class="form-control" name="txtDataRegistrazione" id="txtDataRegistrazione" th:field="${fattura.dataRegistrazione}">
+                    </div> 
+                </div>
+                <div class="modal-footer">
+                    <button type="button"  class="btn btn-danger" data-dismiss="modal" >Chiudi</button>
+                    <button type="submit" class="btn btn-success">Salva</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>    
+</html>

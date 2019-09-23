@@ -12,15 +12,14 @@ import java.util.Date;
  * @author luigi
  */
 public class FatturaVirtuale {
-   private Integer id;
+private Integer id;
    private Date dataReg;
-   private String nReg;
-   private Date dataFattura;
-   private String nFattura;
+   private String numeroReg;
+   private Date dataFatt;
+   private String numeroFatt;
    private String pIva;
    private String denominazione;
    private String imponibile;
-
     /**
      * @return the id
      */
@@ -50,45 +49,45 @@ public class FatturaVirtuale {
     }
 
     /**
-     * @return the nReg
+     * @return the numeroReg
      */
-    public String getnReg() {
-        return nReg;
+    public String getNumeroReg() {
+        return numeroReg;
     }
 
     /**
-     * @param nReg the nReg to set
+     * @param numeroReg the numeroReg to set
      */
-    public void setnReg(String nReg) {
-        this.nReg = nReg;
+    public void setNumeroReg(String numeroReg) {
+        this.numeroReg = numeroReg;
     }
 
     /**
-     * @return the dataFattura
+     * @return the dataFatt
      */
-    public Date getDataFattura() {
-        return dataFattura;
+    public Date getDataFatt() {
+        return dataFatt;
     }
 
     /**
-     * @param dataFattura the dataFattura to set
+     * @param dataFatt the dataFatt to set
      */
-    public void setDataFattura(Date dataFattura) {
-        this.dataFattura = dataFattura;
+    public void setDataFatt(Date dataFatt) {
+        this.dataFatt = dataFatt;
     }
 
     /**
-     * @return the nFattura
+     * @return the numeroFatt
      */
-    public String getnFattura() {
-        return nFattura;
+    public String getNumeroFatt() {
+        return numeroFatt;
     }
 
     /**
-     * @param nFattura the nFattura to set
+     * @param numeroFatt the numeroFatt to set
      */
-    public void setnFattura(String nFattura) {
-        this.nFattura = nFattura;
+    public void setNumeroFatt(String numeroFatt) {
+        this.numeroFatt = numeroFatt;
     }
 
     /**
@@ -132,5 +131,7 @@ public class FatturaVirtuale {
     public void setImponibile(String imponibile) {
         this.imponibile = imponibile;
     }
+   
+
    
 }

@@ -14,10 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -25,8 +22,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -39,9 +36,8 @@ public class InvoiceRestController {
 @Autowired
 private XmlFatturaBaseRepository xmlFatturaBaseRepository;
 
- 
- @GetMapping("/getFattureIn")
-    public List<FatturaVirtuale> FatturePassiveList(HttpServletRequest request,Model model){
+@RequestMapping(path="/getFattureIn", method=RequestMethod.GET)
+public List<FatturaVirtuale> FatturePassiveList(){
         
        
         //FINE:: BLOCCO PER LA PAGINAZIONE
@@ -76,10 +72,10 @@ private XmlFatturaBaseRepository xmlFatturaBaseRepository;
                 FatturaVirtuale riga = new FatturaVirtuale();
                 riga.setId(xmlFattura.getId());   
                 riga.setDataReg(xmlFattura.getDataRegistrazione()); 
-                riga.setnReg(xmlFattura.getNumeroRegistrazione()); 
+                riga.setNumeroReg(xmlFattura.getNumeroRegistrazione()); 
                 
-                riga.setDataFattura(dataFattura);
-                riga.setnFattura(numeroFattura);
+                riga.setDataFatt(dataFattura);
+                riga.setNumeroFatt(numeroFattura);
                 riga.setpIva(partitaIVA );
                 riga.setDenominazione(denominazione );
                 riga.setImponibile( importoFattura);

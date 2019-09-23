@@ -37,7 +37,7 @@
 
 <body class="">
     <div class="wrapper ">
-        <div class="sidebar" data-color="purple" data-background-color="white" data-image="/assets/img/sidebar-1.jpg">
+        <div class="sidebar" data-color="purple" data-background-color="white" >
             <div class="logo">
                 <a href="#" class="simple-text logo-normal">Gestionale Concrete</a>
             </div>
@@ -78,14 +78,22 @@
             <div class="content">
                 <div class="container-fluid">
                     <div  th:if="${messaggio}"  class="modal fade show" id="myModal" tabindex="-1" role="dialog" data-show="true">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <!-- Modal Header -->
-                                <div class="modal-header"><h4 class="modal-title">Notifica</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div>
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Notifica</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                </div>
                                 <!-- Modal body -->
                                 <div class="modal-body" th:text="${messaggio}"></div>
                                 <!-- Modal footer -->
-                                <div class="modal-footer"><button type="button" class="btn btn-danger" data-dismiss="modal">Close</button></div>
+                                <div class="modal-footer">
+                                    <button type="button" id="btnCloseMessageModal" onclick="closeModal();"  class="btn btn-danger" data-dismiss="modal" >Chiudi</button>
+
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -386,6 +394,15 @@
         md.initDashboardPageCharts();
 
       });
+//        function closeModal() {
+//            $('#myModal').modal('hide')
+// 
+//  
+//        };
+//  
+  $("#btnCloseMessageModal").click(function() {
+  $('#myModal').hide();
+ });
     </script>
 </body>
 
