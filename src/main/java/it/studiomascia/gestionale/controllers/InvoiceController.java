@@ -339,26 +339,7 @@ public class InvoiceController {
         return "modalContents :: registerInvoice";
     }
     
-    @GetMapping("/InvoiceIn/{id}/ModalPayment")
-    public String ModalAddPaymentFatturaIn(ModelMap model,@PathVariable Integer id){
-        XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
-        Pagamento p = new Pagamento();
-        model.addAttribute("fattura",x);  
-        model.addAttribute("pagamento",p);  
-        return "modalContents :: paymentInvoice";
-    }
-    
-    @PostMapping("/InvoiceIn/{id}/ModalPayment")
-    public String registraNuovoPagamentoFatturaIn( @ModelAttribute("pagamento") Pagamento pagamento, Model model,@PathVariable Integer id, RedirectAttributes redirectAttributes)
-    {
-        XmlFatturaBase vecchiaFattura = xmlFatturaBaseRepository.findById(id).get();
-        vecchiaFattura.getPagamenti().add(pagamento);
-        
-        xmlFatturaBaseRepository.save(vecchiaFattura);
-//        redirectAttributes.addFlashAttribute("messaggio","Pagamento inserito");  
-        return "redirect:/InvoiceIn/"+ id +"/Payments";
-    }
-    
+   
     
     @GetMapping("/InvoiceIn/Register/{id}")
     public String EditFatturaIn(Model model,@PathVariable Integer id){
@@ -380,12 +361,33 @@ public class InvoiceController {
         //return "redirect:/InvoiceIn/Register/"+updateFattura.getId();
         return "redirect:/InvoicesIn";
     }
+   
+     @GetMapping("/Invoice/{id}/ModalPayment")
+    public String ModalAddPaymentFatturaIn(ModelMap model,@PathVariable Integer id){
+        XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
+        Pagamento p = new Pagamento();
+        model.addAttribute("fattura",x);  
+        model.addAttribute("pagamento",p);  
+        return "modalContents :: paymentInvoice";
+    }
     
-  @GetMapping("/Payment/{id}/ModalAttachment")
-    public String ModalAddAttachmentToPaymentFatturaIn(ModelMap model,@PathVariable Integer id){
+    @PostMapping("/Invoice/{id}/ModalPayment")
+    public String registraNuovoPagamentoFatturaIn( @ModelAttribute("pagamento") Pagamento pagamento, Model model,@PathVariable Integer id, RedirectAttributes redirectAttributes)
+    {
+        XmlFatturaBase vecchiaFattura = xmlFatturaBaseRepository.findById(id).get();
+        vecchiaFattura.getPagamenti().add(pagamento);
+        
+        xmlFatturaBaseRepository.save(vecchiaFattura);
+//        redirectAttributes.addFlashAttribute("messaggio","Pagamento inserito");  
+        return "redirect:/InvoiceIn/"+ id +"/Payments";
+    }
+    
+    
+     @GetMapping("/Invoice/{IdFattura}/Payment/{id}/ModalAttachment")
+    public String ModalAddAttachmentToPaymentFatturaIn(ModelMap model,@PathVariable Integer IdFattura,@PathVariable Integer id){
 //        XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
         Pagamento p = pagamentoRepository.findById(id).get();
-//        model.addAttribute("fattura",x);  
+        model.addAttribute("IdFattura",IdFattura);  
         model.addAttribute("pagamento",p);  
         return "modalContents :: attachmentPaymentInvoice";
     }
@@ -396,16 +398,15 @@ public class InvoiceController {
         if (request.getParameterMap().get("txtDescription") != null && request.getParameterMap().get("txtDescription").length > 0) {
             
             Pagamento p = pagamentoRepository.findById(id).get();
-            
             for (int k=0;k<files.length;k++)
             {
                
-                DBFile dbFile = DBFileStorageService.storeFile(files[k],request.getParameterMap().get("txtDescription").toString());
+                DBFile dbFile = DBFileStorageService.storeFile(files[k],request.getParameter("txtDescription").toString());
                  p.getFilesPagamenti().add(dbFile);
                  pagamentoRepository.save(p);
             }
         }
-        return "redirect:/InvoiceIn/"+ id +"/Payments";
+        return "redirect:/InvoiceIn/"+ request.getParameter("IdFattura").toString() +"/Payments";
     }
     
    

@@ -14,7 +14,7 @@
          
         function openModalPaymentInovice(id){
             $.ajax({
-                url:"/InvoiceIn/"+id+"/ModalPayment",
+                url:"/Invoice/"+id+"/ModalPayment",
                 success: function(response){
                     $("#modalRegisterPaymentHolder").html(response);
                     $("#modalRegisterPaymentHolder").modal("show");
@@ -22,12 +22,12 @@
             });
         }
                   
-        function openModalAttachmentPayment(id){
-            alert("id=" +id);
+        function openModalAttachmentPayment(IdFattura,id){
+//            alert("openModalAttachmentPayment : id=" +id);
             $.ajax({
-                url:"/Payment/"+id+"/ModalAttachment",
+                url:"/Invoice/" + IdFattura + "/Payment/"+id +"/ModalAttachment",
                 success: function(response){
-                    alert (response);
+//                    alert (response);
                     $("#modalRegisterPaymentHolder").html(response);
                     $("#modalRegisterPaymentHolder").modal("show");
                 }
@@ -65,7 +65,6 @@
                 <i class="material-icons">add</i>
             </a>
             
-            <!--<a class="btn btn-info btn-xs" th:href="@{'/InvoiceIn/${fattura.get('Id')}/Payments/Add' + } " target="nuovoframe" >Aggiungi nuovo pagamento</a>-->
                 <table class="table table-sm table-condensed table-hover w-auto">
                     <thead>
                         <tr class="headings">
@@ -106,7 +105,7 @@
                                     </li>-->
                                     <a th:each="item : ${x.getListaFilesPagamenti()}" th:href="@{'/downloadFile/' + ${item.id}}"  th:text="${item.fileDescription}+ ' - ' + ${item.fileName}" class="btn btn-light btn-xs" >Dapibus ac facilisis in</a>
                                     <!--<a class="btn btn-info btn-xs" th:href="@{'/uploadFile' + } " target="nuovoframe" >Aggiungi allegato</a>-->
-                                    <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalAttachmentPayment(\'' + ${x.id} +'\');'" >
+                                    <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalAttachmentPayment(\'' + ${fattura.get('Id')} + '\',\''+ ${x.id} +  '\');'" >
                                         <i class="material-icons">add</i>
                                     </a>
 
