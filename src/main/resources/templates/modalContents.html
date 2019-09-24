@@ -1,10 +1,71 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="stylesheet" href="../static/assets/scss/material-dashboard/_responsive.scss" type="text/css"/>
+    <link rel="stylesheet" href="../static/assets/scss/material-dashboard/bootstrap/scss/_modal.scss" type="text/css">
+
+
     <title>Template vuoto</title>
+
+<link rel="stylesheet" href="../static/vendor/bootstrap/css/bootstrap.min.css" type="text/css"/>
+<link rel="stylesheet" href="../static/vendor/bootstrap/css/bootstrap-reboot.css" type="text/css">
+
 </head>
 <body>
-
+<div  class="modal fade show" id="attachmentPaymentInvoice" th:fragment="attachmentPaymentInvoice" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+        <form class="form-horizontal" th:action="@{'/InvoiceIn/' + ${fattura.id}+'/Payment/ì+${pagamento.id}}"  method="POST" enctype="multipart/form-data">
+            <div class="modal-content col-4">
+                <div class="modal-header">
+                    <h4 class="modal-title">Inserisci il documento da allegare:</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                   
+                    <div class="form-group">
+                        <label for="txtId" class="control-label">Id</label>
+                        <input readonly="true" type="text" class="form-control" name="txtId" id="txtId" th:field="${pagamento.id}">
+                    </div>    
+                    <div class="form-group">
+                        <label for="txtDescription" class="control-label">Descrizione</label>
+                        <input  type="text" class="form-control" name="txtDescription" >
+                    </div> 
+<!--                    <div class="form-group">
+                        <label for="files" class="control-label">files</label>
+                        <input id="files" type="file" name="files" class="file-input" multiple="true" required="true" />
+                    </div> 
+                    -->
+                    
+                    <div class="form-group form-file-upload form-file-multiple">
+                        <input type="file" multiple="" class="inputFileHidden">
+                        <div class="input-group">
+                            <input type="text" class="form-control inputFileVisible" placeholder="Multiple Files" multiple>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-fab btn-round btn-info">
+                                    <i class="material-icons">layers</i>
+                                </button>
+                            </span>
+                        </div>
+                      </div>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button"  class="btn btn-danger" data-dismiss="modal" >Chiudi</button>
+                    <button type="submit" class="btn btn-success">Salva</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
     
 <div  class="modal fade show" id="formModalRegisterInvoice" th:fragment="registerInvoice" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
@@ -30,6 +91,50 @@
                     <div class="form-group">
                         <label for="txtDataRegistrazione" class="control-label">Data Registrazione</label>
                         <input  type="text" class="form-control" name="txtDataRegistrazione" id="txtDataRegistrazione" th:field="${fattura.dataRegistrazione}">
+                    </div> 
+                </div>
+                <div class="modal-footer">
+                    <button type="button"  class="btn btn-danger" data-dismiss="modal" >Chiudi</button>
+                    <button type="submit" class="btn btn-success">Salva</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<div  class="modal fade show" id="formPaymentInvoice" th:fragment="paymentInvoice" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+        <form class="form-horizontal" th:action="@{'/InvoiceIn/'+ ${fattura.id}+ '/ModalPayment/' }"  method="POST" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Inserisci i dati del pagamento:</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                   
+                    <div class="form-group">
+                        <label for="txtId" class="control-label">Id</label>
+                        <input readonly="true" type="text" class="form-control" name="txtId" id="txtId" th:field="${pagamento.id}">
+                    </div>    
+                    <div class="form-group">
+                        <label for="txtNumero" class="control-label">Importo versato</label>
+                        <input  type="text" class="form-control" name="txtNumero" id="txtNumero" th:field="${pagamento.importoVersamento}">
+                    </div> 
+                    <div class="form-group">
+                        <label for="txtDataVersamento" class="control-label">Data Versamento</label>
+                        <input  type="text" class="form-control" name="txtDataVersamento" id="txtDataRegistrazione" th:field="${pagamento.dataVersamento}">
+                    </div>
+                    <div class="form-group">
+                        <label for="txtNote" class="control-label">Note</label>
+                        <input  type="text" class="form-control" name="txtNote" id="txtNumero" th:field="${pagamento.note}">
+                    </div> 
+                      <div class="form-group">
+                        <label for="cbSaldata" class="control-label">Saldata</label>
+                        <input  type="checkbox" class="form-control" name="cbSaldata" id="cbSaldata" th:field="${pagamento.saldata}">
                     </div> 
                 </div>
                 <div class="modal-footer">

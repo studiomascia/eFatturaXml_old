@@ -101,7 +101,7 @@ public class Pagamento {
      * @return the saldata
      */
     public Boolean isSaldata() {
-        return saldata;
+        return this.saldata;
     }
 
     /**
@@ -126,6 +126,13 @@ public class Pagamento {
      */
     public void setFilesPagamenti(Set<DBFile> filesPagamenti) {
         this.filePagamenti = filesPagamenti;
+    }
+
+    /**
+     * @return the saldata
+     */
+    public Boolean getSaldata() {
+        return saldata;
     }
      
     

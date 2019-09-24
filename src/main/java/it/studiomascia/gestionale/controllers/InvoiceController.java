@@ -5,9 +5,13 @@
  */
 package it.studiomascia.gestionale.controllers;
 
+import it.studiomascia.gestionale.models.DBFile;
+import it.studiomascia.gestionale.models.Pagamento;
 import it.studiomascia.gestionale.models.XmlFatturaBase;
 import it.studiomascia.gestionale.models.XmlFatturaBasePredicate;
+import it.studiomascia.gestionale.repository.PagamentoRepository;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
+import it.studiomascia.gestionale.service.DBFileStorageService;
 import it.studiomascia.gestionale.xml.FatturaElettronicaType;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -73,7 +77,13 @@ public class InvoiceController {
     
     @Autowired
     private XmlFatturaBaseRepository xmlFatturaBaseRepository;
+    
+    @Autowired
+    private PagamentoRepository pagamentoRepository;
 
+    @Autowired
+    private DBFileStorageService DBFileStorageService;
+    
     /* INIZIO Metodi comuni per tutti i mapping */
     private SimpleDateFormat formattaData = new SimpleDateFormat("dd-MM-yyyy");
     
@@ -208,7 +218,7 @@ public class InvoiceController {
             jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
        
             for (XmlFatturaBase xmlFattura:listaFatture) {
-                System.out.println("conta= " + conta++);
+                //System.out.println("conta= " + conta++);
                 byteArr = xmlFattura.getXmlData().getBytes("UTF-8");
                 strData = "";
                 sw = new StringWriter();
@@ -329,6 +339,27 @@ public class InvoiceController {
         return "modalContents :: registerInvoice";
     }
     
+    @GetMapping("/InvoiceIn/{id}/ModalPayment")
+    public String ModalAddPaymentFatturaIn(ModelMap model,@PathVariable Integer id){
+        XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
+        Pagamento p = new Pagamento();
+        model.addAttribute("fattura",x);  
+        model.addAttribute("pagamento",p);  
+        return "modalContents :: paymentInvoice";
+    }
+    
+    @PostMapping("/InvoiceIn/{id}/ModalPayment")
+    public String registraNuovoPagamentoFatturaIn( @ModelAttribute("pagamento") Pagamento pagamento, Model model,@PathVariable Integer id, RedirectAttributes redirectAttributes)
+    {
+        XmlFatturaBase vecchiaFattura = xmlFatturaBaseRepository.findById(id).get();
+        vecchiaFattura.getPagamenti().add(pagamento);
+        
+        xmlFatturaBaseRepository.save(vecchiaFattura);
+//        redirectAttributes.addFlashAttribute("messaggio","Pagamento inserito");  
+        return "redirect:/InvoiceIn/"+ id +"/Payments";
+    }
+    
+    
     @GetMapping("/InvoiceIn/Register/{id}")
     public String EditFatturaIn(Model model,@PathVariable Integer id){
         XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
@@ -350,25 +381,34 @@ public class InvoiceController {
         return "redirect:/InvoicesIn";
     }
     
-    @GetMapping("/InvoiceIn/RegisterPayment/{id}")
-    public String refistraPagamentoFatturaIn(Model model,@PathVariable Integer id){
-        XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
-        model.addAttribute("fattura",x);  
-        return "fatture_passive_registra_pagamento";
+  @GetMapping("/Payment/{id}/ModalAttachment")
+    public String ModalAddAttachmentToPaymentFatturaIn(ModelMap model,@PathVariable Integer id){
+//        XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
+        Pagamento p = pagamentoRepository.findById(id).get();
+//        model.addAttribute("fattura",x);  
+        model.addAttribute("pagamento",p);  
+        return "modalContents :: attachmentPaymentInvoice";
     }
     
-    @PostMapping("/InvoiceIn/RegisterPayment/{id}")
-    public String registraPagamentoFatturaIn(@Valid @ModelAttribute("fattura") XmlFatturaBase updateFattura, BindingResult bindingResult,Model model, RedirectAttributes redirectAttributes)
+    @PostMapping("/Payment/{id}/ModalAttachment")
+    public String postModalAddAttachmentToPaymentFatturaIn( @ModelAttribute("pagamento") Pagamento pagamento,@PathVariable Integer id, RedirectAttributes redirectAttributes, @RequestParam("files") MultipartFile[] files, HttpServletRequest request)
     {
-        if (bindingResult.hasErrors()) { return "fatture_passive_registra_pagamento"; }
-        XmlFatturaBase vecchiaFattura = xmlFatturaBaseRepository.findById(updateFattura.getId()).get();
-        
-        vecchiaFattura.setNumeroRegistrazione(updateFattura.getNumeroRegistrazione());
-        vecchiaFattura.setDataRegistrazione(updateFattura.getDataRegistrazione());
-        redirectAttributes.addFlashAttribute("messaggio","La fattura: è stata registrata");  
-        xmlFatturaBaseRepository.save(vecchiaFattura);
-        return "redirect:/InvoiceIn/RegisterPayment/"+updateFattura.getId();
+        if (request.getParameterMap().get("txtDescription") != null && request.getParameterMap().get("txtDescription").length > 0) {
+            
+            Pagamento p = pagamentoRepository.findById(id).get();
+            
+            for (int k=0;k<files.length;k++)
+            {
+               
+                DBFile dbFile = DBFileStorageService.storeFile(files[k],request.getParameterMap().get("txtDescription").toString());
+                 p.getFilesPagamenti().add(dbFile);
+                 pagamentoRepository.save(p);
+            }
+        }
+        return "redirect:/InvoiceIn/"+ id +"/Payments";
     }
+    
+   
     /* METODI PER LE FATTURE OUT */
     
     @GetMapping("/InvoicesOut")

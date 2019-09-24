@@ -42,6 +42,24 @@ public class DBFileStorageService {
             throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
         }
     }
+public DBFile storeFile(MultipartFile file, String descrizione) {
+        // Normalize file name
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+
+        try {
+            // Check if the file's name contains invalid characters
+            if(fileName.contains("..")) {
+                throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
+            }
+
+            DBFile dbFile = new DBFile(fileName, file.getContentType(), file.getBytes());
+            dbFile.setFileDescription(descrizione);
+
+            return dbFileRepository.save(dbFile);
+        } catch (IOException ex) {
+            throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
+        }
+    }
 
     public DBFile getFile(String fileId) {
         return dbFileRepository.findById(fileId)

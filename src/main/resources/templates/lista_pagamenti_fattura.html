@@ -1,14 +1,44 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/0layout"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="main-template">
+       
 <head>
     <title>Home</title>
-
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
+<script>
+         
+        function openModalPaymentInovice(id){
+            $.ajax({
+                url:"/InvoiceIn/"+id+"/ModalPayment",
+                success: function(response){
+                    $("#modalRegisterPaymentHolder").html(response);
+                    $("#modalRegisterPaymentHolder").modal("show");
+                }
+            });
+        }
+                  
+        function openModalAttachmentPayment(id){
+            alert("id=" +id);
+            $.ajax({
+                url:"/Payment/"+id+"/ModalAttachment",
+                success: function(response){
+                    alert (response);
+                    $("#modalRegisterPaymentHolder").html(response);
+                    $("#modalRegisterPaymentHolder").modal("show");
+                }
+            });
+        }
+    </script>
 </head>
 <body>
     <div layout:fragment="content">
+        <div id="modalRegisterPaymentHolder"></div>
+
         <div class="container-fluid">
             <h2>Dettaglio Pagamenti Fattura:</h2>
             
@@ -31,7 +61,11 @@
                 </tbody>
             </table>   
             <h2>Elenco movimenti:</h2>
-            <a class="btn btn-info btn-xs" th:href="@{'/Invoice/${fattura.get('Id')}/Payments/Add' + } " target="nuovoframe" >Aggiungi nuovo pagamento</a>
+            <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalPaymentInovice(\'' + ${fattura.get('Id')} +'\');'" >
+                <i class="material-icons">add</i>
+            </a>
+            
+            <!--<a class="btn btn-info btn-xs" th:href="@{'/InvoiceIn/${fattura.get('Id')}/Payments/Add' + } " target="nuovoframe" >Aggiungi nuovo pagamento</a>-->
                 <table class="table table-sm table-condensed table-hover w-auto">
                     <thead>
                         <tr class="headings">
@@ -71,7 +105,11 @@
                                         </a>
                                     </li>-->
                                     <a th:each="item : ${x.getListaFilesPagamenti()}" th:href="@{'/downloadFile/' + ${item.id}}"  th:text="${item.fileDescription}+ ' - ' + ${item.fileName}" class="btn btn-light btn-xs" >Dapibus ac facilisis in</a>
-                                    <a class="btn btn-info btn-xs" th:href="@{'/uploadFile' + } " target="nuovoframe" >Aggiungi allegato</a>
+                                    <!--<a class="btn btn-info btn-xs" th:href="@{'/uploadFile' + } " target="nuovoframe" >Aggiungi allegato</a>-->
+                                    <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalAttachmentPayment(\'' + ${x.id} +'\');'" >
+                                        <i class="material-icons">add</i>
+                                    </a>
+
                                 </div>
                             </td>
                         </tr>
