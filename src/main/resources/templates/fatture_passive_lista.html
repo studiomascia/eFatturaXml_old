@@ -4,13 +4,14 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="main-template">
 <head>
-    <title>Home</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
+                      
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"/>
+    <link href="/resources/assets/css/material-dashboard.css?v=2.1.1" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css"/>
 
-    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+        <title>Home</title>
     <script>
         $(document).ready( function () {
             $('#tabella').DataTable();
@@ -19,10 +20,10 @@
             $.ajax({
                 url:"/InvoiceIn/ModalRegister/"+id,
                 success: function(response){
-                    //alert(response);
-                    $("#modalRegisterInvoiceHolder").html(response);
-                    $("#modalRegisterInvoiceHolder").modal("show");
-                            
+//                    alert(response);
+//                    $("#modalRegisterInvoiceHolder").html(response);
+//                    $("#modalRegisterInvoiceHolder").modal("show");
+                    $('#modalRegisterInvoiceHolder').modal({show:true});
                 }
             });
                      
@@ -34,10 +35,51 @@
  </head> 
 <body>
     <div layout:fragment="content">
-        <div id="modalRegisterInvoiceHolder"></div>
+ 
         <div class="container-fluid">
             <h1>Elenco fatture passive:</h1><a class="btn btn-info btn-xs" th:href="@{'/InvoicesIn/New'} " target="nuovoframe" >+</a>
-            
+      
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalRegisterInvoiceHolder">Apri</button>
+
+ 
+ <div class="modal fade" id="modalRegisterInvoiceHolder" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+         <div class="form-group">
+                                    <label for="txtId" class="control-label">Id</label>
+                                    <input readonly="true" type="text" class="form-control" name="txtId" id="txtId">
+                                </div>    
+                                <div class="form-group">
+                                    <label for="txtNumero" class="control-label">Importo versato</label>
+                                    <input  type="text" class="form-control" name="txtNumero" id="txtNumero" >
+                                </div> 
+                                <div class="form-group">
+                                    <label for="txtDataVersamento" class="control-label">Data Versamento</label>
+                                    <input  type="text" class="form-control" name="txtDataVersamento" id="txtDataRegistrazione" >
+                                </div>
+                                <div class="form-group">
+                                    <label for="txtNote" class="control-label">Note</label>
+                                    <input  type="text" class="form-control" name="txtNote" id="txtNumero" >
+                                </div> 
+                                <div class="form-group">
+                                    <label for="cbSaldata" class="control-label">Saldata</label>
+                                    <input  type="checkbox" class="form-control" name="cbSaldata" id="cbSaldata" >
+                                </div>          
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>      
             <table id="tabella" class="table table-sm table-condensed table-hover w-auto">
                 <thead>
                     <tr class="headings">
@@ -67,5 +109,8 @@
             </table> 
         </div>
     </div> 
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 </body>
 </html>

@@ -14,24 +14,19 @@
  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
 
 <!DOCTYPE html>
-<html lang="en"
-      xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">Gesionale CONCRETE  - Studiomascia.it!</title>
 
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
-<!--         Fonts and icons     
-     CSS Files -->
+
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
     <!--<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"/>
     <link href="/resources/assets/css/material-dashboard.css?v=2.1.1" rel="stylesheet" />
-    <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <!--<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />-->
     
 </head>
 <body class="">
@@ -76,26 +71,27 @@
             </nav>
             <div class="content">
                 <div class="container-fluid">
-                    <div  th:if="${messaggio}"  class="modal fade show" id="myModal" tabindex="-1" role="dialog" data-show="true">
+<!--                    <div  th:if="${messaggio}"  class="modal fade show" id="myModal" tabindex="-1" role="dialog" data-show="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
-                                <!-- Modal Header -->
+                                 Modal Header 
                                 <div class="modal-header">
                                     <h4 class="modal-title">Notifica</h4>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                 </div>
-                                <!-- Modal body -->
+                                 Modal body 
                                 <div class="modal-body" th:text="${messaggio}"></div>
-                                <!-- Modal footer -->
+                                 Modal footer 
                                 <div class="modal-footer">
                                     <button type="button" id="btnCloseMessageModal" onclick="closeModal();"  class="btn btn-danger" data-dismiss="modal" >Chiudi</button>
 
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>--><!-- Button trigger modal -->
+
                     <div layout:fragment="content"></div>
                 </div>
             </div>

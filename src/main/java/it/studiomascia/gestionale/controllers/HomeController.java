@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  *
  * @author luigi
  */
+
 @Controller
 public class HomeController {
 
@@ -19,8 +20,20 @@ public class HomeController {
     public String home(){
             return "login";
     }
+
     @GetMapping("/index")
     public String home2(){
             return "index";
     }
+
+    @GetMapping("/vuoto")
+    public String vuoto(){
+            return "template_vuoto";
+    }
+    @GetMapping("/testpage")
+    public String testpage(){   
+
+            return "testpage";
+    }
+
 }
