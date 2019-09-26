@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.text.SimpleDateFormat;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -53,7 +54,8 @@ public class PagamentoController {
     
     private static final Logger logger = LoggerFactory.getLogger(PagamentoController.class);
 
-       
+    private SimpleDateFormat formattaData = new SimpleDateFormat("dd-MM-yyyy");
+
     @Autowired
     private DBFileStorageService DBFileStorageService;
 
@@ -77,10 +79,10 @@ public class PagamentoController {
             headers.add("Denominazione");
             headers.add("Imponibile");
             
-            
-        Integer id = Integer.valueOf(fatturaId);
-        XmlFatturaBase xmlFattura = xmlFatturaRepository.findById(id).get();
-         try {
+            String strData="N/A";
+            Integer id = Integer.valueOf(fatturaId);
+            XmlFatturaBase xmlFattura = xmlFatturaRepository.findById(id).get();
+            try {
                 byte[] byteArr = xmlFattura.getXmlData().getBytes("UTF-8");
                 StringWriter sw = new StringWriter();
                 JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
@@ -102,7 +104,9 @@ public class PagamentoController {
                 Map<String, Object> riga = new HashMap<String, Object>();
                 riga.put("Id", xmlFattura.getId());   
                 riga.put("Registro IVA",xmlFattura.getNumeroRegistrazione()+ " - " +  LocalDateTime.ofInstant(xmlFattura.getDataRegistrazione().toInstant(), ZoneId.systemDefault()).toLocalDate());
-                riga.put("Data", LocalDateTime.ofInstant(dataFattura.toInstant(), ZoneId.systemDefault()).toLocalDate());
+                 strData = ((xmlFattura.getDataRegistrazione() == null)) ? "N/A" : formattaData.format(xmlFattura.getDataRegistrazione());
+            
+                riga.put("Data", strData);
                 riga.put("Numero", numeroFattura);
                 riga.put("P.IVA",partitaIVA );
                 riga.put("Denominazione",denominazione );
