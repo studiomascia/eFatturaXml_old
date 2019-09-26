@@ -5,61 +5,21 @@
       layout:decorator="main-template">
 <head>
     <title>Template vuoto</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+    <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <div layout:fragment="content">
     template vuoto
-  
+   <input id="datepicker" width="276" />
+    <script>
+        $('#datepicker').datepicker({
+            uiLibrary: 'bootstrap4'
+        });
+    </script>
 </div>
-    <div  class="modal fade show" id="modalDiv" th:fragment="attachmentPaymentInvoice" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content col-4">
-                <div class="modal-header">
-                    <h4 class="modal-title">Inserisci il documento da allegare:</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form class="form-horizontal" th:action="@{'/InvoiceIn/' + ${fattura.id}+'/Payment/ì+${pagamento.id}}"  method="POST" enctype="multipart/form-data">
-
-                    <div class="form-group">
-                        <label for="txtId" class="control-label">Id</label>
-                        <input readonly="true" type="text" class="form-control" name="txtId" id="txtId" th:field="${pagamento.id}">
-                    </div>    
-                    <div class="form-group">
-                        <label for="txtDescription" class="control-label">Descrizione</label>
-                        <input  type="text" class="form-control" name="txtDescription" >
-                    </div> 
-<!--                    <div class="form-group">
-                        <label for="files" class="control-label">files</label>
-                        <input id="files" type="file" name="files" class="file-input" multiple="true" required="true" />
-                    </div> 
-                    -->
-                    
-                    <div class="form-group form-file-upload form-file-multiple">
-                        <input type="file" multiple="" >
-                        <div class="input-group">
-                            <input type="text" class="form-control inputFileVisible" placeholder="Multiple Files" multiple>
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-fab btn-round btn-info">
-                                    <i class="material-icons">layers</i>
-                                </button>
-                            </span>
-                        </div>
-                      </div>
-                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button"  class="btn btn-danger" data-dismiss="modal" >Chiudi</button>
-                    <button type="submit" class="btn btn-success">Salva</button>
-                </div>
-            </div>
-       
-    </div>
-</div>
-    <scritp> 
-    $('#modalDiv').modal('show');
-    </scritp>
+    
 </body>
 </html>

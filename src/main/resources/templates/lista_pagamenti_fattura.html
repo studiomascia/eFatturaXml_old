@@ -6,30 +6,41 @@
        
 <head>
     <title>Home</title>
-<!--     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    -->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"/>
+    <link href="/resources/assets/css/material-dashboard.css?v=2.1.1" rel="stylesheet" />
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <link  href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet"/>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+
+
+    
+<!--    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>-->
+    
+    
+    
 <script>
          
         function openModalPaymentInovice(id){
             $.ajax({
                 url:"/Invoice/"+id+"/ModalPayment",
                 success: function(response){
-                    $("#modalRegisterPaymentHolder").html(response);
-                    $("#modalRegisterPaymentHolder").modal("show");
+                    $("#contenitoreModal").html(response);
+                    $("#contenitoreModal").modal({keyboard:true, show:true});
                 }
             });
         }
                   
         function openModalAttachmentPayment(IdFattura,id){
-//            alert("openModalAttachmentPayment : id=" +id);
             $.ajax({
                 url:"/Invoice/" + IdFattura + "/Payment/"+id +"/ModalAttachment",
                 success: function(response){
 //                    alert (response);
-                    $("#modalRegisterPaymentHolder").html(response);
-                    $("#modalRegisterPaymentHolder").modal("show");
+                    $("#contenitoreModal").html(response);
+                    $("#contenitoreModal").modal({keyboard:true, show:true});
                 }
             });
         }
@@ -37,22 +48,21 @@
 </head>
 <body>
     <div layout:fragment="content">
-        <div id="modalRegisterPaymentHolder"></div>
+       
 
         <div class="container-fluid">
+            <div class="modal fade" id="contenitoreModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"></div>      
+
             <h2>Dettaglio Pagamenti Fattura:</h2>
             
-            <table class="table table-sm table-condensed table-hover w-auto">
+            <table class="table">
                 <thead>
-                    <tr class="headings">
-                        <th th:each="header: ${headers}" class="column-title th-sm" th:text="${header}" />
-                        <th>azione</th>
-                    </tr>
+                    <tr><th th:each="header: ${headers}" th:text="${header}" /><th>azione</th></tr>
                 </thead>
                 <tbody>
-                    <tr class="even pointer" id="tablerow">
+                    <tr  id="tablerow">
                         <td th:each="header: ${headers}" th:text="${fattura.get(header)}" />
-                        <td class="td-actions text-left">
+                        <td class="text-left">
                             <a  th:href="@{'/Invoice/Download/' + ${fattura.get('Id')}} " target="_blank" type="button" rel="tooltip" class="btn btn-info" >
                                 <i class="material-icons">file_download</i>
                             </a>
@@ -65,19 +75,19 @@
                 <i class="material-icons">add</i>
             </a>
             
-                <table class="table table-sm table-condensed table-hover w-auto">
+                <table class="table table-hover">
                     <thead>
-                        <tr class="headings">
-                            <th class="column-title th-sm">id</th>  
-                            <th class="column-title th-sm">data</th>  
-                            <th class="column-title th-sm">importo</th>  
-                            <th class="column-title th-sm">note</th>  
-                            <th class="column-title th-sm">saldato</th>  
-                            <th class="column-title th-sm">allegati</th>
+                        <tr >
+                            <th>id</th>  
+                            <th>data</th>  
+                            <th>importo</th>  
+                            <th>note</th>  
+                            <th>saldato</th>  
+                            <th>allegati</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="even pointer w-50 p-3" th:each="x :${listapagamenti}"  id="table2row">
+                        <tr  th:each="x :${listapagamenti}"  id="table2row">
                             <td th:text="${x.id}" />
                             <td th:text="${#dates.format(x.dataVersamento, 'dd-MM-yyyy')}" />
                             <td th:text="${x.importoVersamento}" />
