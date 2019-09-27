@@ -175,7 +175,7 @@ public class InvoiceController {
     }
 
     /* METODI PER LE FATTURE IN */
-    
+         
     @GetMapping("/InvoicesIn")
     public String FatturePassiveList(HttpServletRequest request,Model model){
         
@@ -263,6 +263,7 @@ public class InvoiceController {
     @GetMapping("/InvoicesIn/New")
     public String nuovaFatturaIn() {
         return "fatture_passive_new";
+        
     }
     
     @PostMapping("/InvoicesIn/New")
