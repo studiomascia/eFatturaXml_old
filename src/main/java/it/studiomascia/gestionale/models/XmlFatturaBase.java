@@ -52,7 +52,7 @@ public class XmlFatturaBase {
     @Column(name = "file_name")
     private String fileName;
     
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "data_inserimento")
     private Date dataInserimento;
     
@@ -60,7 +60,7 @@ public class XmlFatturaBase {
     @Column(name = "numero_registrazione")
     private String numeroRegistrazione;
     
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "data_registrazione")
     private Date dataRegistrazione;
     

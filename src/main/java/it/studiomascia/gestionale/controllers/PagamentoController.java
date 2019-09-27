@@ -73,8 +73,8 @@ public class PagamentoController {
         List<String> headers = new  ArrayList<>();
             headers.add("Id");
             headers.add("Registro IVA");
-            headers.add("Data");
-            headers.add("Numero");
+            headers.add("N. Fattura");
+            headers.add("Data Fattura");
             headers.add("P.IVA");
             headers.add("Denominazione");
             headers.add("Imponibile");
@@ -103,11 +103,10 @@ public class PagamentoController {
             
                 Map<String, Object> riga = new HashMap<String, Object>();
                 riga.put("Id", xmlFattura.getId());   
-                riga.put("Registro IVA",xmlFattura.getNumeroRegistrazione()+ " - " +  LocalDateTime.ofInstant(xmlFattura.getDataRegistrazione().toInstant(), ZoneId.systemDefault()).toLocalDate());
-                 strData = ((xmlFattura.getDataRegistrazione() == null)) ? "N/A" : formattaData.format(xmlFattura.getDataRegistrazione());
-            
-                riga.put("Data", strData);
-                riga.put("Numero", numeroFattura);
+                strData = ((xmlFattura.getDataRegistrazione() == null)) ? "N/A" : formattaData.format(xmlFattura.getDataRegistrazione());
+                riga.put("Registro IVA",xmlFattura.getNumeroRegistrazione()+ " - " +  strData);
+                riga.put("N. Fattura", numeroFattura);
+                riga.put("Data Fattura", formattaData.format(dataFattura));
                 riga.put("P.IVA",partitaIVA );
                 riga.put("Denominazione",denominazione );
                 riga.put("Imponibile", importoFattura);

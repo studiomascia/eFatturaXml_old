@@ -334,17 +334,18 @@ public class InvoiceController {
    
     @GetMapping("/InvoiceIn/ModalRegister/{id}")
     public String ModalEditFatturaIn(ModelMap model,@PathVariable Integer id){
-        XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
+        XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get(); 
         model.addAttribute("fattura",x);  
         return "modalContents :: registerInvoice";
     }
-    
+     
    
     
     @GetMapping("/InvoiceIn/Register/{id}")
     public String EditFatturaIn(Model model,@PathVariable Integer id){
         XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
         model.addAttribute("fattura",x);  
+        model.addAttribute("dataReg",x.getDataRegistrazione());  
         return "fatture_passive_registra";
     }
      

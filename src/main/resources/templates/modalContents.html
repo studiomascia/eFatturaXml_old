@@ -36,8 +36,8 @@
                       </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button"  class="btn btn-danger" data-dismiss="modal" >Chiudi</button>
-                        <button type="submit" class="btn btn-success">Salva</button>
+                        <button type="button"  class="btn btn-secondary" data-dismiss="modal" >Chiudi</button>
+                        <button type="submit" class="btn btn-primary">Salva</button>
                     </div>
                     </form>
                 </div>
@@ -67,8 +67,7 @@
                     </div> 
                     <div class="form-group">
                         <label for="txtDataRegistrazione" class="control-label">Data Registrazione</label>
-                        <input  type="text" class="form-control" name="txtDataRegistrazione" id="txtDataRegistrazione" th:field="${fattura.dataRegistrazione}">
-                        <input  type="date" class="form-control" name="txtDataRegistrazione2" id="txtDataRegistrazione2" th:field="${fattura.dataRegistrazione}">
+                        <input  type="date" class="form-control" name="txtDataRegistrazione" id="txtDataRegistrazione"  th:field="*{dataRegistrazione}" >
                             <script>
  
 </script>
@@ -103,8 +102,8 @@
                     </div> 
                     <div class="form-group">
                         <label for="txtDataVersamento" class="control-label">Data Versamento</label>
-                        <input   type="text" class="form-control" name="txtDataVersamento" id="txtDataRegistrazione" th:field="${pagamento.dataVersamento}">
-s                    </div>
+                        <input   type="date" class="form-control" name="txtDataVersamento" id="txtDataRegistrazione" th:field="${pagamento.dataVersamento}">
+                    </div>
                     <div class="form-group">
                         <label for="txtNote" class="control-label">Note</label>
                         <input  type="text" class="form-control" name="txtNote" id="txtNumero" th:field="${pagamento.note}">

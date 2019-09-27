@@ -95,27 +95,11 @@
                             <td th:text="${x.isSaldata()} ?  'Si' : 'No'">yes</td>
 
                             <td>
-<!--                                 <table>
-                                     <tr th:each="item : ${x.getListaFilesPagamenti()}" >
-                                        <td th:text="${item.id}">1</td>
-                                        <td th:text="${item.fileName}">Jack</td>
-                                        <td th:text="${item.fileDescription}">23</td>
-                                        <td>
-                                            <a type="button" class="btn btn-info" th:href="@{'/downloadFile/' + ${item.id}} " >
-                                                <i class="material-icons">file_download</i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                </table>-->
+
                                 <div class="list-group">
-<!--                                    <li th:each="item : ${x.getListaFilesPagamenti()}" th:text="${item.fileDescription}+ ' - ' + ${item.fileName}">
-                                        <a type="button" class="btn btn-info" th:href="@{'/downloadFile/' + ${item.id}} " >
-                                                <i class="material-icons">file_download</i>
-                                        </a>
-                                    </li>-->
-                                    <a th:each="item : ${x.getListaFilesPagamenti()}" th:href="@{'/downloadFile/' + ${item.id}}"  th:text="${item.fileDescription}+ ' - ' + ${item.fileName}" class="btn btn-light btn-xs" >Dapibus ac facilisis in</a>
-                                    <!--<a class="btn btn-info btn-xs" th:href="@{'/uploadFile' + } " target="nuovoframe" >Aggiungi allegato</a>-->
-                                    <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalAttachmentPayment(\'' + ${fattura.get('Id')} + '\',\''+ ${x.id} +  '\');'" >
+                                    
+                                    <a th:each="item : ${x.getListaFilesPagamenti()}" th:href="@{'/downloadFile/' + ${item.id}}"  th:text="${item.fileDescription}+ ' - ' + ${item.fileName}" class="btn btn-primary btn-xs" >Dapibus ac facilisis in</a>
+                                    <a class="btn btn-secondary btn-xs" th:onclick="'javascript:openModalAttachmentPayment(\'' + ${fattura.get('Id')} + '\',\''+ ${x.id} +  '\');'" >
                                         <i class="material-icons">add</i>
                                     </a>
 

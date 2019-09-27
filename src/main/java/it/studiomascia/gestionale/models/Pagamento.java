@@ -32,7 +32,7 @@ public class Pagamento {
     @Column(name = "id")
     private Integer id;    
 
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "data_versamento")
     private Date dataVersamento;
     
