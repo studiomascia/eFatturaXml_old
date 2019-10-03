@@ -242,7 +242,7 @@ public class InvoiceController {
                 JAXBElement<FatturaElettronicaType> root =jaxbUnMarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(byteArr)), FatturaElettronicaType.class);
                 FatturaElettronicaType item = root.getValue();
                 jaxbMarshaller.marshal(root, sw);
-
+                Date dataConsegna = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiTrasporto().getDataOraConsegna().toGregorianCalendar().getTime();
                 Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
                 String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
                 String partitaIVA = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice().toString();
@@ -264,7 +264,8 @@ public class InvoiceController {
                 riga.put("Id", xmlFattura.getId());   
                 riga.put("Data Reg.",  strData);
                 riga.put("N.Reg.", xmlFattura.getNumeroRegistrazione());
-                riga.put("Data",  formattaData.format(dataFattura));
+//                riga.put("Data",  formattaData.format(dataFattura));
+                riga.put("Data",  formattaData.format(dataConsegna));
                 riga.put("Numero", numeroFattura);
                 riga.put("P.IVA",partitaIVA );
                 riga.put("Denominazione",denominazione );
