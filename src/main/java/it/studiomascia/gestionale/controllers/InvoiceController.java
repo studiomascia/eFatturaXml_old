@@ -245,10 +245,15 @@ public class InvoiceController {
                 Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
                 String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
                 String partitaIVA = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice().toString();
-                String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
-                if (denominazione.isEmpty()) {
+                String denominazione="";
+                if (item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione()!=null)
+                {
+                    denominazione=item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
+                }else{
                     AnagraficaType  anagrafica = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica();
-                    denominazione = anagrafica.getTitolo() + " " + anagrafica.getNome() + " " + anagrafica.getCognome();
+                    if (anagrafica.getTitolo()!=null)  denominazione+= anagrafica.getTitolo() +" ";
+                    if (anagrafica.getNome()!=null)  denominazione+= anagrafica.getNome() +" ";
+                    if (anagrafica.getCognome()!=null)  denominazione+= anagrafica.getCognome() +" ";
                 }
                 String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
              
