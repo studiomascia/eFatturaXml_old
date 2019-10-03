@@ -7,7 +7,7 @@ package it.studiomascia.gestionale;
 
 import it.studiomascia.gestionale.xml.DettaglioPagamentoType;
 import it.studiomascia.gestionale.xml.ModalitaPagamentoType;
-import java.util.EnumSet;
+import java.util.List;
 
 /**
  *
@@ -19,21 +19,24 @@ public class Utility {
     {
     }
     
-    public static boolean CheckInoicePayed (DettaglioPagamentoType x)
+    public static boolean CheckInvoicePayed (List<DettaglioPagamentoType> lista)
     {
         boolean ret= false;
-        ModalitaPagamentoType y = x.getModalitaPagamento();
-        if ((y!=null) && (  ( y == ModalitaPagamentoType.MP_01) || 
-                            ( y == ModalitaPagamentoType.MP_03) || 
-                            ( y == ModalitaPagamentoType.MP_04) || 
-                            ( y == ModalitaPagamentoType.MP_08) || 
-                            ( y == ModalitaPagamentoType.MP_09) || 
-                            ( y == ModalitaPagamentoType.MP_10) || 
-                            ( y == ModalitaPagamentoType.MP_11) || 
-                            ( y == ModalitaPagamentoType.MP_12) || 
-                            ( y == ModalitaPagamentoType.MP_16) || 
-                            ( y == ModalitaPagamentoType.MP_17 ) 
-        ))  ret = true;
+         for (int k=0; k==lista.size(); k++)
+         { 
+            ModalitaPagamentoType y = lista.get(k).getModalitaPagamento();
+            if ((y!=null) && (  ( y == ModalitaPagamentoType.MP_01) || 
+                                ( y == ModalitaPagamentoType.MP_03) || 
+                                ( y == ModalitaPagamentoType.MP_04) || 
+                                ( y == ModalitaPagamentoType.MP_08) || 
+                                ( y == ModalitaPagamentoType.MP_09) || 
+                                ( y == ModalitaPagamentoType.MP_10) || 
+                                ( y == ModalitaPagamentoType.MP_11) || 
+                                ( y == ModalitaPagamentoType.MP_12) || 
+                                ( y == ModalitaPagamentoType.MP_16) || 
+                                ( y == ModalitaPagamentoType.MP_17 ) 
+            ))  ret = true;
+         }
         return ret;
     }
 }

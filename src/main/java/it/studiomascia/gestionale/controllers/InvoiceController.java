@@ -312,8 +312,8 @@ public class InvoiceController {
                 xmlFattura.setFileName(files[k].getOriginalFilename());
                 xmlFattura.setXmlData(sw.toString());
                 
-                 DettaglioPagamentoType  dettaglioPagamento =  item.getFatturaElettronicaBody().get(0).getDatiPagamento().get(0).getDettaglioPagamento().get(0);
-                if (Utility.CheckInoicePayed(dettaglioPagamento)) {
+                List<DettaglioPagamentoType>  dettaglioPagamento =  item.getFatturaElettronicaBody().get(0).getDatiPagamento().get(0).getDettaglioPagamento();
+                if (Utility.CheckInvoicePayed(dettaglioPagamento)) {
                     Set<Pagamento> setp = new HashSet<Pagamento>();
 
                     Pagamento p = new Pagamento();
