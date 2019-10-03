@@ -5,6 +5,7 @@
  */
 package it.studiomascia.gestionale.controllers;
 
+import it.studiomascia.gestionale.Utility;
 import it.studiomascia.gestionale.models.DBFile;
 import it.studiomascia.gestionale.models.Pagamento;
 import it.studiomascia.gestionale.models.XmlFatturaBase;
@@ -12,6 +13,7 @@ import it.studiomascia.gestionale.models.XmlFatturaBasePredicate;
 import it.studiomascia.gestionale.repository.PagamentoRepository;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
 import it.studiomascia.gestionale.service.DBFileStorageService;
+import it.studiomascia.gestionale.xml.DettaglioPagamentoType;
 import it.studiomascia.gestionale.xml.FatturaElettronicaType;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -24,8 +26,10 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -307,8 +311,22 @@ public class InvoiceController {
                 xmlFattura.setDataInserimento(new Date());
                 xmlFattura.setFileName(files[k].getOriginalFilename());
                 xmlFattura.setXmlData(sw.toString());
+                
+                 DettaglioPagamentoType  dettaglioPagamento =  item.getFatturaElettronicaBody().get(0).getDatiPagamento().get(0).getDettaglioPagamento().get(0);
+                if (Utility.CheckInoicePayed(dettaglioPagamento)) {
+                    Set<Pagamento> setp = new HashSet<Pagamento>();
+
+                    Pagamento p = new Pagamento();
+                    p.setDataVersamento(dataFattura);
+                    p.setImportoVersamento(item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().intValue());
+                    p.setNote("pagamento impostato automaticamente");
+                    p.setSaldata(true);
+                    setp.add(p);
+                    xmlFattura.setPagamenti(setp);
+                }
                 xmlFattura = xmlFatturaBaseRepository.save(xmlFattura);
                 xmlFatturaBaseRepository.flush();
+                
                 
                 // Perpara la Map da aggiungere alla view 
                 Map<String, Object> riga = new HashMap<String, Object>(4);
