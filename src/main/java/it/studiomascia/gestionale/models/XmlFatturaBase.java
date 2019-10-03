@@ -84,7 +84,13 @@ public class XmlFatturaBase {
         this.pagamenti = listaPagamenti;
     }
      
-    
+     public boolean isSaldata() {
+        Boolean ret=false;
+        for (Pagamento x : pagamenti){
+        	if (x.isSaldata()) ret =true;
+        }
+     return ret;   
+    }
     
     
     private boolean attiva;

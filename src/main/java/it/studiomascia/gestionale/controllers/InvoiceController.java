@@ -218,6 +218,7 @@ public class InvoiceController {
         headers.add("P.IVA");
         headers.add("Denominazione");
         headers.add("Imponibile");     
+        headers.add("Saldata");     
        
         List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
         int conta=1;
@@ -268,7 +269,8 @@ public class InvoiceController {
                 riga.put("P.IVA",partitaIVA );
                 riga.put("Denominazione",denominazione );
                 riga.put("Imponibile", importoFattura);
-                righe.add(riga);
+                riga.put("Saldata", xmlFattura.isSaldata());
+                righe.add(riga); 
             }
         } catch (JAXBException e) {
             e.printStackTrace();
