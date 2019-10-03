@@ -22,9 +22,9 @@ public class Utility {
     public static boolean CheckInvoicePayed (List<DettaglioPagamentoType> lista)
     {
         boolean ret= false;
-         for (int k=0; k==lista.size(); k++)
+         for (DettaglioPagamentoType x:lista)
          { 
-            ModalitaPagamentoType y = lista.get(k).getModalitaPagamento();
+            ModalitaPagamentoType y = x.getModalitaPagamento();
             if ((y!=null) && (  ( y == ModalitaPagamentoType.MP_01) || 
                                 ( y == ModalitaPagamentoType.MP_03) || 
                                 ( y == ModalitaPagamentoType.MP_04) || 

@@ -91,7 +91,7 @@ public class InvoiceController {
     /* INIZIO Metodi comuni per tutti i mapping */
     private SimpleDateFormat formattaData = new SimpleDateFormat("dd-MM-yyyy");
     
-    public byte[] getData(final byte[] p7bytes) throws Exception { 
+    public byte[] getData( byte[] p7bytes) throws Exception { 
         ByteArrayOutputStream out = new ByteArrayOutputStream();                 
         try{
             CMSSignedData cms = new CMSSignedData(p7bytes);           
@@ -100,7 +100,17 @@ public class InvoiceController {
                 return null; 
             } 
             cms.getSignedContent().write(out);           
-        }catch (Exception ex){}
+        }catch (Exception ex){
+            p7bytes = org.bouncycastle.util.encoders.Base64.decode(p7bytes);
+            try{
+                CMSSignedData cms = new CMSSignedData(p7bytes);           
+                if(cms.getSignedContent() == null) { 
+                    //Error!!! 
+                    return null; 
+                } 
+                cms.getSignedContent().write(out);           
+            }catch (Exception e){}
+        }
 
         return out.toByteArray(); 
     } 
@@ -312,7 +322,7 @@ public class InvoiceController {
                 xmlFattura.setDataInserimento(new Date());
                 xmlFattura.setFileName(files[k].getOriginalFilename());
                 xmlFattura.setXmlData(sw.toString());
-                
+                if(item.getFatturaElettronicaBody().get(0).getDatiPagamento().size()>0){
                 List<DettaglioPagamentoType>  dettaglioPagamento =  item.getFatturaElettronicaBody().get(0).getDatiPagamento().get(0).getDettaglioPagamento();
                 if (Utility.CheckInvoicePayed(dettaglioPagamento)) {
                     Set<Pagamento> setp = new HashSet<Pagamento>();
@@ -325,6 +335,7 @@ public class InvoiceController {
                     setp.add(p);
                     xmlFattura.setPagamenti(setp);
                 }
+            }
                 xmlFattura = xmlFatturaBaseRepository.save(xmlFattura);
                 xmlFatturaBaseRepository.flush();
                 System.out.println("OK");
@@ -342,13 +353,13 @@ public class InvoiceController {
                 
             } catch (JAXBException e) {
                 System.out.println("ERRORE 1) CARICAMENTO FILE");
-                e.printStackTrace();
+                //e.printStackTrace();
             } catch (IOException e) {
                 System.out.println("ERRORE 2) CARICAMENTO FILE");
-                e.printStackTrace();
+                //e.printStackTrace();
             } catch (Exception e) {
                 System.out.println("ERRORE 3) CARICAMENTO FILE");
-                e.printStackTrace();
+                //e.printStackTrace();
             }
             modelMap.addAttribute("headers", headers);
             modelMap.addAttribute("rows", righe);
