@@ -218,8 +218,8 @@ public class InvoiceController {
         headers.add("P.IVA");
         headers.add("Denominazione");
         headers.add("Imponibile");     
-        headers.add("Saldata");     
-       
+//        headers.add("Saldata");     
+ 
         List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
         int conta=1;
         String  strData = null;

@@ -62,18 +62,27 @@
                                     <thead>
                                         <tr>
                                             <th th:each="header: ${headers}"  th:text="${header}" />
+                            
                                             <th>azione</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr  th:each="row: ${rows}" id="tablerow">
-                                            <td th:each="header: ${headers}" th:text="${row.get(header)}" />
+                                            <!--<td th:each="header: ${headers}" th:text="${row.get(header)}" />-->
+                                            <td th:text="${row.get('Id')}" />
+                                            <td th:text="${row.get('Data Reg.')}" />
+                                            <td th:text="${row.get('N.Reg.')}" />
+                                            <td th:text="${row.get('Data')}" />
+                                            <td th:text="${row.get('Numero')}" />
+                                            <td th:text="${row.get('P.IVA')}" />
+                                            <td th:text="${row.get('Denominazione')}" />
+                                            <td th:text="${row.get('Imponibile')}" />
                                             <td>
                                                 <a type="button" class="btn btn-info btn-xs" th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " target="_blank" >
                                                     <i class="material-icons">file_download</i>
                                                 </a>
                                                 
-                                                <a type="button" th:classappend="${row.get(Saldata)}? 'btn btn-success btn-xs' : 'btn btn-primary btn-xs'" th:href="@{'/InvoiceIn/' + ${row.get('Id')}}+'/Payments' "  target="_blank" >
+                                                <a type="button" th:classappend="${row.get('Saldata') == true} ? 'btn btn-success btn-xs' : 'btn btn-primary btn-xs'" th:href="@{'/InvoiceIn/' + ${row.get('Id')}}+'/Payments' "  target="_blank" >
                                                     <i class="material-icons">attach_money</i>
                                                 </a>
                                                 <a type="button" class="btn btn-secondary btn-xs" th:onclick="'javascript:openModalRegisterInovice(\'' + ${row.get('Id')} +'\');'" >
