@@ -13,6 +13,7 @@ import it.studiomascia.gestionale.models.XmlFatturaBasePredicate;
 import it.studiomascia.gestionale.repository.PagamentoRepository;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
 import it.studiomascia.gestionale.service.DBFileStorageService;
+import it.studiomascia.gestionale.xml.AnagraficaType;
 import it.studiomascia.gestionale.xml.DettaglioPagamentoType;
 import it.studiomascia.gestionale.xml.FatturaElettronicaType;
 import java.io.ByteArrayInputStream;
@@ -245,6 +246,10 @@ public class InvoiceController {
                 String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
                 String partitaIVA = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice().toString();
                 String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
+                if (denominazione.length()==0) {
+                    AnagraficaType  anagrafica = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica();
+                    denominazione = anagrafica.getTitolo() + " " + anagrafica.getNome() + " " + anagrafica.getCognome();
+                }
                 String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
              
                 strData = ((xmlFattura.getDataRegistrazione() == null)) ? "N/A" : formattaData.format(xmlFattura.getDataRegistrazione());
