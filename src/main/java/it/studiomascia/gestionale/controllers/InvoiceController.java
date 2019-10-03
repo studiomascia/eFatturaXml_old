@@ -284,6 +284,7 @@ public class InvoiceController {
         
         for (int k=0;k<files.length;k++){
             try {
+                System.out.println("Carico files[k].getOriginalFilename()= " + files[k].getOriginalFilename());
                 byte[] byteArr = files[k].getBytes();
                 if (files[k].getOriginalFilename().endsWith("p7m")) {
                     byteArr=getData(files[k].getBytes());
@@ -326,7 +327,8 @@ public class InvoiceController {
                 }
                 xmlFattura = xmlFatturaBaseRepository.save(xmlFattura);
                 xmlFatturaBaseRepository.flush();
-                
+                System.out.println("OK");
+              
                 
                 // Perpara la Map da aggiungere alla view 
                 Map<String, Object> riga = new HashMap<String, Object>(4);
@@ -339,10 +341,13 @@ public class InvoiceController {
                 righe.add(riga);
                 
             } catch (JAXBException e) {
+                System.out.println("ERRORE 1) CARICAMENTO FILE");
                 e.printStackTrace();
             } catch (IOException e) {
+                System.out.println("ERRORE 2) CARICAMENTO FILE");
                 e.printStackTrace();
             } catch (Exception e) {
+                System.out.println("ERRORE 3) CARICAMENTO FILE");
                 e.printStackTrace();
             }
             modelMap.addAttribute("headers", headers);
