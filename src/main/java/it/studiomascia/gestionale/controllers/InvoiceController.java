@@ -246,7 +246,7 @@ public class InvoiceController {
                 String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
                 String partitaIVA = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice().toString();
                 String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
-                if (denominazione.length()==0) {
+                if (denominazione.isEmpty()) {
                     AnagraficaType  anagrafica = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica();
                     denominazione = anagrafica.getTitolo() + " " + anagrafica.getNome() + " " + anagrafica.getCognome();
                 }
