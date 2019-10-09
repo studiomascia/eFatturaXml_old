@@ -90,6 +90,13 @@ public class XmlFatturaBase {
      return ret;   
     }
     
+    public boolean isControllata() {
+        Boolean ret=false;
+        for (ControlloFattura x : controlli){
+        	if (x.isControllata()) ret =true;
+        }
+     return ret;   
+    }
       /**
      * @return the controlli
      */

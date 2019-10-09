@@ -280,6 +280,7 @@ public class InvoiceController {
                 riga.put("Denominazione",denominazione );
                 riga.put("Imponibile", importoFattura);
                 riga.put("Saldata", xmlFattura.isSaldata());
+                riga.put("Controllata", xmlFattura.isControllata());
                 righe.add(riga); 
             }
         } catch (JAXBException e) {

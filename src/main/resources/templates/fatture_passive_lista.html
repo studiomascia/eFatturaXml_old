@@ -81,7 +81,7 @@
                                                 <a type="button" class="btn btn-info btn-xs" th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " target="_blank" >
                                                     <i class="material-icons">file_download</i>
                                                 </a>
-                                                 <a type="button" class="btn btn-info btn-xs" th:href="@{'/InvoiceIn/' + ${row.get('Id')}}+'/Checks' " target="_blank" >
+                                                 <a type="button" th:classappend="${row.get('Controllata') == true} ? 'btn btn-success btn-xs' : 'btn btn-warning btn-xs'"  th:href="@{'/InvoiceIn/' + ${row.get('Id')}}+'/Checks' " target="_blank" >
                                                     <i class="material-icons">check</i>
                                                 </a>
                                                 <a type="button" th:classappend="${row.get('Saldata') == true} ? 'btn btn-success btn-xs' : 'btn btn-primary btn-xs'" th:href="@{'/InvoiceIn/' + ${row.get('Id')}}+'/Payments' "  target="_blank" >
