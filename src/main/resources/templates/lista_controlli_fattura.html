@@ -26,9 +26,9 @@
     
 <script>
          
-        function openModalPaymentInovice(id){
+        function openModalCheckInoviceIn(id){
             $.ajax({
-                url:"/Invoice/"+id+"/ModalPayment",
+                url:"/InvoiceIn/"+id+"/ModalCheck",
                 success: function(response){
                     $("#contenitoreModal").html(response);
                     $("#contenitoreModal").modal({keyboard:true, show:true});
@@ -36,9 +36,9 @@
             });
         }
                   
-        function openModalAttachmentPayment(IdFattura,id){
+        function openModalAttachmentCheck(IdFattura,id){
             $.ajax({
-                url:"/Invoice/" + IdFattura + "/Payment/"+id +"/ModalAttachment",
+                url:"/InvoiceIn/" + IdFattura + "/Check/"+id +"/ModalAttachment",
                 success: function(response){
 //                    alert (response);
                     $("#contenitoreModal").html(response);
@@ -55,7 +55,7 @@
         <div class="container-fluid">
             <div class="modal fade" id="contenitoreModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"></div>      
 
-            <h2>Dettaglio Pagamenti Fattura:</h2>
+            <h2>Dettaglio Controlli Fattura:</h2>
             
             <table class="table">
                 <thead>
@@ -72,8 +72,8 @@
                     </tr>
                 </tbody>
             </table>   
-            <h2>Elenco movimenti:</h2>
-            <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalPaymentInovice(\'' + ${fattura.get('Id')} +'\');'" >
+            <h2>Elenco controlli:</h2>
+            <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalCheckInoviceIn(\'' + ${fattura.get('Id')} +'\');'" >
                 <i class="material-icons">add</i>
             </a>
             
@@ -82,29 +82,25 @@
                         <tr >
                             <th>id</th>  
                             <th>data</th>  
-                            <th>importo</th>  
+                            <th>centro di costo</th>  
                             <th>note</th>  
-                            <th>saldato</th>  
+                            <th>controllata</th>  
                             <th>allegati</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr  th:each="x :${listapagamenti}"  id="table2row">
+                        <tr  th:each="x :${listacontrolli}"  id="table2row">
                             <td th:text="${x.id}" />
-                            <td th:text="${#dates.format(x.dataVersamento, 'dd-MM-yyyy')}" />
-                            <td th:text="${x.importoVersamento}" />
+                            <td th:text="${#dates.format(x.dataControllo, 'dd-MM-yyyy')}" />
+                            <td th:text="${x.centroDiCosto}" />
                             <td th:text="${x.note}" />
-                            <td th:text="${x.isSaldata()} ?  'Si' : 'No'">yes</td>
-
+                            <td th:text="${x.isControllata()} ?  'Si' : 'No'">yes</td>
                             <td>
-
                                 <div class="list-group">
-                                    
-                                    <a th:each="item : ${x.getListaFilesPagamenti()}" th:href="@{'/downloadFile/' + ${item.id}}"  th:text="${item.fileDescription}+ ' - ' + ${item.fileName}" class="btn btn-primary btn-xs" >Dapibus ac facilisis in</a>
-                                    <a class="btn btn-secondary btn-xs" th:onclick="'javascript:openModalAttachmentPayment(\'' + ${fattura.get('Id')} + '\',\''+ ${x.id} +  '\');'" >
+                                    <a th:each="item : ${x.getListaFilesControlloFattura()}" th:href="@{'/downloadFile/' + ${item.id}}"  th:text="${item.fileDescription}+ ' - ' + ${item.fileName}" class="btn btn-primary btn-xs" >Dapibus ac facilisis in</a>
+                                    <a class="btn btn-secondary btn-xs" th:onclick="'javascript:openModalAttachmentCheck(\'' + ${fattura.get('Id')} + '\',\''+ ${x.id} +  '\');'" >
                                         <i class="material-icons">add</i>
                                     </a>
-
                                 </div>
                             </td>
                         </tr>

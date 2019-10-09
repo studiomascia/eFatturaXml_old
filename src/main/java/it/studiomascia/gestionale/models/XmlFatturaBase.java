@@ -36,13 +36,8 @@ import org.springframework.format.annotation.DateTimeFormat;
     @NamedQuery(name = "XmlFatturaBase.findAllAttive", query = "SELECT x FROM XmlFatturaBase x WHERE x.attiva IS TRUE")})
 
 public class XmlFatturaBase {
-
-    
-
- 
-    
-    
-  @Id
+  
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
@@ -70,6 +65,9 @@ public class XmlFatturaBase {
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<Pagamento> pagamenti;
     
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<ControlloFattura> controlli;
+    
      
     /**
      * @return the pagamenti
@@ -84,7 +82,7 @@ public class XmlFatturaBase {
         this.pagamenti = listaPagamenti;
     }
      
-     public boolean isSaldata() {
+    public boolean isSaldata() {
         Boolean ret=false;
         for (Pagamento x : pagamenti){
         	if (x.isSaldata()) ret =true;
@@ -92,6 +90,29 @@ public class XmlFatturaBase {
      return ret;   
     }
     
+      /**
+     * @return the controlli
+     */
+    public Set<ControlloFattura> getControlli() {
+        return controlli;
+    }
+
+    /**
+     * @param controlli the controlli to set
+     */
+    public void setControlli(Set<ControlloFattura> controlli) {
+        this.controlli = controlli;
+    }
+     
+   
+    
+    public boolean isAutorizzata() {
+        Boolean ret=false;
+        for (ControlloFattura x : getControlli()){
+        	if (x.isControllata()) ret =true;
+        }
+     return ret;   
+    }
     
     private boolean attiva;
     
@@ -206,6 +227,6 @@ public class XmlFatturaBase {
      public XmlFatturaBase(boolean isAttiva) {
         this.attiva=isAttiva;
     }
-     
-   
+
+  
 }

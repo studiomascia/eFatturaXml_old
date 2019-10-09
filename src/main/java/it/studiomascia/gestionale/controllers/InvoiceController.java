@@ -6,10 +6,14 @@
 package it.studiomascia.gestionale.controllers;
 
 import it.studiomascia.gestionale.Utility;
+import it.studiomascia.gestionale.models.CentroDiCosto;
+import it.studiomascia.gestionale.models.ControlloFattura;
 import it.studiomascia.gestionale.models.DBFile;
 import it.studiomascia.gestionale.models.Pagamento;
 import it.studiomascia.gestionale.models.XmlFatturaBase;
 import it.studiomascia.gestionale.models.XmlFatturaBasePredicate;
+import it.studiomascia.gestionale.repository.CentroDiCostoRepository;
+import it.studiomascia.gestionale.repository.ControlloFatturaRepository;
 import it.studiomascia.gestionale.repository.PagamentoRepository;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
 import it.studiomascia.gestionale.service.DBFileStorageService;
@@ -85,9 +89,15 @@ public class InvoiceController {
     
     @Autowired
     private PagamentoRepository pagamentoRepository;
-
+    
+    @Autowired
+    private ControlloFatturaRepository controlloFatturaRepository;
+    
     @Autowired
     private DBFileStorageService DBFileStorageService;
+    
+    @Autowired
+    private CentroDiCostoRepository centroDiCostoRepository;
     
     /* INIZIO Metodi comuni per tutti i mapping */
     private SimpleDateFormat formattaData = new SimpleDateFormat("dd-MM-yyyy");
@@ -379,14 +389,14 @@ public class InvoiceController {
         return "fatture_passive_caricate";
     }
    
+    /* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */ 
+    
     @GetMapping("/InvoiceIn/ModalRegister/{id}")
     public String ModalEditFatturaIn(ModelMap model,@PathVariable Integer id){
         XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get(); 
         model.addAttribute("fattura",x);  
         return "modalContents :: registerInvoice";
     }
-     
-   
     
     @GetMapping("/InvoiceIn/Register/{id}")
     public String EditFatturaIn(Model model,@PathVariable Integer id){
@@ -410,7 +420,9 @@ public class InvoiceController {
         return "redirect:/InvoicesIn";
     }
    
-     @GetMapping("/Invoice/{id}/ModalPayment")
+    /* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */ 
+    
+    @GetMapping("/Invoice/{id}/ModalPayment")
     public String ModalAddPaymentFatturaIn(ModelMap model,@PathVariable Integer id){
         XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
         Pagamento p = new Pagamento();
@@ -430,8 +442,7 @@ public class InvoiceController {
         return "redirect:/InvoiceIn/"+ id +"/Payments";
     }
     
-    
-     @GetMapping("/Invoice/{IdFattura}/Payment/{id}/ModalAttachment")
+    @GetMapping("/Invoice/{IdFattura}/Payment/{id}/ModalAttachment")
     public String ModalAddAttachmentToPaymentFatturaIn(ModelMap model,@PathVariable Integer IdFattura,@PathVariable Integer id){
 //        XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
         Pagamento p = pagamentoRepository.findById(id).get();
@@ -457,7 +468,134 @@ public class InvoiceController {
         return "redirect:/InvoiceIn/"+ request.getParameter("IdFattura").toString() +"/Payments";
     }
     
+    /* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */ 
    
+    @GetMapping("/InvoiceIn/{id}/ModalCheck")
+    public String ModalAddCheckFatturaIn(ModelMap model,@PathVariable Integer id){
+        XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
+        ControlloFattura p = new ControlloFattura();
+        List<CentroDiCosto> l =  centroDiCostoRepository.findAll();
+        model.addAttribute("fattura",x);  
+        model.addAttribute("controllo",p);  
+        model.addAttribute("listaCdc",l);  
+        return "modalContents :: checkInvoice";
+    }
+    
+    @PostMapping("/InvoiceIn/{id}/ModalCheck")
+    public String registraNuovoCheckFatturaIn( @ModelAttribute("controllo") ControlloFattura controllo,@PathVariable Integer id, HttpServletRequest request)
+    {
+        XmlFatturaBase vecchiaFattura = xmlFatturaBaseRepository.findById(id).get();
+        controllo.setDataControllo(new Date());
+        if (request.getParameter("ddlCentroDiCosto") != null) {
+            int id2 = Integer.parseInt(request.getParameter("ddlCentroDiCosto"));
+            controllo.setCentroDiCosto(centroDiCostoRepository.findById(id2).get().getText());
+        }
+
+        vecchiaFattura.getControlli().add(controllo);
+        
+        xmlFatturaBaseRepository.save(vecchiaFattura);
+//        redirectAttributes.addFlashAttribute("messaggio","Pagamento inserito");  
+        return "redirect:/InvoiceIn/"+ id +"/Checks";
+    }
+    
+    @GetMapping("/InvoiceIn/{IdFattura}/Check/{id}/ModalAttachment")
+    public String ModalAddAttachmentToCheckFatturaIn(ModelMap model,@PathVariable Integer IdFattura,@PathVariable Integer id){
+//        XmlFatturaBase x = xmlFatturaBaseRepository.findById(id).get();
+        ControlloFattura p = controlloFatturaRepository.findById(id).get();
+        model.addAttribute("IdFattura",IdFattura);  
+        model.addAttribute("controllo",p);  
+        return "modalContents :: attachmentCheckInvoice";
+    }
+    
+    @PostMapping("/Check/{id}/ModalAttachment")
+    public String postModalAddAttachmentToCheckFatturaIn( @ModelAttribute("controllo") ControlloFattura controllo,@PathVariable Integer id, RedirectAttributes redirectAttributes, @RequestParam("files") MultipartFile[] files, HttpServletRequest request)
+    {
+        if (request.getParameterMap().get("txtDescription") != null && request.getParameterMap().get("txtDescription").length > 0) {
+            
+            ControlloFattura p = controlloFatturaRepository.findById(id).get();
+            for (int k=0;k<files.length;k++)
+            {
+               
+                DBFile dbFile = DBFileStorageService.storeFile(files[k],request.getParameter("txtDescription").toString());
+                 p.getFilesControlloFattura().add(dbFile);
+                 controlloFatturaRepository.save(p);
+            }
+        }
+        return "redirect:/InvoiceIn/"+ request.getParameter("IdFattura").toString() +"/Checks";
+    }
+    
+      @GetMapping("/InvoiceIn/{fatturaId}/Checks")
+    public String ControlliFattura(Model model, @PathVariable String fatturaId){
+        List<String> headers = new  ArrayList<>();
+            headers.add("Id");
+            headers.add("Registro IVA");
+            headers.add("N. Fattura");
+            headers.add("Data Fattura");
+            headers.add("P.IVA");
+            headers.add("Denominazione");
+            headers.add("Imponibile");
+            
+            String strData="N/A";
+            Integer id = Integer.valueOf(fatturaId);
+            XmlFatturaBase xmlFattura = xmlFatturaBaseRepository.findById(id).get();
+            try {
+                byte[] byteArr = xmlFattura.getXmlData().getBytes("UTF-8");
+                StringWriter sw = new StringWriter();
+                JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
+                // Unmarshaller serve per convertire il file in un oggetto
+                Unmarshaller jaxbUnMarshaller = context.createUnmarshaller();
+                // Marshaller serve per convertire l'oggetto ottenuto dal file in una stringa xml
+                Marshaller jaxbMarshaller = context.createMarshaller();
+                jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+                JAXBElement<FatturaElettronicaType> root =jaxbUnMarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(byteArr)), FatturaElettronicaType.class);
+                FatturaElettronicaType item = root.getValue();
+                jaxbMarshaller.marshal(root, sw);
+
+                Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
+                String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
+                String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
+                String partitaIVA =  item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice();
+                String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
+            
+                Map<String, Object> riga = new HashMap<String, Object>();
+                riga.put("Id", xmlFattura.getId());   
+                strData = ((xmlFattura.getDataRegistrazione() == null)) ? "N/A" : formattaData.format(xmlFattura.getDataRegistrazione());
+                riga.put("Registro IVA",xmlFattura.getNumeroRegistrazione()+ " - " +  strData);
+                riga.put("N. Fattura", numeroFattura);
+                riga.put("Data Fattura", formattaData.format(dataFattura));
+                riga.put("P.IVA",partitaIVA );
+                riga.put("Denominazione",denominazione );
+                riga.put("Imponibile", importoFattura);
+             
+                model.addAttribute("fattura", riga);
+                model.addAttribute("headers", headers);
+ 
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }     
+            
+        Set<ControlloFattura> listacontrolli= xmlFattura.getControlli();
+        
+        List<DBFile> listaFile = new ArrayList<DBFile>();
+        for (ControlloFattura x : listacontrolli){
+
+            listaFile.addAll(x.getFilesControlloFattura());
+        	
+        }
+        
+        List lista = new ArrayList(listacontrolli);
+        model.addAttribute("listafiles", listaFile);
+        model.addAttribute("listacontrolli", lista);
+        return "lista_controlli_fattura";
+    }
+    
+   
+    
+    
+    
+    
     /* METODI PER LE FATTURE OUT */
     
     @GetMapping("/InvoicesOut")
