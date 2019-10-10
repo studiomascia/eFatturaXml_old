@@ -1,6 +1,6 @@
 package it.studiomascia.gestionale.service;
 
-import it.studiomascia.gestionale.models.Role;
+import it.studiomascia.gestionale.models.Authority;
 import it.studiomascia.gestionale.models.User;
 import it.studiomascia.gestionale.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService{
         if (user == null) throw new UsernameNotFoundException(username);
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-        for (Role role : user.getRoles()){
+        for (Authority role : user.getAuthorities()){
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
         }
 

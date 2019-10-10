@@ -36,7 +36,7 @@ public class UserController {
         User u1 = new User();
         u1.setUsername("admin@admin.it");
         u1.setPassword("123123");
-        u1.setStato(1);
+        u1.setEnabled(1);
         userService.insertNewUser(u1);
         
         return "login";
@@ -79,7 +79,7 @@ public class UserController {
 //        System.out.println("Updading user.id=" + updateUtente.getId());        
         User vecchioUtente = userRepository.findById(updateUtente.getId()).get();
         
-        vecchioUtente.setStato(updateUtente.getStato());
+        vecchioUtente.setEnabled(updateUtente.getEnabled());
         redirectAttributes.addFlashAttribute("messaggio","L'utente: " +vecchioUtente.getUsername() + " è stato aggiornato");  
         userRepository.save(vecchioUtente);
         return "redirect:/Admin/Users";

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -33,23 +34,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
+    public void configure(WebSecurity web) throws Exception {
+            web.ignoring().antMatchers("/resources/**");
+    }
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
                 .antMatchers("/**").permitAll()
-                .antMatchers("/resources/**","/static/**").permitAll();
-//                .antMatchers("/Admin/**").hasRole("ADMIN")               
-//                .antMatchers("/Utenti/**").hasRole("USER")               
-//                .antMatchers("/**").hasRole("USER")        
-//                .and()
-//            .formLogin()
-//                .loginPage("/login")
-//                .loginProcessingUrl("/perform_login")
-//                .defaultSuccessUrl("/Dashboard.html",true)
-//                .permitAll()
-//                .and()
-//            .logout()
-//                .permitAll();
+                .antMatchers("/resources/**","/static/**").permitAll()
+                .antMatchers("/Admin/**").hasRole("ADMIN")
+                .antMatchers("/**").hasRole("USER")        
+                .and()
+            .formLogin()
+                .loginPage("/login")
+//                .loginProcessingUrl("/log")
+                .defaultSuccessUrl("/Dashboard.html",true)
+                .permitAll()
+                .and()
+            .logout()
+                .permitAll();
     }
 
     @Bean

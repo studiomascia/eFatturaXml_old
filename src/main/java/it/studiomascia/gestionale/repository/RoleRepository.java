@@ -5,13 +5,13 @@
 // */
 package it.studiomascia.gestionale.repository;
 
-import it.studiomascia.gestionale.models.Role;
+import it.studiomascia.gestionale.models.Authority;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  *
  * @author luigi
  */
-public interface RoleRepository extends JpaRepository<Role, Long>{
+public interface RoleRepository extends JpaRepository<Authority, Long>{
 
 }

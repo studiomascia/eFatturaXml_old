@@ -6,8 +6,9 @@
 package it.studiomascia.gestionale.models;
 
 
-import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
@@ -20,12 +21,15 @@ public class User {
 
     private String password;
 
-    private int stato;
+    private int enabled;
 
 
-    @ManyToMany (fetch=FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name="users_roles", joinColumns = @JoinColumn(name="users_id"),inverseJoinColumns =@JoinColumn(name="role_id") )
-    private Set<Role> roles;
+    @ManyToMany (fetch=FetchType.EAGER , cascade = CascadeType.ALL)
+    @JoinTable(name="users_authority", 
+            joinColumns = { @JoinColumn(name="users_id")}, 
+            inverseJoinColumns ={@JoinColumn(name="authority_id")} )
+    
+    private Set<Authority> authorities = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -51,19 +55,26 @@ public class User {
         this.password = password;
     }
 
-    public int getStato() {
-        return stato;
+    public int getEnabled() {
+        return enabled;
     }
 
-    public void setStato(int x) {
-        this.stato = x;
+    public void setEnabled(int x) {
+        this.enabled = x;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
+    /**
+     * @return the authorities
+     */
+    public Set<Authority> getAuthorities() {
+        return authorities;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    /**
+     * @param authorities the authorities to set
+     */
+    public void setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
     }
+
 }

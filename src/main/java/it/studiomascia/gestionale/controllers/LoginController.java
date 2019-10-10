@@ -7,12 +7,15 @@ package it.studiomascia.gestionale.controllers;
 
 import it.studiomascia.gestionale.models.User;
 import it.studiomascia.gestionale.repository.UserRepository;
+import it.studiomascia.gestionale.service.UtenteDetails;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 /**
@@ -37,26 +40,30 @@ public class LoginController {
     }
  
     @PostMapping("/login")   
-    public String doLogin(HttpServletRequest request, Model model)
+    public String doLogin(Model model, HttpSession session)
     { 
-        String email = "";
-        if (request.getParameterMap().get("username") != null && request.getParameterMap().get("username").length > 0) {
-            email = request.getParameter("username");
-        }
+        System.out.println("LOGIN!");
+        // read principal out of security context and set it to session
+        UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        validatePrinciple(authentication.getPrincipal());
+        User loggedInUser = ((UtenteDetails) authentication.getPrincipal()).getUserDetails();
+        model.addAttribute("currentUser", loggedInUser.getUsername());
+        session.setAttribute("userId", loggedInUser.getId());
+        return "/Dashboard";
 
-        String pwd = "";
-        if (request.getParameterMap().get("password") != null && request.getParameterMap().get("password").length > 0) {
-            pwd = request.getParameter("password");
-        }
-        User u = utenti_repository.findByUsername(email);
-        if (u != null) {
-            return "lista_utenti";
-        } else {
-            return "login";
-        }
+//        User u = utenti_repository.findByUsername(email);
+//        if (u != null) {
+//            return "lista_utenti";
+//        } else {
+//            return "login";
+//        }
 
     }
-    
+    private void validatePrinciple(Object principal) {
+        if (!(principal instanceof UtenteDetails)) {
+            throw new  IllegalArgumentException("Principal can not be null!");
+        }
+    }
     
     @GetMapping("/perform_login")
     @PostMapping("/perform_login")

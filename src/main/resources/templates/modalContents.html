@@ -165,10 +165,11 @@
             <div class="modal-body">
 
                 <div class="form-group">
-                    <label for="txtId" class="control-label">Id</label>
-                    <input readonly="true" type="text" class="form-control" name="txtId" id="txtId" th:field="${controllo.id}">
+                    <label hidden="true" for="txtId" class="control-label">Id</label>
+                    <input hidden="true" readonly="true" type="text" class="form-control" name="txtId" id="txtId" th:field="${controllo.id}">
                 </div>    
                 <div class="form-group">
+                    <label for="ddlCentroDiCosto" class="control-label">Seleziona il Centro Di Costo</label>                   
                     <select class="form-control" name="ddlCentroDiCosto"  id="ddlCentroDiCosto" >
                         <option th:each="cdc : ${listaCdc}" th:value="${cdc.id}" th:text="${cdc.text}"></option>
                     </select>

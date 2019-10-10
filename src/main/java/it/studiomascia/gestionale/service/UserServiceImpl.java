@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
         System.out.println("password prima della codifica = "+ user.getPassword());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         System.out.println("password dopo la codifica     = "+ user.getPassword());
-        user.setRoles(new HashSet<>(role_Repository.findAll()));
+        user.setAuthorities(new HashSet<>(role_Repository.findAll()));
         user_Repository.save(user);
     }
 
