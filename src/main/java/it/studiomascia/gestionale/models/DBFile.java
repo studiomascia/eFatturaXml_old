@@ -5,6 +5,7 @@
  */
 package it.studiomascia.gestionale.models;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -35,6 +36,9 @@ public class DBFile {
     @Lob
     private byte[] data;
 
+    @Column(name = "creator")
+    private  String creator;
+    
     
     private String idFolder;
     
@@ -138,5 +142,19 @@ public class DBFile {
      */
     public void setFileDescription(String fileDescription) {
         this.fileDescription = fileDescription;
+    }
+
+    /**
+     * @return the creator
+     */
+    public String getCreator() {
+        return creator;
+    }
+
+    /**
+     * @param creator the creator to set
+     */
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 }

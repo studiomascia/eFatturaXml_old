@@ -59,6 +59,10 @@ public class XmlFatturaBase {
     @Column(name = "data_registrazione")
     private Date dataRegistrazione;
     
+    @Column(name = "creatore")
+    private  String creatore;
+    
+    
     @Lob
     private String xmlString;
 
@@ -233,6 +237,20 @@ public class XmlFatturaBase {
     
      public XmlFatturaBase(boolean isAttiva) {
         this.attiva=isAttiva;
+    }
+
+    /**
+     * @return the creatore
+     */
+    public String getCreatore() {
+        return creatore;
+    }
+
+    /**
+     * @param creatore the creatore to set
+     */
+    public void setCreatore(String creatore) {
+        this.creatore = creatore;
     }
 
   

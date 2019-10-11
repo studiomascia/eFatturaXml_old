@@ -59,6 +59,10 @@ public class ControlloFattura {
     @Column(name = "controllata")
     private  Boolean controllata;
     
+    @Column(name = "creatore")
+    private  String creatore;
+    
+    
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<DBFile> fileControlloFattura;
 
@@ -133,6 +137,20 @@ public class ControlloFattura {
      */
     public Boolean getControllata() {
         return controllata;
+    }
+
+    /**
+     * @return the creatore
+     */
+    public String getCreatore() {
+        return creatore;
+    }
+
+    /**
+     * @param creatore the creatore to set
+     */
+    public void setCreatore(String creatore) {
+        this.creatore = creatore;
     }
 
     

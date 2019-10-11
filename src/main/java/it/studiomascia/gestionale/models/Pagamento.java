@@ -42,6 +42,9 @@ public class Pagamento {
     @Column(name = "note")
     private  String note;
     
+    @Column(name = "creatore")
+    private  String creatore;
+    
     @Column(name = "saldata")
     private  Boolean saldata;
     
@@ -133,6 +136,20 @@ public class Pagamento {
      */
     public Boolean getSaldata() {
         return saldata;
+    }
+
+    /**
+     * @return the creatore
+     */
+    public String getCreatore() {
+        return creatore;
+    }
+
+    /**
+     * @param creatore the creatore to set
+     */
+    public void setCreatore(String creatore) {
+        this.creatore = creatore;
     }
      
     

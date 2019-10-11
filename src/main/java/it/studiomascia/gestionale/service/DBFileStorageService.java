@@ -11,6 +11,7 @@ import it.studiomascia.gestionale.models.DBFile;
 import it.studiomascia.gestionale.repository.DBFileRepository;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,7 +55,7 @@ public DBFile storeFile(MultipartFile file, String descrizione) {
 
             DBFile dbFile = new DBFile(fileName, file.getContentType(), file.getBytes());
             dbFile.setFileDescription(descrizione);
-
+            dbFile.setCreator(SecurityContextHolder.getContext().getAuthentication().getName());
             return dbFileRepository.save(dbFile);
         } catch (IOException ex) {
             throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);

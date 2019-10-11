@@ -60,6 +60,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -344,6 +345,7 @@ public class InvoiceController {
                 //xmlFattura.setNumeroRegistrazione(numeroFattura);
                 xmlFattura.setDataInserimento(new Date());
                 xmlFattura.setFileName(files[k].getOriginalFilename());
+                xmlFattura.setCreatore(SecurityContextHolder.getContext().getAuthentication().getName());
                 xmlFattura.setXmlData(sw.toString());
                 if(item.getFatturaElettronicaBody().get(0).getDatiPagamento().size()>0){
                 List<DettaglioPagamentoType>  dettaglioPagamento =  item.getFatturaElettronicaBody().get(0).getDatiPagamento().get(0).getDettaglioPagamento();
@@ -354,6 +356,7 @@ public class InvoiceController {
                     p.setDataVersamento(dataFattura);
                     p.setImportoVersamento(item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().intValue());
                     p.setNote("pagamento impostato automaticamente");
+                    p.setCreatore("System");
                     p.setSaldata(true);
                     setp.add(p);
                     xmlFattura.setPagamenti(setp);
@@ -436,6 +439,7 @@ public class InvoiceController {
     public String registraNuovoPagamentoFatturaIn( @ModelAttribute("pagamento") Pagamento pagamento, Model model,@PathVariable Integer id, RedirectAttributes redirectAttributes)
     {
         XmlFatturaBase vecchiaFattura = xmlFatturaBaseRepository.findById(id).get();
+        pagamento.setCreatore(SecurityContextHolder.getContext().getAuthentication().getName());
         vecchiaFattura.getPagamenti().add(pagamento);
         
         xmlFatturaBaseRepository.save(vecchiaFattura);
@@ -487,6 +491,7 @@ public class InvoiceController {
     {
         XmlFatturaBase vecchiaFattura = xmlFatturaBaseRepository.findById(id).get();
         controllo.setDataControllo(new Date());
+        controllo.setCreatore(SecurityContextHolder.getContext().getAuthentication().getName());
         if (request.getParameter("ddlCentroDiCosto") != null) {
             int id2 = Integer.parseInt(request.getParameter("ddlCentroDiCosto"));
             controllo.setCentroDiCosto(centroDiCostoRepository.findById(id2).get().getText());
@@ -721,6 +726,7 @@ public class InvoiceController {
                 xmlFattura.setDataInserimento(new Date());
                 xmlFattura.setFileName(files[k].getOriginalFilename());
                 xmlFattura.setXmlData(sw.toString());
+                xmlFattura.setCreatore(SecurityContextHolder.getContext().getAuthentication().getName());
                 xmlFattura = xmlFatturaBaseRepository.save(xmlFattura);
                 xmlFatturaBaseRepository.flush();
                 
