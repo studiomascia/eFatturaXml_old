@@ -82,6 +82,7 @@
                         <tr >
                             <th>id</th>  
                             <th>data</th>  
+                            <th>creato da</th>  
                             <th>importo</th>  
                             <th>note</th>  
                             <th>saldato</th>  
@@ -92,6 +93,7 @@
                         <tr  th:each="x :${listapagamenti}"  id="table2row">
                             <td th:text="${x.id}" />
                             <td th:text="${#dates.format(x.dataVersamento, 'dd-MM-yyyy')}" />
+                            <td th:text="${x.creatore}" />
                             <td th:text="${x.importoVersamento}" />
                             <td th:text="${x.note}" />
                             <td th:text="${x.isSaldata()} ?  'Si' : 'No'">yes</td>
