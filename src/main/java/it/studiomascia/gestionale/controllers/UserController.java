@@ -130,14 +130,16 @@ public class UserController {
     {
         User vecchioUtente = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         vecchioUtente.setPassword(updateUtente.getPassword());
-        if (request.getParameter("txtConfirmPassord") == request.getParameter("txtPassord") )
+        if (request.getParameter("txtConfirmPassword") == request.getParameter("password") )
         {
             model.addAttribute("messaggio","La password è stata aggiornata. ");  
+            redirectAttributes.addFlashAttribute("messaggio", "\"La password è stata aggiornata correttamente");
             userService.EncodeAndSave(vecchioUtente);
-
-            return "user_dashboard";
-        }else
-           return "account_aggiorna_password";
+            return "redirect:/Dashboard";
+        }else{
+            model.addAttribute("messaggio","Le password non coincidono. "); 
+            return "account_aggiorna_password";
+        }
     }
     
    

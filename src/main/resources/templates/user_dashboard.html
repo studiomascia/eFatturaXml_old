@@ -7,7 +7,8 @@
     <title>Gesionale CONCRETE  - Studiomascia.it!</title>
 </head>
 <body>
-    <div  th:if="${messaggio}"  class="modal fade show" id="MessageDiv" tabindex="-1" role="dialog" data-show="true">
+    <div layout:fragment="content">
+        <div  th:if="${messaggio}"  class="modal fade show" id="MessageDiv" tabindex="-1" role="dialog" data-show="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <!-- Modal Header -->
@@ -28,7 +29,7 @@
         </div>
     </div>
     <div th:if="${messaggio}" ><script> $('#MessageDiv').modal('show')</script></div>
-    <div layout:fragment="content">
+        
         <div class="container">
             <h2></h2>
             <div class="row">
