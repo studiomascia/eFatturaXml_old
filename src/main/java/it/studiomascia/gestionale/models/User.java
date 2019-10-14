@@ -13,6 +13,9 @@ import javax.persistence.*;
 @Entity
 @Table(name = "users")
 public class User {
+//    $2a$10$J4Njbzt7u0j1.Z96Mh705e/ZG92Mh5ymMj3/ozZ47.HsftBLTz./i
+//      $2a$10$YLFL3mWnwXl0Nrk6KIWOBuG.j00BomF1rbqKDkcWbTRg8tyYsSZWa
+//    123123
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,6 +26,7 @@ public class User {
 
     private int enabled;
 
+    private String shortname;
 
     @ManyToMany (fetch=FetchType.EAGER , cascade = CascadeType.ALL)
     @JoinTable(name="users_authority", 
@@ -75,6 +79,20 @@ public class User {
      */
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    /**
+     * @return the shortname
+     */
+    public String getShortname() {
+        return shortname;
+    }
+
+    /**
+     * @param shortname the shortname to set
+     */
+    public void setShortname(String shortname) {
+        this.shortname = shortname;
     }
 
 }

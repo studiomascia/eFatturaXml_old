@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -37,7 +38,7 @@ public class UserController {
         u1.setUsername("admin@admin.it");
         u1.setPassword("123123");
         u1.setEnabled(1);
-        userService.insertNewUser(u1);
+        userService.insertDefaultNewUser(u1);
         
         return "login";
     }
@@ -109,9 +110,34 @@ public class UserController {
 //        u1.setUsername("admin@admin.it");
 //        u1.setPassword("123123");
 //        u1.setStato(1);
-        userService.insertNewUser(utente);
+            userService.insertDefaultNewUser(utente);
             return "redirect:/Admin/Users";
         }
+    }
+    
+    @GetMapping("Account/Password")
+    public String Password(Model model, RedirectAttributes redirectAttributes){
+        User x = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        model.addAttribute("utente",x);
+//        if (model.containsAttribute("messaggio")) 
+//            redirectAttributes.addFlashAttribute("messaggio",model.asMap().get("messaggio"));  
+
+        return "/account_aggiorna_password";
+    }
+    
+    @PostMapping("Account/Password")
+    public String aggiornaPassword(@Valid @ModelAttribute("utente") User updateUtente, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes)
+    {
+        User vecchioUtente = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        vecchioUtente.setPassword(updateUtente.getPassword());
+        if (request.getParameter("txtConfirmPassord") == request.getParameter("txtPassord") )
+        {
+            model.addAttribute("messaggio","La password è stata aggiornata. ");  
+            userService.EncodeAndSave(vecchioUtente);
+
+            return "user_dashboard";
+        }else
+           return "account_aggiorna_password";
     }
     
    

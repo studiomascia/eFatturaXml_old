@@ -18,7 +18,7 @@ public class UserServiceImpl implements UserService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
        
-    public void insertNewUser(User user) {
+    public void insertDefaultNewUser(User user) {
         System.out.println("password prima della codifica = "+ user.getPassword());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         System.out.println("password dopo la codifica     = "+ user.getPassword());
@@ -29,5 +29,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUsername(String username) {
         return user_Repository.findByUsername(username);
+    }
+    
+    public void EncodeAndSave(User user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user_Repository.save(user);
     }
 }
