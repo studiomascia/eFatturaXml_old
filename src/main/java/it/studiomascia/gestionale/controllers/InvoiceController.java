@@ -49,6 +49,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.xmlgraphics.util.MimeConstants;
@@ -58,8 +59,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.exact;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -82,6 +81,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * @author Admin
  */
 @Controller
+@Slf4j
 public class InvoiceController {
      
     @Value("${max.rows.table}")
@@ -314,6 +314,8 @@ public class InvoiceController {
         for (int k=0;k<files.length;k++){
             try {
                 System.out.println("Carico file= " + files[k].getOriginalFilename());
+                log.info("Carico file= " + files[k].getOriginalFilename());
+                
                 byte[] byteArr = files[k].getBytes();
                 if (files[k].getOriginalFilename().endsWith("p7m")) {
                     byteArr=getData(files[k].getBytes());
@@ -379,16 +381,17 @@ public class InvoiceController {
                 }else
                 {
                     //
+                    log.info("       Skip fattura esistente - file = " + files[k].getOriginalFilename());
                     System.out.println("       Skip fattura esistente - file = " + files[k].getOriginalFilename());
                 }
             } catch (JAXBException e) {
-                System.out.println("ERRORE CARICAMENTO FILE - JAXBException)");
+                log.info("ERRORE CARICAMENTO FILE - JAXBException)");
                 //e.printStackTrace();
             } catch (IOException e) {
-                System.out.println("ERRORE CARICAMENTO FILE - IOException");
+                log.info("ERRORE CARICAMENTO FILE - IOException");
                 //e.printStackTrace();
             } catch (Exception e) {
-                System.out.println("ERRORE CARICAMENTO FILE - Exception");
+                log.info("ERRORE CARICAMENTO FILE - Exception");
                 //e.printStackTrace();
             }
             modelMap.addAttribute("headers", headers);
