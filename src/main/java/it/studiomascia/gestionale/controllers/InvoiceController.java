@@ -220,7 +220,7 @@ public class InvoiceController {
         headers.add("Numero");
         headers.add("P.IVA");
         headers.add("Denominazione");
-        headers.add("Imponibile");     
+        headers.add("Importo");     
 //        headers.add("Saldata");     
  
         List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
@@ -270,7 +270,7 @@ public class InvoiceController {
                 riga.put("Numero", numeroFattura);
                 riga.put("P.IVA",partitaIVA );
                 riga.put("Denominazione",denominazione );
-                riga.put("Imponibile", importoFattura);
+                riga.put("Importo", importoFattura);
                 riga.put("Saldata", xmlFattura.isSaldata());
                 riga.put("Controllata", xmlFattura.isControllata());
                 righe.add(riga); 
@@ -308,7 +308,7 @@ public class InvoiceController {
         headers.add("Data");
         headers.add("Denominazione");
         headers.add("Numero"); 
-        headers.add("Imponibile");     
+        headers.add("Importo");     
         List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
         
         for (int k=0;k<files.length;k++){
@@ -343,7 +343,11 @@ public class InvoiceController {
                 if (!trovato){
                     Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
                     String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
-                    String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
+                    String importoFattura= "0";
+                    // Alcune fatture con importo 0 hanno un valore null 
+                    if (item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento() !=null){
+                        importoFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
+                    }
                     String partitaIVA = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice().toString();
                     String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
 
@@ -368,7 +372,11 @@ public class InvoiceController {
                                 xmlFattura.setPagamenti(setp);
                         }
                     }
-
+                    
+                    xmlFattura = xmlFatturaBaseRepository.save(xmlFattura);
+                    xmlFatturaBaseRepository.flush();
+                    System.out.println("       Fattura Inserita = "  + files[k].getOriginalFilename());
+                    log.info("       Fattura Inserita = "  + files[k].getOriginalFilename());
                     // Perpara la Map da aggiungere alla view 
                     Map<String, Object> riga = new HashMap<String, Object>(4);
                     riga.put("Id", xmlFattura.getId());   
@@ -376,7 +384,7 @@ public class InvoiceController {
                     riga.put("Denominazione",denominazione );
                     riga.put("Data",  LocalDateTime.ofInstant(dataFattura.toInstant(), ZoneId.systemDefault()).toLocalDate());
                     riga.put("Numero", numeroFattura);
-                    riga.put("Imponibile", importoFattura);
+                    riga.put("Importo", importoFattura);
                     righe.add(riga);
                 }else
                 {
@@ -546,7 +554,7 @@ public class InvoiceController {
             headers.add("Data Fattura");
             headers.add("P.IVA");
             headers.add("Denominazione");
-            headers.add("Imponibile");
+            headers.add("Importo");
             
             String strData="N/A";
             Integer id = Integer.valueOf(fatturaId);
@@ -578,7 +586,7 @@ public class InvoiceController {
                 riga.put("Data Fattura", formattaData.format(dataFattura));
                 riga.put("P.IVA",partitaIVA );
                 riga.put("Denominazione",denominazione );
-                riga.put("Imponibile", importoFattura);
+                riga.put("Importo", importoFattura);
              
                 model.addAttribute("fattura", riga);
                 model.addAttribute("headers", headers);
@@ -625,7 +633,7 @@ public class InvoiceController {
         headers.add("Denominazione");
         headers.add("Causale");
 //        headers.add("Descrizione");
-        headers.add("Imponibile");     
+        headers.add("Importo");     
        
         List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
         
@@ -672,7 +680,7 @@ public class InvoiceController {
                 riga.put("Denominazione",denominazione );
                 riga.put("Data",  LocalDateTime.ofInstant(xmlFattura.getDataRegistrazione().toInstant(), ZoneId.systemDefault()).toLocalDate());
                 riga.put("Numero", numeroFattura);
-                riga.put("Imponibile", importoFattura);
+                riga.put("Importo", importoFattura);
                 riga.put("Causale", causale);
                 riga.put("Descrizione", descrizione);
                 riga.put("Saldata", xmlFattura.isSaldata());
@@ -708,7 +716,7 @@ public class InvoiceController {
         headers.add("Denominazione");
         headers.add("Numero");
         headers.add("Data");
-        headers.add("Imponibile");     
+        headers.add("Importo");     
         List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
         
         for (int k=0;k<files.length;k++){
@@ -751,7 +759,7 @@ public class InvoiceController {
                 riga.put("Denominazione",denominazione );
                 riga.put("Data",  LocalDateTime.ofInstant(dataFattura.toInstant(), ZoneId.systemDefault()).toLocalDate());
                 riga.put("Numero", numeroFattura);
-                riga.put("Imponibile", importoFattura);
+                riga.put("Importo", importoFattura);
                 righe.add(riga);
                 
             } catch (JAXBException e) {
@@ -775,7 +783,7 @@ public class InvoiceController {
             headers.add("Data Fattura");
             headers.add("P.IVA");
             headers.add("Denominazione");
-            headers.add("Imponibile");
+            headers.add("Importo");
             
             String strData="N/A";
             Integer id = Integer.valueOf(fatturaId);
@@ -808,7 +816,7 @@ public class InvoiceController {
                 riga.put("Data Fattura", formattaData.format(dataFattura));
                 riga.put("P.IVA",partitaIVA );
                 riga.put("Denominazione",denominazione );
-                riga.put("Imponibile", importoFattura);
+                riga.put("Importo", importoFattura);
              
                 model.addAttribute("fattura", riga);
                 model.addAttribute("headers", headers);

@@ -76,7 +76,7 @@
                                             <td th:text="${row.get('Numero')}" />
                                             <td th:text="${row.get('P.IVA')}" />
                                             <td th:text="${row.get('Denominazione')}" />
-                                            <td th:text="${row.get('Imponibile')}" />
+                                            <td th:text="${row.get('Importo')}" />
                                             <td>
                                                 <a  class="btn btn-info btn-fab btn-fab-mini btn-round"   th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " target="_blank" >
                                                     <i class="material-icons">file_download</i>
