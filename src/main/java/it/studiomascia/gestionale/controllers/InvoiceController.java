@@ -205,18 +205,7 @@ public class InvoiceController {
     @GetMapping("/InvoicesIn")
     public String FatturePassiveList(HttpServletRequest request,Model model){
         
-        //INIZIO:: BLOCCO PER LA PAGINAZIONE
-        int page = 0; //default page number is 0 (yes it is weird)
-        int size = MAX_ROWS_TABLE;  
         
-        if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
-            page = Integer.parseInt(request.getParameter("page")) - 1;
-        }
-
-        if (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
-            size = Integer.parseInt(request.getParameter("size"));
-        }
-        //FINE:: BLOCCO PER LA PAGINAZIONE
         List<XmlFatturaBase> listaFatture = XmlFatturaBasePredicate.filterXmlFatturaBase(xmlFatturaBaseRepository.findAll(), XmlFatturaBasePredicate.isPassiva());
      
         // Prepara la Map da aggiungere alla view 
@@ -232,7 +221,6 @@ public class InvoiceController {
 //        headers.add("Saldata");     
  
         List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
-        int conta=1;
         String  strData = null;
         byte[] byteArr;
         try {
@@ -293,7 +281,6 @@ public class InvoiceController {
        
         model.addAttribute("headers", headers);
         model.addAttribute("rows", righe);
-        model.addAttribute("currentPage", page);
 //        model.addAttribute("messaggio", "Ci sono: " + righe.size() +" ");
         return "fatture_passive_lista";
     }
@@ -607,29 +594,17 @@ public class InvoiceController {
     @GetMapping("/InvoicesOut")
     public String FattureAttiveList(HttpServletRequest request,Model model){
         
-        //INIZIO:: BLOCCO PER LA PAGINAZIONE
-        int page = 0; //default page number is 0 (yes it is weird)
-        int size = 100; //default page size is 10
-        
-        if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
-            page = Integer.parseInt(request.getParameter("page")) - 1;
-        }
-
-        if (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
-            size = Integer.parseInt(request.getParameter("size"));
-        }
-        //FINE:: BLOCCO PER LA PAGINAZIONE
         List<XmlFatturaBase> listaFatture = XmlFatturaBasePredicate.filterXmlFatturaBase(xmlFatturaBaseRepository.findAll(), XmlFatturaBasePredicate.isAttiva());
-        
-
 
         // Prepara la Map da aggiungere alla view 
         List<String> headers = new  ArrayList<>();
         headers.add("Id");
-        headers.add("P.IVA");
-        headers.add("Data");
-        headers.add("Denominazione");
         headers.add("Numero");
+        headers.add("Data");
+        headers.add("P.IVA");
+        headers.add("Denominazione");
+        headers.add("Causale");
+//        headers.add("Descrizione");
         headers.add("Imponibile");     
        
         List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
@@ -651,8 +626,25 @@ public class InvoiceController {
                 Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
                 String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
                 String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
-                String partitaIVA =  item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice();
+                
+                String partitaIVA =  "N/A";
+                if (item.getFatturaElettronicaHeader().getCessionarioCommittente().getDatiAnagrafici().getIdFiscaleIVA()!=null)
+                {
+                    partitaIVA= item.getFatturaElettronicaHeader().getCessionarioCommittente().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice();
+                }else{
+                    partitaIVA = item.getFatturaElettronicaHeader().getCessionarioCommittente().getDatiAnagrafici().getCodiceFiscale();
+                }
+                
+                String causale = "N/A";
+                String descrizione = "N/A";
+                if (item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getCausale()!=null ){
+                   causale= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getCausale().get(0).toString();
+                   descrizione= item.getFatturaElettronicaBody().get(0).getDatiBeniServizi().getDettaglioLinee().get(0).getDescrizione();
+                }
+        
                 String denominazione = item.getFatturaElettronicaHeader().getCessionarioCommittente().getDatiAnagrafici().getAnagrafica().getDenominazione();
+                
+                
             
                 Map<String, Object> riga = new HashMap<String, Object>();
                 riga.put("Id", xmlFattura.getId());   
@@ -661,6 +653,9 @@ public class InvoiceController {
                 riga.put("Data",  LocalDateTime.ofInstant(xmlFattura.getDataRegistrazione().toInstant(), ZoneId.systemDefault()).toLocalDate());
                 riga.put("Numero", numeroFattura);
                 riga.put("Imponibile", importoFattura);
+                riga.put("Causale", causale);
+                riga.put("Descrizione", descrizione);
+                riga.put("Saldata", xmlFattura.isSaldata());
                 righe.add(riga);
                                 
         } catch (JAXBException e) {
@@ -673,7 +668,6 @@ public class InvoiceController {
        
        model.addAttribute("headers", headers);
         model.addAttribute("rows", righe);
-        model.addAttribute("currentPage", page);
         model.addAttribute("messaggio", "Ci sono: " + righe.size() +" ");
     return "fatture_attive_lista";
       
@@ -691,9 +685,9 @@ public class InvoiceController {
         List<String> headers = new  ArrayList<>();
         headers.add("Id");
         headers.add("P.IVA");
-        headers.add("Data");
         headers.add("Denominazione");
         headers.add("Numero");
+        headers.add("Data");
         headers.add("Imponibile");     
         List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
         
@@ -752,8 +746,83 @@ public class InvoiceController {
         } //end for
         return "fatture_attive_caricate";
     }
+     
+    @GetMapping("/InvoiceOut/{fatturaId}/Payments")
+    public String PagamentiFatturaOut(Model model, @PathVariable String fatturaId){
+        List<String> headers = new  ArrayList<>();
+            headers.add("Id");
+            headers.add("N. Fattura");
+            headers.add("Data Fattura");
+            headers.add("P.IVA");
+            headers.add("Denominazione");
+            headers.add("Imponibile");
+            
+            String strData="N/A";
+            Integer id = Integer.valueOf(fatturaId);
+            XmlFatturaBase xmlFattura = xmlFatturaBaseRepository.findById(id).get();
+            try {
+                byte[] byteArr = xmlFattura.getXmlData().getBytes("UTF-8");
+                StringWriter sw = new StringWriter();
+                JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
+                // Unmarshaller serve per convertire il file in un oggetto
+                Unmarshaller jaxbUnMarshaller = context.createUnmarshaller();
+                // Marshaller serve per convertire l'oggetto ottenuto dal file in una stringa xml
+                Marshaller jaxbMarshaller = context.createMarshaller();
+                jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+                JAXBElement<FatturaElettronicaType> root =jaxbUnMarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(byteArr)), FatturaElettronicaType.class);
+                FatturaElettronicaType item = root.getValue();
+                jaxbMarshaller.marshal(root, sw);
 
-  
+                Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
+                String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
+                String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
+                String partitaIVA =  item.getFatturaElettronicaHeader().getCessionarioCommittente().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice();
+                String denominazione = item.getFatturaElettronicaHeader().getCessionarioCommittente().getDatiAnagrafici().getAnagrafica().getDenominazione();
+        
+                
+                
+                
+                Map<String, Object> riga = new HashMap<String, Object>();
+                riga.put("Id", xmlFattura.getId());   
+                riga.put("N. Fattura", numeroFattura);
+                riga.put("Data Fattura", formattaData.format(dataFattura));
+                riga.put("P.IVA",partitaIVA );
+                riga.put("Denominazione",denominazione );
+                riga.put("Imponibile", importoFattura);
+             
+                model.addAttribute("fattura", riga);
+                model.addAttribute("headers", headers);
+ 
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }     
+            
+        Set<Pagamento> listapagamenti= xmlFattura.getPagamenti();
+        
+        List<DBFile> listaFile = new ArrayList<DBFile>();
+        for (Pagamento x : listapagamenti){
+//            List<DBFile> files = dbFileRepository.findAll();
+//            int k = files.size();
+//            for (DBFile f:  x.getFilesPagamenti())
+//            {
+//                listaFile.add(f);
+//            }
+            listaFile.addAll(x.getFilesPagamenti());
+        	
+        }
+        
+        List lista = new ArrayList(listapagamenti);
+        model.addAttribute("listafiles", listaFile);
+        model.addAttribute("listapagamenti", lista);
+        return "lista_pagamenti_fattura_out";
+    }
+    
+   
+    
+    /* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */ 
+   
     
    
 }
