@@ -57,6 +57,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.exact;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -285,6 +288,11 @@ public class InvoiceController {
         return "fatture_passive_lista";
     }
    
+    public List<XmlFatturaBase> findXmlFatturaBase(XmlFatturaBase probe) {
+        return xmlFatturaBaseRepository.findAll(Example.of(probe));
+    }
+    
+    
     @GetMapping("/InvoicesIn/New")
     public String nuovaFatturaIn() {
         return "fatture_passive_new";
@@ -293,7 +301,7 @@ public class InvoiceController {
     
     @PostMapping("/InvoicesIn/New")
     public String nuovaFatturaIn(@RequestParam("files") MultipartFile[] files, ModelMap modelMap) {            
-        List<FatturaElettronicaType> lista = new ArrayList<FatturaElettronicaType>();
+        List<XmlFatturaBase> listaEsistenti =xmlFatturaBaseRepository.findAll();
         List<String> headers = new  ArrayList<>();
         headers.add("Id");
         headers.add("P.IVA");
@@ -305,7 +313,7 @@ public class InvoiceController {
         
         for (int k=0;k<files.length;k++){
             try {
-                System.out.println("Carico files[k].getOriginalFilename()= " + files[k].getOriginalFilename());
+                System.out.println("Carico file= " + files[k].getOriginalFilename());
                 byte[] byteArr = files[k].getBytes();
                 if (files[k].getOriginalFilename().endsWith("p7m")) {
                     byteArr=getData(files[k].getBytes());
@@ -320,58 +328,67 @@ public class InvoiceController {
                 JAXBElement<FatturaElettronicaType> root =jaxbUnMarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(byteArr)), FatturaElettronicaType.class);
                 FatturaElettronicaType item = root.getValue();
                 jaxbMarshaller.marshal(root, sw);
+                
+                // Controllo se il file esiste gia nella tabella, se esiste skip
+                String comparaStringa = sw.toString();
+                int i = 0;
+                Boolean trovato =false;
+		while (i < listaEsistenti.size() && !trovato) {
+			if (listaEsistenti.get(i).getXmlData().equals(comparaStringa)) trovato =true;
+			i++;
+		}
+                
+                if (!trovato){
+                    Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
+                    String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
+                    String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
+                    String partitaIVA = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice().toString();
+                    String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
 
-                Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
-                String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
-                String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
-                String partitaIVA = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice().toString();
-                String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
-        
-                XmlFatturaBase xmlFattura = new XmlFatturaBase();
-                //xmlFattura.setDataRegistrazione(dataFattura);
-                //xmlFattura.setNumeroRegistrazione(numeroFattura);
-                xmlFattura.setDataInserimento(new Date());
-                xmlFattura.setFileName(files[k].getOriginalFilename());
-                xmlFattura.setCreatore(SecurityContextHolder.getContext().getAuthentication().getName());
-                xmlFattura.setXmlData(sw.toString());
-                if(item.getFatturaElettronicaBody().get(0).getDatiPagamento().size()>0){
-                List<DettaglioPagamentoType>  dettaglioPagamento =  item.getFatturaElettronicaBody().get(0).getDatiPagamento().get(0).getDettaglioPagamento();
-                if (Utility.CheckInvoicePayed(dettaglioPagamento)) {
-                    Set<Pagamento> setp = new HashSet<Pagamento>();
 
-                    Pagamento p = new Pagamento();
-                    p.setDataVersamento(dataFattura);
-                    p.setImportoVersamento(item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().intValue());
-                    p.setNote("pagamento impostato automaticamente");
-                    p.setCreatore("System");
-                    p.setSaldata(true);
-                    setp.add(p);
-                    xmlFattura.setPagamenti(setp);
+
+                    XmlFatturaBase xmlFattura = new XmlFatturaBase();
+                    xmlFattura.setDataInserimento(new Date());
+                    xmlFattura.setFileName(files[k].getOriginalFilename());
+                    xmlFattura.setCreatore(SecurityContextHolder.getContext().getAuthentication().getName());
+                    xmlFattura.setXmlData(sw.toString());
+                    if(item.getFatturaElettronicaBody().get(0).getDatiPagamento().size()>0){
+                        List<DettaglioPagamentoType>  dettaglioPagamento =  item.getFatturaElettronicaBody().get(0).getDatiPagamento().get(0).getDettaglioPagamento();
+                        if (Utility.CheckInvoicePayed(dettaglioPagamento)){
+                                Set<Pagamento> setp = new HashSet<Pagamento>();
+                                Pagamento p = new Pagamento();
+                                p.setDataVersamento(dataFattura);
+                                p.setImportoVersamento(item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().intValue());
+                                p.setNote("pagamento impostato automaticamente");
+                                p.setCreatore("System");
+                                p.setSaldata(true);
+                                setp.add(p);
+                                xmlFattura.setPagamenti(setp);
+                        }
+                    }
+
+                    // Perpara la Map da aggiungere alla view 
+                    Map<String, Object> riga = new HashMap<String, Object>(4);
+                    riga.put("Id", xmlFattura.getId());   
+                    riga.put("P.IVA",partitaIVA );
+                    riga.put("Denominazione",denominazione );
+                    riga.put("Data",  LocalDateTime.ofInstant(dataFattura.toInstant(), ZoneId.systemDefault()).toLocalDate());
+                    riga.put("Numero", numeroFattura);
+                    riga.put("Imponibile", importoFattura);
+                    righe.add(riga);
+                }else
+                {
+                    //
+                    System.out.println("       Skip fattura esistente - file = " + files[k].getOriginalFilename());
                 }
-            }
-                xmlFattura = xmlFatturaBaseRepository.save(xmlFattura);
-                xmlFatturaBaseRepository.flush();
-                System.out.println("OK");
-              
-                
-                // Perpara la Map da aggiungere alla view 
-                Map<String, Object> riga = new HashMap<String, Object>(4);
-                riga.put("Id", xmlFattura.getId());   
-                riga.put("P.IVA",partitaIVA );
-                riga.put("Denominazione",denominazione );
-                riga.put("Data",  LocalDateTime.ofInstant(dataFattura.toInstant(), ZoneId.systemDefault()).toLocalDate());
-                riga.put("Numero", numeroFattura);
-                riga.put("Imponibile", importoFattura);
-                righe.add(riga);
-                
             } catch (JAXBException e) {
-                System.out.println("ERRORE 1) CARICAMENTO FILE");
+                System.out.println("ERRORE CARICAMENTO FILE - JAXBException)");
                 //e.printStackTrace();
             } catch (IOException e) {
-                System.out.println("ERRORE 2) CARICAMENTO FILE");
+                System.out.println("ERRORE CARICAMENTO FILE - IOException");
                 //e.printStackTrace();
             } catch (Exception e) {
-                System.out.println("ERRORE 3) CARICAMENTO FILE");
+                System.out.println("ERRORE CARICAMENTO FILE - Exception");
                 //e.printStackTrace();
             }
             modelMap.addAttribute("headers", headers);
