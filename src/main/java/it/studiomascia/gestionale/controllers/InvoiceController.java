@@ -50,6 +50,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.xmlgraphics.util.MimeConstants;
@@ -75,9 +76,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+ 
 
 /**
  *
+ * 
  * @author Admin
  */
 @Controller
@@ -622,8 +625,8 @@ public class InvoiceController {
     @GetMapping("/InvoicesOut")
     public String FattureAttiveList(HttpServletRequest request,Model model){
         
-        List<XmlFatturaBase> listaFatture = XmlFatturaBasePredicate.filterXmlFatturaBase(xmlFatturaBaseRepository.findAll(), XmlFatturaBasePredicate.isAttiva());
-
+//        List<XmlFatturaBase> listaFatture = XmlFatturaBasePredicate.filterXmlFatturaBase(xmlFatturaBaseRepository.findAllByOrderByIdDesc(), XmlFatturaBasePredicate.isAttiva());
+        List<XmlFatturaBase>  listaFatture=            xmlFatturaBaseRepository.findByAttivaTrue();
         // Prepara la Map da aggiungere alla view 
         List<String> headers = new  ArrayList<>();
         headers.add("Id");
@@ -652,8 +655,14 @@ public class InvoiceController {
                 jaxbMarshaller.marshal(root, sw);
 
                 Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
+                String strData = (item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData() == null) ? "N/A" : formattaData.format(item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime());
+
                 String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
-                String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
+                String importoFattura= "N/A";
+                if (item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento() != null){
+//                    importoFattura=  NumberFormat.getCurrencyInstance().format(item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento());
+                    importoFattura=  Utility.ConvertBigDecimaltoString(item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento());
+                }
                 
                 String partitaIVA =  "N/A";
                 if (item.getFatturaElettronicaHeader().getCessionarioCommittente().getDatiAnagrafici().getIdFiscaleIVA()!=null)
@@ -678,8 +687,9 @@ public class InvoiceController {
                 riga.put("Id", xmlFattura.getId());   
                 riga.put("P.IVA",partitaIVA );
                 riga.put("Denominazione",denominazione );
-                riga.put("Data",  LocalDateTime.ofInstant(xmlFattura.getDataRegistrazione().toInstant(), ZoneId.systemDefault()).toLocalDate());
-                riga.put("Numero", numeroFattura);
+//                riga.put("Data",  LocalDateTime.ofInstant(xmlFattura.getDataRegistrazione().toInstant(), ZoneId.systemDefault()).toLocalDate());
+                riga.put("Data",  strData);
+                riga.put("Numero", xmlFattura.getNumeroRegistrazione());
                 riga.put("Importo", importoFattura);
                 riga.put("Causale", causale);
                 riga.put("Descrizione", descrizione);

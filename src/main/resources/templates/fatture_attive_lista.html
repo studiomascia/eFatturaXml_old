@@ -25,6 +25,9 @@
                 "paging": false,
                 "ordering":true
             } );
+  
+            $('[data-toggle="tooltip"]').tooltip();
+
         } );
     </script>
 </head>
@@ -44,7 +47,7 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="tabella" class="table display compact">
+                                <table id="tabella" data-order='[[ 1, "desc" ]]' class="table  compact table-hover">
                                     <thead>
                                         <tr>
                                             <th th:each="header: ${headers}"  th:text="${header}" />
@@ -59,8 +62,8 @@
                                             <td th:text="${row.get('Numero')}" />
                                             <td th:text="${row.get('Data')}" />
                                             <td th:text="${row.get('P.IVA')}" />
-                                            <td th:text="${row.get('Denominazione')}" />
-                                            <td th:text="${row.get('Causale')}" data-container="body"  data-toggle="tooltip" data-placement="bottom" title="" />
+                                            <td th:text="${row.get('Denominazione')}"  />
+                                            <td th:text="${row.get('Causale')}" th:attr="title=${row.get('Descrizione')}"  data-toggle="tooltip" data-placement="bottom" data-container="body" />
                                             
                          
                                             

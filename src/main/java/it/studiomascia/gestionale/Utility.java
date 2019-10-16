@@ -7,7 +7,11 @@ package it.studiomascia.gestionale;
 
 import it.studiomascia.gestionale.xml.DettaglioPagamentoType;
 import it.studiomascia.gestionale.xml.ModalitaPagamentoType;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -37,6 +41,18 @@ public class Utility {
                                 ( y == ModalitaPagamentoType.MP_17 ) 
             ))  ret = true;
          }
+        return ret;
+    }
+    
+    public static String ConvertBigDecimaltoString(BigDecimal numero){
+        
+        String ret="";
+        NumberFormat numberFormat = NumberFormat.getInstance(Locale.ITALY);
+        numberFormat.setMinimumFractionDigits(2);
+        try{
+            ret = numberFormat.format(numero);
+        }catch (Exception e){
+        }
         return ret;
     }
 }

@@ -7,6 +7,7 @@ package it.studiomascia.gestionale.repository;
 
 import it.studiomascia.gestionale.models.XmlFatturaBase;
 import java.util.List;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -21,5 +22,7 @@ public interface XmlFatturaBaseRepository extends JpaRepository<XmlFatturaBase, 
     List<XmlFatturaBase> findPassiveNotRegistered();
     List<XmlFatturaBase> findAllAttive();
     List<XmlFatturaBase> findAttiveNotRegistered();
+    List<XmlFatturaBase> findAllByOrderByIdDesc();
+    List<XmlFatturaBase> findByAttivaTrue();
 
 }
