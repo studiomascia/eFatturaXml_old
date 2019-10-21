@@ -109,8 +109,6 @@ public class FileController {
         return null;
     }
     
-   
-    
     private static <ProcessingInstructionImpl> Document addingStylesheet(Document doc) 
             throws TransformerConfigurationException, ParserConfigurationException 
     {
@@ -120,10 +118,6 @@ public class FileController {
         //trans.transform(new DOMSource(doc), new StreamResult(new OutputStreamWriter(bout, "utf-8")));
         return doc;
     }
-    
-     
-    
-    
     
     @Autowired
     private DBFileStorageService DBFileStorageService;
@@ -161,18 +155,7 @@ public class FileController {
         model.addAttribute("messaggio", "messaggio da mostrare");
     return "lista_files";
     }
-    
-   
-    
-  
-//    var persons = List.of(p1, p2, p3, p4, p5);
-//
-//        Predicate<Person> byAge = person -> person.getAge() > 30;
-//
-//        var result = persons.stream().filter(byAge)
-//                .collect(Collectors.toList());
-    
-    
+        
     @GetMapping("/downloadFattura/{fileId}")
     public ResponseEntity<Resource> downloadFattura(@PathVariable String fileId) {
         // Load file from database
@@ -197,32 +180,8 @@ public class FileController {
     
     }
     
-    
-//    @GetMapping("/downloadFatturaPDF/{fileId}")
-//    public ResponseEntity<Resource> downloadFatturaPDF(@PathVariable String fileId) {
-//        // Load file from database
-//        Integer id = Integer.valueOf(fileId);
-//        XmlFatturaBase item = xmlFatturaBaseRepository.findById(id).get();
-//    
-//        Document doc2 = convertStringToDocument(item.getXmlData());
-//        Document doc1 = null;
-//        try {
-//            doc1 = addingStylesheet(doc2);
-//        } catch (ParserConfigurationException e) {
-//            e.printStackTrace();
-//        } catch (Exception ex)
-//        {
-//            ex.printStackTrace();
-//        }
-//        
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.APPLICATION_PDF)
-//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + item.getFileName() + "\"")
-//                .body(new ByteArrayResource(convertToPdf(doc1)));
-//    
-//    }
-//     
- @GetMapping("/uploadConfigFile")
+       
+    @GetMapping("/uploadConfigFile")
     public String uploadConfigFile() {
         return "upload_config_file";
     }

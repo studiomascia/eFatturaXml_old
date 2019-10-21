@@ -18,11 +18,11 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface XmlFatturaBaseRepository extends JpaRepository<XmlFatturaBase, Integer> ,JpaSpecificationExecutor<XmlFatturaBase>  {
-    List<XmlFatturaBase> findAllPassive();
+//    List<XmlFatturaBase> findAllPassive();
     List<XmlFatturaBase> findPassiveNotRegistered();
-    List<XmlFatturaBase> findAllAttive();
+//    List<XmlFatturaBase> findAllAttive();
     List<XmlFatturaBase> findAttiveNotRegistered();
     List<XmlFatturaBase> findAllByOrderByIdDesc();
     List<XmlFatturaBase> findByAttivaTrue();
-
+    List<XmlFatturaBase> findByAttivaFalse();
 }

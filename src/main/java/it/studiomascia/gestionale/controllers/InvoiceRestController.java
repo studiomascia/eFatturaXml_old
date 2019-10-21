@@ -5,12 +5,15 @@
  */
 package it.studiomascia.gestionale.controllers;
 
+import it.studiomascia.gestionale.Utility;
 import it.studiomascia.gestionale.models.FatturaVirtuale;
 import it.studiomascia.gestionale.models.XmlFatturaBase;
 import it.studiomascia.gestionale.models.XmlFatturaBasePredicate;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
+import it.studiomascia.gestionale.service.XmlFatturaBaseService;
 import it.studiomascia.gestionale.xml.FatturaElettronicaType;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +25,11 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +43,8 @@ public class InvoiceRestController {
 
 @Autowired
 private XmlFatturaBaseRepository xmlFatturaBaseRepository;
+@Autowired
+private XmlFatturaBaseService xmlFatturaBaseService;
 
 @RequestMapping(path="/getFattureIn", method=RequestMethod.GET)
 public List<FatturaVirtuale> FatturePassiveList(){
@@ -90,5 +100,19 @@ public List<FatturaVirtuale> FatturePassiveList(){
         return listaFattureVirtuali;
     }
   
+
+@RequestMapping(path="/ReportFattureIn", method=RequestMethod.GET)
+    public ResponseEntity<Resource> downloadReportFattureIn(String fileName) throws IOException {
+        String filename= "report.xlsx";
+        
+        
+        ByteArrayResource resource = Utility.listToExcel( filename,xmlFatturaBaseService.getHeaders(),xmlFatturaBaseService.getRows());
+
+return ResponseEntity.ok()
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+        .contentLength(resource.contentLength())
+        .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+        .body(resource);
+}
  
 }

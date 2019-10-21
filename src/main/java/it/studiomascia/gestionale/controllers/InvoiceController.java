@@ -17,6 +17,7 @@ import it.studiomascia.gestionale.repository.ControlloFatturaRepository;
 import it.studiomascia.gestionale.repository.PagamentoRepository;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
 import it.studiomascia.gestionale.service.DBFileStorageService;
+import it.studiomascia.gestionale.service.XmlFatturaBaseService;
 import it.studiomascia.gestionale.xml.AnagraficaType;
 import it.studiomascia.gestionale.xml.DettaglioPagamentoType;
 import it.studiomascia.gestionale.xml.FatturaElettronicaType;
@@ -50,7 +51,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.xmlgraphics.util.MimeConstants;
@@ -91,8 +91,12 @@ public class InvoiceController {
     private int MAX_ROWS_TABLE;
     
     
+    
     @Autowired
     private XmlFatturaBaseRepository xmlFatturaBaseRepository;
+    
+    @Autowired
+    private XmlFatturaBaseService xmlFatturaBaseService;
     
     @Autowired
     private PagamentoRepository pagamentoRepository;
@@ -136,8 +140,7 @@ public class InvoiceController {
     
     /* METODO CHE PERMETTE DI VISUALIZZARE LA FATTURA SIA IN CHE OUT */
     @GetMapping("/Invoice/Download/{fileId}")
-    public ModelAndView downloadFattura(HttpServletRequest request,
-        HttpServletResponse response, @PathVariable String fileId) throws IOException {
+    public ModelAndView downloadFattura(HttpServletRequest request, HttpServletResponse response, @PathVariable String fileId) throws IOException {
         
         // Load file from database
         Integer id = Integer.valueOf(fileId); 
@@ -173,22 +176,11 @@ public class InvoiceController {
 
             //Start the transformation and rendering process
             transformer.transform(src, res);
-
-//            Prepare response
-//            response.setContentType("application/pdf");
-//            response.setContentLength(out.size()); 
-//
-//            //Send content to Browser
-//            response.getOutputStream().write(out.toByteArray());
-//            response.getOutputStream().flush();
    
             return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"test.pdf\"")
                 .body(new ByteArrayResource(out.toByteArray()));
-    
-                    
-                    
                     
         }catch(Exception e){
             e.printStackTrace();
@@ -211,90 +203,15 @@ public class InvoiceController {
     @GetMapping("/InvoicesIn")
     public String FatturePassiveList(HttpServletRequest request,Model model){
         
-        
-        List<XmlFatturaBase> listaFatture = XmlFatturaBasePredicate.filterXmlFatturaBase(xmlFatturaBaseRepository.findAll(), XmlFatturaBasePredicate.isPassiva());
-     
-        // Prepara la Map da aggiungere alla view 
-        List<String> headers = new  ArrayList<>();
-        headers.add("Id");
-        headers.add("Data Reg.");
-        headers.add("N.Reg.");
-        headers.add("Data");
-        headers.add("Numero");
-        headers.add("P.IVA");
-        headers.add("Denominazione");
-        headers.add("Importo");     
-//        headers.add("Saldata");     
- 
-        List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
-        String  strData = null;
-        byte[] byteArr;
-        try {
-            StringWriter sw = new StringWriter();
-            JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
-            // Unmarshaller serve per convertire il file in un oggetto
-            Unmarshaller jaxbUnMarshaller = context.createUnmarshaller();
-            // Marshaller serve per convertire l'oggetto ottenuto dal file in una stringa xml
-            Marshaller jaxbMarshaller = context.createMarshaller();
-            jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-       
-            for (XmlFatturaBase xmlFattura:listaFatture) {
-                //System.out.println("conta= " + conta++);
-                byteArr = xmlFattura.getXmlData().getBytes("UTF-8");
-                strData = "";
-                sw = new StringWriter();
-            
-                JAXBElement<FatturaElettronicaType> root =jaxbUnMarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(byteArr)), FatturaElettronicaType.class);
-                FatturaElettronicaType item = root.getValue();
-                jaxbMarshaller.marshal(root, sw);
-                Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
-                String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
-                String partitaIVA = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice().toString();
-                String denominazione="";
-                if (item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione()!=null)
-                {
-                    denominazione=item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
-                }else{
-                    AnagraficaType  anagrafica = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica();
-                    if (anagrafica.getTitolo()!=null)  denominazione+= anagrafica.getTitolo() +" ";
-                    if (anagrafica.getNome()!=null)  denominazione+= anagrafica.getNome() +" ";
-                    if (anagrafica.getCognome()!=null)  denominazione+= anagrafica.getCognome() +" ";
-                }
-                String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
-             
-                strData = ((xmlFattura.getDataRegistrazione() == null)) ? "N/A" : formattaData.format(xmlFattura.getDataRegistrazione());
+        model.addAttribute("headers", xmlFatturaBaseService.getHeaders());
+        model.addAttribute("rows", xmlFatturaBaseService.getRows());
 
-                Map<String, Object> riga = new HashMap<String, Object>();
-                riga.put("Id", xmlFattura.getId());   
-                riga.put("Data Reg.",  strData);
-                riga.put("N.Reg.", xmlFattura.getNumeroRegistrazione());
-//                riga.put("Data",  formattaData.format(dataFattura));
-                riga.put("Data",  formattaData.format(dataFattura));
-                riga.put("Numero", numeroFattura);
-                riga.put("P.IVA",partitaIVA );
-                riga.put("Denominazione",denominazione );
-                riga.put("Importo", importoFattura);
-                riga.put("Saldata", xmlFattura.isSaldata());
-                riga.put("Controllata", xmlFattura.isControllata());
-                righe.add(riga); 
-            }
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } 
-
-       
-        model.addAttribute("headers", headers);
-        model.addAttribute("rows", righe);
-//        model.addAttribute("messaggio", "Ci sono: " + righe.size() +" ");
         return "fatture_passive_lista";
     }
-   
+    
     public List<XmlFatturaBase> findXmlFatturaBase(XmlFatturaBase probe) {
         return xmlFatturaBaseRepository.findAll(Example.of(probe));
     }
-    
     
     @GetMapping("/InvoicesIn/New")
     public String nuovaFatturaIn() {
@@ -577,7 +494,14 @@ public class InvoiceController {
 
                 Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
                 String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
-                String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
+//                String importoFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
+                 String importoFattura= "0";
+                    // Alcune fatture con importo 0 hanno un valore null 
+                    if (item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento() !=null){
+                        importoFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
+                    }
+                
+                
                 String partitaIVA =  item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice();
                 String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
             
@@ -615,18 +539,13 @@ public class InvoiceController {
         return "lista_controlli_fattura";
     }
     
-   
-    
-    
-    
-    
     /* METODI PER LE FATTURE OUT */
     
     @GetMapping("/InvoicesOut")
     public String FattureAttiveList(HttpServletRequest request,Model model){
         
 //        List<XmlFatturaBase> listaFatture = XmlFatturaBasePredicate.filterXmlFatturaBase(xmlFatturaBaseRepository.findAllByOrderByIdDesc(), XmlFatturaBasePredicate.isAttiva());
-        List<XmlFatturaBase>  listaFatture=            xmlFatturaBaseRepository.findByAttivaTrue();
+        List<XmlFatturaBase>  listaFatture= xmlFatturaBaseRepository.findByAttivaTrue();
         // Prepara la Map da aggiungere alla view 
         List<String> headers = new  ArrayList<>();
         headers.add("Id");

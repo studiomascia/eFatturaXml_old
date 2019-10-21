@@ -43,7 +43,8 @@ public class DBFileStorageService {
             throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
         }
     }
-public DBFile storeFile(MultipartFile file, String descrizione) {
+
+    public DBFile storeFile(MultipartFile file, String descrizione) {
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 

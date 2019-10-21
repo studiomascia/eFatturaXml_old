@@ -31,8 +31,8 @@ public class UserDashboardController {
     public String Dashboard(Model model){
         
         model.addAttribute("numUtenti", utenti_repository.findAll().size());
-        model.addAttribute("nFatturePassive", xmlfattura_repository.findAllPassive().size());
-        model.addAttribute("nFattureAttive", xmlfattura_repository.findAllAttive().size());  
+        model.addAttribute("nFatturePassive", xmlfattura_repository.findByAttivaFalse().size());
+        model.addAttribute("nFattureAttive", xmlfattura_repository.findByAttivaTrue().size());  
 
         model.addAttribute("nFatturePassiveNR", xmlfattura_repository.findPassiveNotRegistered().size());
         model.addAttribute("nFattureAttiveNR", xmlfattura_repository.findAttiveNotRegistered().size());

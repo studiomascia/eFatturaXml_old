@@ -30,10 +30,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Entity
 @Table(name = "xmlfatturabase")
 @NamedQueries({
-    @NamedQuery(name = "XmlFatturaBase.findAllPassive", query = "SELECT x FROM XmlFatturaBase x WHERE x.attiva IS FALSE"),
+//    @NamedQuery(name = "XmlFatturaBase.findAllPassive", query = "SELECT x FROM XmlFatturaBase x WHERE x.attiva IS FALSE"),
     @NamedQuery(name = "XmlFatturaBase.findPassiveNotRegistered", query = "SELECT x FROM XmlFatturaBase x WHERE (x.attiva IS FALSE) AND (x.numeroRegistrazione IS NULL) "),
-    @NamedQuery(name = "XmlFatturaBase.findAttiveNotRegistered", query = "SELECT x FROM XmlFatturaBase x WHERE (x.attiva IS TRUE) AND (x.numeroRegistrazione IS NULL) "),
-    @NamedQuery(name = "XmlFatturaBase.findAllAttive", query = "SELECT x FROM XmlFatturaBase x WHERE x.attiva IS TRUE")
+    @NamedQuery(name = "XmlFatturaBase.findAttiveNotRegistered", query = "SELECT x FROM XmlFatturaBase x WHERE (x.attiva IS TRUE) AND (x.numeroRegistrazione IS NULL) ")
+//    @NamedQuery(name = "XmlFatturaBase.findAllAttive", query = "SELECT x FROM XmlFatturaBase x WHERE x.attiva IS TRUE")
 })
 
 public class XmlFatturaBase {

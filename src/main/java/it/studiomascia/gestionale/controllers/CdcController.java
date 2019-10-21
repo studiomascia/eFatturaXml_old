@@ -24,9 +24,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @Controller
 public class CdcController {
-    
-    @Autowired
-    private XmlFatturaBaseRepository xmlFatturaBaseRepository;
+
     
     @Autowired
     private CdcRepository cdcRepository;
