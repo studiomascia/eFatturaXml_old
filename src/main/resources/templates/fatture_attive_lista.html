@@ -17,8 +17,14 @@
     <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
         <title>Home</title>
-             <style>body { background: white;} </style>
-
+             <style>
+                 body { background: white;} 
+                .tooltip-inner {background-color: #c0c0c0; min-width: 300px }
+                .tooltip.bs-tooltip-right .arrow:before { border-right-color: #c0c0c0 !important;}
+                .tooltip.bs-tooltip-left .arrow:before {border-left-color: #c0c0c0 !important;}
+                .tooltip.bs-tooltip-bottom .arrow:before {border-bottom-color: #c0c0c0 !important;}
+                .tooltip.bs-tooltip-top .arrow:before {border-top-color: #c0c0c0 !important;}
+             </style>
     <script>
         $(document).ready( function () {
             $('#tabella').DataTable( {

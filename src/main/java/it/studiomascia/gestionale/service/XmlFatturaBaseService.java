@@ -24,6 +24,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service;
  * @author Admin
  */
 @Service
+@Slf4j
 public class XmlFatturaBaseService {
     
     @Autowired
@@ -80,7 +82,8 @@ public class XmlFatturaBaseService {
             
             for (XmlFatturaBase xmlFattura:listaFatture) {
 //                listaFatture.parallelStream().forEach(xmlFattura ->{ 
-                System.out.println("conta= " + conta++);
+                log.info("Conteggio fatture elaborate= " + conta++);
+
                 byteArr = xmlFattura.getXmlData().getBytes("UTF-8");
                 strData = "";
                 sw = new StringWriter();
