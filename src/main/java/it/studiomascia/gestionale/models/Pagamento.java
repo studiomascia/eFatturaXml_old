@@ -5,6 +5,7 @@
  */
 package it.studiomascia.gestionale.models;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +38,7 @@ public class Pagamento {
     private Date dataVersamento;
     
     @Column(name = "importo_versamento")
-    private  Integer importoVersamento;
+    private  BigDecimal importoVersamento;
     
     @Column(name = "note")
     private  String note;
@@ -75,14 +76,14 @@ public class Pagamento {
     /**
      * @return the importoVersamento
      */
-    public Integer getImportoVersamento() {
+    public BigDecimal getImportoVersamento() {
         return importoVersamento;
     }
 
     /**
      * @param importoVersamento the importoVersamento to set
      */
-    public void setImportoVersamento(Integer importoVersamento) {
+    public void setImportoVersamento(BigDecimal importoVersamento) {
         this.importoVersamento = importoVersamento;
     }
 

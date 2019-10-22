@@ -284,7 +284,7 @@ public class InvoiceController {
                                 Set<Pagamento> setp = new HashSet<Pagamento>();
                                 Pagamento p = new Pagamento();
                                 p.setDataVersamento(dataFattura);
-                                p.setImportoVersamento(item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().intValue());
+                                p.setImportoVersamento(item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento());
                                 p.setNote("pagamento impostato automaticamente");
                                 p.setCreatore("System");
                                 p.setSaldata(true);

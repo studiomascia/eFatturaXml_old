@@ -82,7 +82,7 @@ public class XmlFatturaBaseService {
             
             for (XmlFatturaBase xmlFattura:listaFatture) {
 //                listaFatture.parallelStream().forEach(xmlFattura ->{ 
-                log.info("Conteggio fatture elaborate= " + conta++);
+                //log.info("Conteggio fatture elaborate= " + conta++);
 
                 byteArr = xmlFattura.getXmlData().getBytes("UTF-8");
                 strData = "";

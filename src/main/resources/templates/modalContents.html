@@ -79,7 +79,16 @@
 </div>
 
 <div th:fragment="paymentInvoice" class="modal-dialog modal-dialog-centered" role="document">
-    <form class="form-horizontal" th:action="@{'/Invoice/'+ ${fattura.id}+ '/ModalPayment/' }"  method="POST" >
+    <script>
+        function Controlla(){
+            alert('Controllo....'+ $('#txtNumero').val()   );
+            if (/^\\d+\\.\\d{2}$/.test($('#amount').val()))             return fal
+            
+            se;
+        }
+    </script>
+    
+    <form class="form-horizontal" th:action="@{'/Invoice/'+ ${fattura.id}+ '/ModalPayment/' }"   method="POST" >
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Inserisci i dati del pagamento:</h5>
@@ -92,8 +101,8 @@
                     <input readonly="true" type="text" class="form-control" name="txtId" id="txtId" th:field="${pagamento.id}">
                 </div>    
                 <div class="form-group">
-                    <label for="txtNumero" class="control-label">Importo versato</label>
-                    <input  type="text" class="form-control" name="txtNumero" id="txtNumero" th:field="${pagamento.importoVersamento}">
+                    <label for="txtNumero" class="control-label">Importo Versato</label>
+                    <input  type="text" pattern="^\d+(\.)\d{2}$"  class="form-control" name="txtNumero" id="txtNumero" th:field="${pagamento.importoVersamento}">
                 </div> 
                 <div class="form-group">
                     <label for="txtDataVersamento" class="control-label">Data Versamento</label>
