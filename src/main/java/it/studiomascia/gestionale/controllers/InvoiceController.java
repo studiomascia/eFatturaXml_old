@@ -186,16 +186,6 @@ public class InvoiceController {
             e.printStackTrace();
             return null;
         }
-    
-        
-        
-        
-        
-        
-        
-        
-        
-        
     }
 
     /* METODI PER LE FATTURE IN */
@@ -549,6 +539,7 @@ public class InvoiceController {
         // Prepara la Map da aggiungere alla view 
         List<String> headers = new  ArrayList<>();
         headers.add("Id");
+        headers.add("TD");
         headers.add("Numero");
         headers.add("Data");
         headers.add("P.IVA");
@@ -603,7 +594,9 @@ public class InvoiceController {
                 
             
                 Map<String, Object> riga = new HashMap<String, Object>();
-                riga.put("Id", xmlFattura.getId());   
+                riga.put("Id", xmlFattura.getId());  
+                riga.put("TD", item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getTipoDocumento().value() );   
+
                 riga.put("P.IVA",partitaIVA );
                 riga.put("Denominazione",denominazione );
 //                riga.put("Data",  LocalDateTime.ofInstant(xmlFattura.getDataRegistrazione().toInstant(), ZoneId.systemDefault()).toLocalDate());

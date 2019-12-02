@@ -50,6 +50,7 @@ public class XmlFatturaBaseService {
         
         List<String> headers = new  ArrayList<>();
         headers.add("Id");
+        headers.add("TD");
         headers.add("Data Reg.");
         headers.add("N.Reg.");
         headers.add("Data");
@@ -119,6 +120,7 @@ public class XmlFatturaBaseService {
 
                 Map<String, Object> riga = new HashMap<String, Object>();
                 riga.put("Id", xmlFattura.getId());   
+                riga.put("TD", item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getTipoDocumento().value() );   
                 riga.put("Data Reg.",  strData);
                 riga.put("N.Reg.", xmlFattura.getNumeroRegistrazione());
 //                riga.put("Data",  formattaData.format(dataFattura));

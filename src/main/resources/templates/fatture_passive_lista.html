@@ -84,6 +84,7 @@
                                         <tr  th:each="row: ${rows}" id="tablerow">
                                             <!--<td th:each="header: ${headers}" th:text="${row.get(header)}" />-->
                                             <td th:text="${row.get('Id')}" />
+                                            <td th:text="${row.get('TD')}" />
                                             <td th:text="${row.get('Data Reg.')}" />
                                             <td th:text="${row.get('N.Reg.')}" />
                                             <td th:text="${row.get('Data')}" />
