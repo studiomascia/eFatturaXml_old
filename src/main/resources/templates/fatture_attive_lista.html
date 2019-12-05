@@ -36,6 +36,8 @@
              </style>
     <script>
         $(document).ready( function () {
+            
+
             $('#tabella').DataTable( {
                 "paging": false,
                 "ordering":true,
@@ -43,10 +45,20 @@
                 buttons: [
                     {
                         extend: 'excelHtml5',
+                        className: "btn-info btn-xs",
                         exportOptions: {columns:  [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ]}
                     },
                     {
+                        extend: 'pdfHtml5',
+                        className: "btn-info btn-xs",
                         exportOptions: {columns:  [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ]}
+                    },
+                    {
+                        text: '+',
+                        className: "btn-info btn-xs",
+                        action: function () {
+                            window.location='/InvoicesOut/New';
+                        }
                     }
                 ]
             } );
@@ -68,7 +80,7 @@
                     <div class="card">
                         <div class="card-header card-header-primary">
                             <h4 class="card-title ">Elenco fatture emesse:</h4>
-                            <p class="card-category"><a class="btn btn-info btn-xs" th:href="@{'/InvoicesOut/New'} " >+</a></p>
+<!--                            <p class="card-category"><a class="btn btn-info btn-xs" th:href="@{'/InvoicesOut/New'} " >+</a></p>-->
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
