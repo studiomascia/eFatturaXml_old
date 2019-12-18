@@ -73,7 +73,23 @@ public class XmlFatturaBase {
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<ControlloFattura> controlli;
     
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<Ddt> ddt;
+    
      
+     /**
+     * @return the Ddt
+     */
+    public Set<Ddt> getDDT() {
+        return ddt;
+    }
+    /**
+     * @param ddt the pagamenti to set
+     */
+    public void setDDT(Set<Ddt> listaDDT) {
+        this.ddt = listaDDT;
+    }
+    
     /**
      * @return the pagamenti
      */

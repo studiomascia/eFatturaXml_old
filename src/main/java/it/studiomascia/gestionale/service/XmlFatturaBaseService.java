@@ -38,10 +38,7 @@ public class XmlFatturaBaseService {
     
     @Autowired
     private XmlFatturaBaseRepository xmlFatturaBaseRepository;
-    
-    @Autowired
-    private XmlFatturaBaseService xmlFatturaBaseService;
-    
+        
      /* INIZIO Metodi comuni per tutti i mapping */
     private SimpleDateFormat formattaData = new SimpleDateFormat("dd-MM-yyyy");
     

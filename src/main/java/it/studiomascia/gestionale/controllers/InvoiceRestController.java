@@ -52,8 +52,7 @@ public class InvoiceRestController {
 private XmlFatturaBaseRepository xmlFatturaBaseRepository;
 @Autowired
 private XmlFatturaBaseService xmlFatturaBaseService;
-@Autowired
-private AnagraficaSocietaRepository  anagraficaSocietaRepository;
+
 
 @RequestMapping(path="/getFattureIn", method=RequestMethod.GET)
 public List<FatturaVirtuale> FatturePassiveList(){
@@ -124,83 +123,5 @@ return ResponseEntity.ok()
         .body(resource);
 }
  
-@RequestMapping(path="/AnagraficaShortList", method=RequestMethod.GET)
-public List<AnagraficaSocieta> AnagraficaShortList(){
-        
-       
-        //FINE:: BLOCCO PER LA PAGINAZIONE
-        List<XmlFatturaBase> listaFatture = XmlFatturaBasePredicate.filterXmlFatturaBase(xmlFatturaBaseRepository.findAll(), XmlFatturaBasePredicate.isPassiva());
-        //List<AnagraficaSocieta> listaAnagrafica = new ArrayList<AnagraficaSocieta>();
-        ArrayList<AnagraficaSocieta> listaAnagrafica = new ArrayList<>();
 
-        String  strData = null;
-        byte[] byteArr;
-        try {
-            StringWriter sw = new StringWriter();
-            JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
-            // Unmarshaller serve per convertire il file in un oggetto
-            Unmarshaller jaxbUnMarshaller = context.createUnmarshaller();
-            // Marshaller serve per convertire l'oggetto ottenuto dal file in una stringa xml
-            Marshaller jaxbMarshaller = context.createMarshaller();
-            jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-       
-            for (XmlFatturaBase xmlFattura:listaFatture) {
-                byteArr = xmlFattura.getXmlData().getBytes("UTF-8");
-                sw = new StringWriter();
-            
-                JAXBElement<FatturaElettronicaType> root =jaxbUnMarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(byteArr)), FatturaElettronicaType.class);
-                FatturaElettronicaType item = root.getValue();
-                jaxbMarshaller.marshal(root, sw);
-
-                
-                String partitaIVA = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice().toString();
-                String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
-                if (item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione()!=null)
-                {
-                    denominazione=item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
-                }else{
-                    AnagraficaType  anagrafica = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica();
-                    if (anagrafica.getTitolo()!=null)  denominazione+= anagrafica.getTitolo() +" ";
-                    if (anagrafica.getNome()!=null)  denominazione+= anagrafica.getNome() +" ";
-                    if (anagrafica.getCognome()!=null)  denominazione+= anagrafica.getCognome() +" ";
-                }
-                
-                
-                String indirizzo = item.getFatturaElettronicaHeader().getCedentePrestatore().getSede().getIndirizzo();
-                String civico = item.getFatturaElettronicaHeader().getCedentePrestatore().getSede().getNumeroCivico();
-                String cap = item.getFatturaElettronicaHeader().getCedentePrestatore().getSede().getCAP();
-                String comune = item.getFatturaElettronicaHeader().getCedentePrestatore().getSede().getComune();
-
-                AnagraficaSocieta riga = new AnagraficaSocieta();
-                riga.setPiva(partitaIVA );
-                riga.setDenominazione(denominazione );
-                riga.seFornitore(true);
-                riga.setIndirizzo(indirizzo +","+ civico+";"+ cap +";"+ comune);
-                listaAnagrafica.add(riga); 
-            }
-            Set<AnagraficaSocieta> newListaAnagrafica = new LinkedHashSet<>(listaAnagrafica);
-            listaAnagrafica.clear();
-            listaAnagrafica.addAll(newListaAnagrafica);
-
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } 
-        return listaAnagrafica;
-    }
-
-    @RequestMapping(path="/AnagraficaUpdateList", method=RequestMethod.GET)
-    public void AnagraficaUpdateList(){
-
-        List<AnagraficaSocieta> lista = AnagraficaShortList();
-        List<AnagraficaSocieta>listaDB = anagraficaSocietaRepository.findAll();
-        
-        for (AnagraficaSocieta var : lista) 
-        { 
-            if (anagraficaSocietaRepository.findByPiva(var.getPiva()) == null )
-            {
-                anagraficaSocietaRepository.save(var);}
-            } 
-    }
 }

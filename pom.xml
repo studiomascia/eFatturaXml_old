@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>it.studiomascia</groupId>
 	<artifactId>gestionale</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2</version>
 	<name>gestionale</name>
 	<description>Gestionale project for Spring Boot</description>
 
