@@ -74,7 +74,8 @@ public class AnagraficaSocietaService {
        return righe;
     }
         
-        
+    
+
         
         
         

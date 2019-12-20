@@ -6,6 +6,8 @@
 package it.studiomascia.gestionale.repository;
 
 import it.studiomascia.gestionale.models.AnagraficaSocieta;
+import it.studiomascia.gestionale.models.Ddt;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +19,6 @@ import org.springframework.stereotype.Repository;
 
 public interface AnagraficaSocietaRepository extends JpaRepository<AnagraficaSocieta, Integer> {
      AnagraficaSocieta findByPiva(String piva);
+    // List<Ddt> findByProvider(int Provider);
 //     Boolean existByPiva(String piva);
 }

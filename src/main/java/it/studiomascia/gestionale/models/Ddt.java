@@ -17,10 +17,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -59,6 +59,18 @@ public class Ddt {
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<DBFile> fileDDT;
 
+    @ManyToOne
+    @JoinColumn( name="idAnagraficaSocieta" )
+    private AnagraficaSocieta anagraficaSocieta;
+ 
+    public AnagraficaSocieta getAnagraficaSocieta() {
+        return anagraficaSocieta;
+    }
+    public void setAnagraficaSocieta(AnagraficaSocieta provider) {
+        this.anagraficaSocieta = provider;
+    }
+    
+    
     /**
      * @return the id
      */

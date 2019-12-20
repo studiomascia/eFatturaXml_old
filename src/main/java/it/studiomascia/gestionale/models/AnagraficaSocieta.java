@@ -23,8 +23,44 @@ import org.springframework.format.annotation.DateTimeFormat;
  * @author Admin
  */
 @Entity
-
 public class AnagraficaSocieta {
+
+    
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
+       
+    @Column(name = "piva")
+    private String piva;
+
+    @Column(name = "denominazione")
+    private String denominazione;
+    
+    @Column(name = "indirizzo")
+    private String indirizzo;
+    
+    @Column(name = "fornitore")
+    private boolean fornitore;
+    
+    @OneToMany( mappedBy = "anagraficaSocieta" )
+    private Set<Ddt> listaDDT;
+    
+    /**
+     * @return the listaDDT
+     */
+    public Set<Ddt> getListaDDT() {
+        return listaDDT;
+    }
+
+    /**
+     * @param listaDDT the listaDDT to set
+     */
+    public void setListaDDT(Set<Ddt> listaDDT) {
+        this.listaDDT = listaDDT;
+    }
 
     /**
      * @return the piva
@@ -68,23 +104,19 @@ public class AnagraficaSocieta {
         this.indirizzo = indirizzo;
     }
     
-  @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
-       
-    @Column(name = "piva")
-    private String piva;
+  
 
-    @Column(name = "denominazione")
-    private String denominazione;
+        
     
-    @Column(name = "indirizzo")
-    private String indirizzo;
+    public Set<Ddt> getStudenti() {
+        return getListaDDT();
+    }
+    public void setStudenti(Set<Ddt> studenti) {
+        this.setListaDDT(studenti);
+    }
     
-    @Column(name = "fornitore")
-    private boolean fornitore;
+    
+    
     
     /**
      * @return the attiva status

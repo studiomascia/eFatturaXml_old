@@ -89,7 +89,7 @@
                                             <td th:text="${row.get('Denominazione')}" th:attr="title=${row.get('Descrizione')}"  data-toggle="tooltip" data-placement="bottom" data-container="body" />
                                             <td th:text="${row.get('Indirizzo')}" />
                                             <td>
-                                                <a  class="btn btn-primary btn-fab btn-fab-mini d" th:href="@{'/Providers/'+${provider.id} + '/DDT'} "  target="_blank" >
+                                                <a  class="btn btn-primary btn-fab btn-fab-mini d" th:href="@{'/Provider/'+${row.get('Id')} + '/DDT'} "  target="_blank" >
                                                     <i class="material-icons">local_shipping</i>
                                                 </a>
                                                 

@@ -39,6 +39,8 @@ public class ProviderRestController {
     private XmlFatturaBaseService xmlFatturaBaseService;
 
 
+    // recupera la lista delle fatture passive e da questa
+    // ricava l'elenco delle anagrafiche delle varie societa 
     @RequestMapping(path="/ProviderShortList", method=RequestMethod.GET)
     public List<AnagraficaSocieta> ProviderShortList(){
         
@@ -105,6 +107,8 @@ public class ProviderRestController {
         return listaAnagrafica;
     }
 
+    // aggiorna la tabella delle anagrafiche sul DB
+    // a partire dall'elenco delle anagrafiche che si ottengono dalle fatture ricevute
     @RequestMapping(path="/AnagraficaUpdateList", method=RequestMethod.GET)
     public void AnagraficaUpdateList(){
 

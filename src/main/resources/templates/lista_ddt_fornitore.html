@@ -59,18 +59,21 @@
             
             <table class="table">
                 <thead>
-                    <tr><th th:each="header: ${headers}" th:text="${header}" /></tr>
+                    <tr><th th:each="header: ${headerProvider}" th:text="${header}" /></tr>
                 </thead>
                 <tbody>
-                    <tr  id="tablerow">
-                        <td th:each="header: ${headers}" th:text="${provider.get(header)}" />
+                    <tr>
+                        <td th:text="${provider.Id}" />
+                        <td th:text="${provider.piva}" />
+                        <td th:text="${provider.Denominazione}" />
+                        <td th:text="${provider.Indirizzo}" />
                     </tr>
                 </tbody>
             </table>   
             <h2>Elenco DDT</h2>
-            <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalDdtProvider(\'' + ${provider.get('Id')} +'\');'" >
+<!--            <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalDdtProvider(\'' + ${provider.get('Id')} +'\');'" >
                 <i class="material-icons">add</i>
-            </a>
+            </a>-->
             
                 <table class="table table-hover">
                     <thead>
@@ -95,16 +98,14 @@
                             <td th:text="${x.isVerificato()} ?  'Si' : 'No'">yes</td>
 
                             <td>
-
-                                <div class="list-group">
-                                    
+<!--                                <div class="list-group">
                                     <a th:each="item : ${x.getListaFilesDDT()}" th:href="@{'/downloadFile/' + ${item.id}}"  th:text="${item.fileDescription}+ ' - ' + ${item.fileName}" class="btn btn-primary btn-xs" >Dapibus ac facilisis in</a>
                                     <a class="btn btn-secondary btn-xs" th:onclick="'javascript:openModalAttachmentDDT(\'' + ${provider.get('Id')} + '\',\''+ ${x.id} +  '\');'" >
                                         <i class="material-icons">add</i>
                                     </a>
-
-                                </div>
+                                </div>-->
                             </td>
+                            <td></td>
                         </tr>
                 </tbody>
             </table>
