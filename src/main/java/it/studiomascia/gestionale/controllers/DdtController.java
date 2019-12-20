@@ -5,9 +5,12 @@
  */
 package it.studiomascia.gestionale.controllers;
 
+import it.studiomascia.gestionale.models.AnagraficaSocieta;
 import it.studiomascia.gestionale.models.DBFile;
 import it.studiomascia.gestionale.models.Ddt;
+import it.studiomascia.gestionale.models.Pagamento;
 import it.studiomascia.gestionale.models.XmlFatturaBase;
+import it.studiomascia.gestionale.repository.AnagraficaSocietaRepository;
 import it.studiomascia.gestionale.repository.DBFileRepository;
 import it.studiomascia.gestionale.repository.DdtRepository;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
@@ -32,9 +35,12 @@ import javax.xml.transform.stream.StreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 /**
@@ -52,13 +58,13 @@ public class DdtController {
     private DBFileStorageService DBFileStorageService;
 
     @Autowired
-    private DBFileRepository dbFileRepository;
-    
-    @Autowired
     private DdtRepository ddtRepository;
     
     @Autowired
     private XmlFatturaBaseRepository xmlFatturaRepository;
+    
+    @Autowired
+    private AnagraficaSocietaRepository anagraficaSocietaRepository;
     
     @GetMapping("/InvoiceIn/{fatturaId}/DDT")
     public String DdtFattura(Model model, @PathVariable String fatturaId){
@@ -128,6 +134,47 @@ public class DdtController {
     }
     
    
+    @GetMapping("/Provider/{idProvider}/ModalDdt")
+    public String ModalAddDdtProvider (ModelMap model,@PathVariable Integer idProvider){
+        
+        AnagraficaSocieta provider = anagraficaSocietaRepository.findById(idProvider).get();
+        Ddt ddt = new Ddt();
+        model.addAttribute("ddt",ddt);  
+        model.addAttribute("provider",provider);  
+        return "modalContents :: ddtProvider";
+    }
+ 
+    
+    @PostMapping("/Provider/{idProvider}/ModalDdt")
+    public String registraNuovoPagamentoFatturaIn( @ModelAttribute("ddt") Ddt ddt, Model model,@PathVariable Integer idProvider, RedirectAttributes redirectAttributes)
+    {
+        AnagraficaSocieta provider = anagraficaSocietaRepository.findById(idProvider).get();
+        ddt.setCreatore(SecurityContextHolder.getContext().getAuthentication().getName());
+        ddt.setAnagraficaSocieta(provider);
+        
+        ddtRepository.save(ddt);
 
+        //provider.getListaDDT().add(ddt);
+        
+        //anagraficaSocietaRepository.save(provider);
+        return "redirect:/Provider/"+ idProvider +"/DDT";
+    }
+    
+
+//    
+//    @PostMapping("/Provider/{id}/ModalDdt")
+//    public String registraNuovoPagamentoFatturaIn( @ModelAttribute("ddt") Ddt ddt, Model model,@PathVariable Integer idProvider, RedirectAttributes redirectAttributes)
+//    {
+//        AnagraficaSocieta provider = anagraficaSocietaRepository.findById(idProvider).get();
+//        ddt.setCreatore(SecurityContextHolder.getContext().getAuthentication().getName());
+//        provider.getPagamenti().add(pagamento);
+//        
+//        xmlFatturaBaseRepository.save(vecchiaFattura);
+////        redirectAttributes.addFlashAttribute("messaggio","Pagamento inserito");  
+//        return "redirect:/InvoiceIn/"+ id +"/Payments";
+//    }
+    
+    
+    
 
 }

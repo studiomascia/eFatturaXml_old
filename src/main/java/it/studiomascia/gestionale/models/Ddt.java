@@ -14,6 +14,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,6 +31,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Entity
 @Table(name = "ddt")
 public class Ddt {
+
+   
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,13 +59,31 @@ public class Ddt {
     @Column(name = "verificato")
     private  Boolean verificato;
     
+    
+    
+    
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<DBFile> fileDDT;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn( name="idAnagraficaSocieta" )
     private AnagraficaSocieta anagraficaSocieta;
  
+     /**
+     * @return the numero
+     */
+    public String getNumero() {
+        return numero;
+    }
+
+    /**
+     * @param numero the numero to set
+     */
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+    
+    
     public AnagraficaSocieta getAnagraficaSocieta() {
         return anagraficaSocieta;
     }
@@ -126,7 +147,12 @@ public class Ddt {
     public Boolean isVerificato() {
         return this.verificato;
     }
-
+    public Boolean getVerificato() {
+        return this.verificato;
+    }
+    public void setVerificato( Boolean b) {
+        this.verificato= b;
+    }
     /**
      * @param verificato the verificato to set
      */
@@ -147,9 +173,7 @@ public class Ddt {
     }
 
      
-    public Boolean getVerificato() {
-        return verificato;
-    }
+
 
     /**
      * @return the creatore

@@ -25,10 +25,9 @@
     
     
 <script>
-         
-        function openModalPaymentInovice(id){
+        function openModalDdtProvider(id){
             $.ajax({
-                url:"/Invoice/"+id+"/ModalPayment",
+                url:"/Provider/"+id+"/ModalDdt",
                 success: function(response){
                     $("#contenitoreModal").html(response);
                     $("#contenitoreModal").modal({keyboard:true, show:true});
@@ -36,11 +35,10 @@
             });
         }
                   
-        function openModalAttachmentPayment(IdFattura,id){
+        function openModalAttachmentDdt(id){
             $.ajax({
-                url:"/Invoice/" + IdFattura + "/Payment/"+id +"/ModalAttachment",
+                url:"/Ddt/"+id +"/ModalAttachment",
                 success: function(response){
-//                    alert (response);
                     $("#contenitoreModal").html(response);
                     $("#contenitoreModal").modal({keyboard:true, show:true});
                 }
@@ -63,7 +61,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td th:text="${provider.Id}" />
+                        <td th:text="${provider.id}" />
                         <td th:text="${provider.piva}" />
                         <td th:text="${provider.Denominazione}" />
                         <td th:text="${provider.Indirizzo}" />
@@ -71,9 +69,9 @@
                 </tbody>
             </table>   
             <h2>Elenco DDT</h2>
-<!--            <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalDdtProvider(\'' + ${provider.get('Id')} +'\');'" >
-                <i class="material-icons">add</i>
-            </a>-->
+                <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalDdtProvider(\'' + ${provider.id} +'\');'" >
+                    <i class="material-icons">add</i>
+                </a> 
             
                 <table class="table table-hover">
                     <thead>
@@ -93,17 +91,20 @@
                             <td th:text="${x.id}" />
                             <td th:text="${x.creatore}" />
                             <td th:text="${#dates.format(x.data, 'dd-MM-yyyy')}" />
+                            <td th:text="${x.numero}" />
                             <td th:text="${x.importo}" />
                             <td th:text="${x.note}" />
                             <td th:text="${x.isVerificato()} ?  'Si' : 'No'">yes</td>
 
                             <td>
-<!--                                <div class="list-group">
+                                <div class="list-group">
+                                    
                                     <a th:each="item : ${x.getListaFilesDDT()}" th:href="@{'/downloadFile/' + ${item.id}}"  th:text="${item.fileDescription}+ ' - ' + ${item.fileName}" class="btn btn-primary btn-xs" >Dapibus ac facilisis in</a>
-                                    <a class="btn btn-secondary btn-xs" th:onclick="'javascript:openModalAttachmentDDT(\'' + ${provider.get('Id')} + '\',\''+ ${x.id} +  '\');'" >
+                                    <a class="btn btn-secondary btn-xs" th:onclick="'javascript:openModalAttachmentDdt(\'' + ${x.id} +  '\');'" >
                                         <i class="material-icons">add</i>
                                     </a>
-                                </div>-->
+
+                                </div>
                             </td>
                             <td></td>
                         </tr>
