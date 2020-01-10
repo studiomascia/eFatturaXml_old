@@ -262,7 +262,7 @@
     </form>
 </div>
 
-<div th:fragment="attachmentDdtProvider" class="modal-dialog modal-dialog-centered mw-100 w-75" role="document">
+<div th:fragment="attachmentDdt" class="modal-dialog modal-dialog-centered mw-100 w-75" role="document">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">Inserisci il documento da allegare:</h5>
@@ -273,10 +273,10 @@
 
         <form class="form-horizontal" th:action="@{'/Ddt/' + ${ddt.id} + '/ModalAttachment/' }"  method="POST" enctype="multipart/form-data">
             <div class="modal-body">
-<!--                <div class="form-group">
+                 <div class="form-group">
                     <label for="txtId" class="control-label">Id</label>
-                    <input readonly="true" type="text" class="form-control" name="txtId" id="txtId" th:field="${pagamento.id}">
-                        <input   type="hidden" name="IdFattura" id="IdFattura"  th:value="${IdFattura}">    
+                    <input readonly="true" type="text" class="form-control" name="txtId" id="txtId" th:field="${ddt.id}">
+                        <input   type="hidden" name="IdProvider" id="IdProvider"  th:value="${IdProvider}">    
                 </div>    
                 <div class="form-group">
                     <label for="txtDescription" class="control-label">Descrizione</label>
@@ -292,7 +292,7 @@
 
 
                   </div>
-                </div>-->
+                </div> 
                 <div class="modal-footer">
                     <button type="button"  class="btn btn-secondary" data-dismiss="modal" >Chiudi</button>
                     <button type="submit" class="btn btn-primary">Salva</button>

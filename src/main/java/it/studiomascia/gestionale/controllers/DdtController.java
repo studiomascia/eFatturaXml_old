@@ -5,13 +5,12 @@
  */
 package it.studiomascia.gestionale.controllers;
 
-import it.studiomascia.gestionale.models.AnagraficaSocieta;
+import static com.sun.corba.se.spi.presentation.rmi.StubAdapter.request;
 import it.studiomascia.gestionale.models.DBFile;
 import it.studiomascia.gestionale.models.Ddt;
 import it.studiomascia.gestionale.models.Pagamento;
 import it.studiomascia.gestionale.models.XmlFatturaBase;
 import it.studiomascia.gestionale.repository.AnagraficaSocietaRepository;
-import it.studiomascia.gestionale.repository.DBFileRepository;
 import it.studiomascia.gestionale.repository.DdtRepository;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
 import it.studiomascia.gestionale.service.DBFileStorageService;
@@ -25,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.text.SimpleDateFormat;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -35,11 +35,12 @@ import javax.xml.transform.stream.StreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
@@ -133,46 +134,39 @@ public class DdtController {
         return "lista_ddt_fattura";
     }
     
-   
-    @GetMapping("/Provider/{idProvider}/ModalDdt")
-    public String ModalAddDdtProvider (ModelMap model,@PathVariable Integer idProvider){
+    @GetMapping("/Ddt/{id}/ModalAttachment")
+    public String ModalAddDdtAttachment (ModelMap model,@PathVariable Integer id){
         
-        AnagraficaSocieta provider = anagraficaSocietaRepository.findById(idProvider).get();
-        Ddt ddt = new Ddt();
+        Ddt ddt = ddtRepository.findById(id).get();
+        model.addAttribute("IdProvider",ddt.getAnagraficaSocieta().getId());  
         model.addAttribute("ddt",ddt);  
-        model.addAttribute("provider",provider);  
-        return "modalContents :: ddtProvider";
+        return "modalContents :: attachmentDdt";
+        
+        
+        
+        
     }
  
     
-    @PostMapping("/Provider/{idProvider}/ModalDdt")
-    public String registraNuovoPagamentoFatturaIn( @ModelAttribute("ddt") Ddt ddt, Model model,@PathVariable Integer idProvider, RedirectAttributes redirectAttributes)
+    @PostMapping("/Ddt/{idDdt}/ModalAttachment")
+    public String postModalAddAttachmentToDdt(@ModelAttribute("ddt") Ddt d,@PathVariable Integer idDdt, RedirectAttributes redirectAttributes, @RequestParam("files") MultipartFile[] files, HttpServletRequest request)
     {
-        AnagraficaSocieta provider = anagraficaSocietaRepository.findById(idProvider).get();
-        ddt.setCreatore(SecurityContextHolder.getContext().getAuthentication().getName());
-        ddt.setAnagraficaSocieta(provider);
-        
-        ddtRepository.save(ddt);
-
-        //provider.getListaDDT().add(ddt);
-        
-        //anagraficaSocietaRepository.save(provider);
+        String idProvider="0";
+        if (request.getParameterMap().get("txtDescription") != null && request.getParameterMap().get("txtDescription").length > 0) {
+            
+            Ddt ddt = ddtRepository.findById(idDdt).get();
+            idProvider = ddt.getAnagraficaSocieta().getId().toString();
+            for (int k=0;k<files.length;k++)
+            {
+                DBFile dbFile = DBFileStorageService.storeFile(files[k],request.getParameter("txtDescription").toString());
+                 ddt.getFilesDDT().add(dbFile);
+                 ddtRepository.save(ddt);
+            }
+        }
         return "redirect:/Provider/"+ idProvider +"/DDT";
     }
-    
+   
 
-//    
-//    @PostMapping("/Provider/{id}/ModalDdt")
-//    public String registraNuovoPagamentoFatturaIn( @ModelAttribute("ddt") Ddt ddt, Model model,@PathVariable Integer idProvider, RedirectAttributes redirectAttributes)
-//    {
-//        AnagraficaSocieta provider = anagraficaSocietaRepository.findById(idProvider).get();
-//        ddt.setCreatore(SecurityContextHolder.getContext().getAuthentication().getName());
-//        provider.getPagamenti().add(pagamento);
-//        
-//        xmlFatturaBaseRepository.save(vecchiaFattura);
-////        redirectAttributes.addFlashAttribute("messaggio","Pagamento inserito");  
-//        return "redirect:/InvoiceIn/"+ id +"/Payments";
-//    }
     
     
     
