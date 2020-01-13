@@ -13,9 +13,10 @@
     </div>
     <div th:fragment="albero">
         <ul>
-            <li th:each="cat : ${folders}">
-                <span th:text="${cat.folderFileName}"></span>
-                <div th:with="folders = ${cat.children}" th:include="fragments.html :: albero"></div>
+            <li th:each="item : ${folders}">
+                
+                <span th:text="${item.folderFileName}"   th:onclick="'javascript:alert(' + ${item.id} + ')'" ></span>
+                <div th:with="folders = ${item.children}" th:include="fragments.html :: albero"></div>
             </li>
         </ul>
     </div>

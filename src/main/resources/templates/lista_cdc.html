@@ -14,14 +14,16 @@
       Elenco centri di costo:
         <table class="table table-striped table-bordered">
             <thead>
-                <tr><th>Id</th> <th>Descrizione</th><th>Parent</th><th>Children</th><th>Stato</th></tr>
+                <tr><th>Id</th> <th>Descrizione</th><th>Stato</th><th>Children</th><th>Parent</th></tr>
             </thead>
             <tbody>
-                <tr th:each="item : ${lista}">
+                <tr th:each="item : ${lista_cdc}">
                     <td th:text="${item.id}" />
                     <td th:text="${item.text}" />
+<!--                    
                     <td th:text="${item.parent}" />
                     <td th:text="${item.nodes}" />
+-->
                     <td th:text="${item.attivo}" />
                 </tr>
             </tbody>
