@@ -35,7 +35,7 @@
             <div class="row">
                 <div class="col-sm-4">
                     <div class="card card-nav-tabs">
-                        <h4 class="card-header card-header-danger">Area Utenti</h4>
+                        <h4 class="card-header card-header-danger">Utenti</h4>
                         <div class="card-body">
                             <p class="card-text" th:text="'Nel sistema sono attivi ' + ${numUtenti} + ' utenti'">Contenuto.</p>
                             <a href="/Utenti" class="btn btn-primary">Lista Utenti</a>
@@ -44,7 +44,7 @@
                </div>
             <div class="col-sm-4">
                 <div class="card card-nav-tabs">
-                    <h4 class="card-header card-header-info">Area Fatture Passive</h4>
+                    <h4 class="card-header card-header-info">Fatture Passive</h4>
                     <div class="card-body">
                         <p class="card-text" th:text="'Nel sistema sono state inserite ' + ${nFatturePassive} + ' fatture passive'">Contenuto.</p>
                         <p class="card-text" th:text="'di cui  ' + ${nFatturePassiveNR} + ' sono prive di registrazione'">Contenuto.</p>
@@ -54,7 +54,7 @@
             </div>
             <div class="col-sm-4">
                 <div class="card card-nav-tabs">
-                    <h4 class="card-header card-header-success">Area Fatture Attive</h4>
+                    <h4 class="card-header card-header-success">Fatture Attive</h4>
                     <div class="card-body">
                         <p class="card-text" th:text="'Nel sistema sono state inserite ' + ${nFattureAttive} + ' fatture attive'">Contenuto.</p>
                         <p class="card-text" th:text="'di cui  ' + ${nFattureAttiveNR} + ' sono prive di registrazione'">Contenuto.</p>
@@ -64,7 +64,7 @@
             </div>
             <div class="col-sm-4">
                 <div class="card card-nav-tabs">
-                    <h4 class="card-header card-header-warning">Area Risorse Umane</h4>
+                    <h4 class="card-header card-header-warning">Risorse Umane</h4>
                     <div class="card-body">
                         <p class="card-text" th:text="'La società ha: '  + ' dipendenti'">Contenuto.</p>
                         <a href="#" class="btn btn-primary">Lista Dipendenti</a>
@@ -73,7 +73,7 @@
             </div>
             <div class="col-sm-4">
                 <div class="card card-nav-tabs">                    
-                    <h4 class="card-header card-header-warning">Area DDT</h4>
+                    <h4 class="card-header card-header-warning">DDT</h4>
                     <div class="card-body">
                         <p class="card-text">Naviga per fornitore</p>
                         <a href="/ProvidersList" class="btn btn-primary">Lista </a>

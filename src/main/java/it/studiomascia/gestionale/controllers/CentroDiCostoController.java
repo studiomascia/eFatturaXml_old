@@ -9,6 +9,7 @@ import it.studiomascia.gestionale.models.CentroDiCosto;
 import it.studiomascia.gestionale.repository.CentroDiCostoRepository;
 import java.util.List;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +37,17 @@ public class CentroDiCostoController {
     @GetMapping("/CentroDiCosto")
     public String CentroDiCostoList(Model model){
         
-        List<CentroDiCosto> lista =  centroDiCostoRepository.findAll();
-        model.addAttribute("lista_cdc", lista);
+        CentroDiCosto rootCategory = centroDiCostoRepository.findRootFolder().get();
+        List<CentroDiCosto> lista =  new ArrayList<CentroDiCosto>();
+        lista.add(rootCategory);
+         model.addAttribute("lista_cdc", lista);
+        
         return "lista_cdc";
     }
     
-   
-  
+ 
+
+    
     
 
 }

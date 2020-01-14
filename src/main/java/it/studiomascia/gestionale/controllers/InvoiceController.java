@@ -419,7 +419,8 @@ public class InvoiceController {
         controllo.setCreatore(SecurityContextHolder.getContext().getAuthentication().getName());
         if (request.getParameter("ddlCentroDiCosto") != null) {
             int id2 = Integer.parseInt(request.getParameter("ddlCentroDiCosto"));
-            controllo.setCentroDiCosto(centroDiCostoRepository.findById(id2).get().getText());
+            //controllo.setCentroDiCosto(centroDiCostoRepository.findById(id2).get().getText());
+            controllo.setCentroDiCosto(centroDiCostoRepository.findById(id2).get());
         }
 
         vecchiaFattura.getControlli().add(controllo);

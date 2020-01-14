@@ -94,7 +94,7 @@
                             <td th:text="${x.id}" />
                             <td th:text="${#dates.format(x.dataControllo, 'dd-MM-yyyy')}" />
                             <td th:text="${x.creatore}" />
-                            <td th:text="${x.centroDiCosto}" />
+                            <td th:text="${x.centroDiCosto.getText()}" />
                             <td th:text="${x.note}" />
                             <td th:text="${x.isControllata()} ?  'Si' : 'No'">yes</td>
                             <td>
