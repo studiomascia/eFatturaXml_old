@@ -9,28 +9,28 @@
 <body>
     <div layout:fragment="content">
         <div  th:if="${messaggio}"  class="modal fade show" id="MessageDiv" tabindex="-1" role="dialog" data-show="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">Notifica</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <!-- Modal body -->
-                <div class="modal-body" th:text="${messaggio}"></div>
-                <!-- Modal footer -->
-                <div class="modal-footer">
-                    <button type="button" id="btnCloseMessageModal" onclick="closeModal();"  class="btn btn-danger" data-dismiss="modal" >Chiudi</button>
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Notifica</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="modal-body" th:text="${messaggio}"></div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" id="btnCloseMessageModal" onclick="closeModal();"  class="btn btn-danger" data-dismiss="modal" >Chiudi</button>
 
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div th:if="${messaggio}" ><script> $('#MessageDiv').modal('show')</script></div>
+        <div th:if="${messaggio}"><script> $('#MessageDiv').modal('show')</script></div>
         
-        <div class="container">
+        <div class="container w-100">
             <h2></h2>
             <div class="row">
                 <div class="col-sm-4">
@@ -41,56 +41,56 @@
                             <a href="/Utenti" class="btn btn-primary">Lista Utenti</a>
                         </div>
                     </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card card-nav-tabs">
+                        <h4 class="card-header card-header-info">Fatture Passive</h4>
+                        <div class="card-body">
+                            <p class="card-text" th:text="'Nel sistema sono state inserite ' + ${nFatturePassive} + ' fatture passive'">Contenuto.</p>
+                            <p class="card-text" th:text="'di cui  ' + ${nFatturePassiveNR} + ' sono prive di registrazione'">Contenuto.</p>
+                            <a href="/InvoicesIn" class="btn btn-primary">Lista Fatture</a><a href="/InvoicesIn/New" class="btn btn-info">+</a>
+                        </div>                                                               
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card card-nav-tabs">
+                        <h4 class="card-header card-header-success">Fatture Attive</h4>
+                        <div class="card-body">
+                            <p class="card-text" th:text="'Nel sistema sono state inserite ' + ${nFattureAttive} + ' fatture attive'">Contenuto.</p>
+                            <p class="card-text" th:text="'di cui  ' + ${nFattureAttiveNR} + ' sono prive di registrazione'">Contenuto.</p>
+                            <a href="/InvoicesOut" class="btn btn-primary">Lista Fatture</a><a href="/InvoicesOut/New"  class="btn btn-info">+</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card card-nav-tabs">
+                        <h4 class="card-header card-header-warning">Risorse Umane</h4>
+                        <div class="card-body">
+                            <p class="card-text" th:text="'La società ha: '  + ' dipendenti'">Contenuto.</p>
+                            <a href="#" class="btn btn-primary">Lista Dipendenti</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card card-nav-tabs">                    
+                        <h4 class="card-header card-header-warning">DDT/ODA</h4>
+                        <div class="card-body">
+                            <p class="card-text">Naviga per fornitore</p>
+                            <a href="/ProvidersList" class="btn btn-primary">Lista </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card card-nav-tabs">                    
+                        <h4 class="card-header card-header-warning">Centri di costo</h4>
+                        <div class="card-body">
+                            <h5 class="card-title">Gestione centri di costo</h5>
+                            <p class="card-text">Area in cui si possono gestire i centri di costo.</p>
+                            <a href="/CentroDiCosto" class="btn btn-primary">Lista </a>
+                        </div>
+                    </div>
                </div>
-            <div class="col-sm-4">
-                <div class="card card-nav-tabs">
-                    <h4 class="card-header card-header-info">Fatture Passive</h4>
-                    <div class="card-body">
-                        <p class="card-text" th:text="'Nel sistema sono state inserite ' + ${nFatturePassive} + ' fatture passive'">Contenuto.</p>
-                        <p class="card-text" th:text="'di cui  ' + ${nFatturePassiveNR} + ' sono prive di registrazione'">Contenuto.</p>
-                        <a href="/InvoicesIn" class="btn btn-primary">Lista Fatture</a><a href="/InvoicesIn/New" class="btn btn-info">+</a>
-                    </div>                                                               
-                </div>
             </div>
-            <div class="col-sm-4">
-                <div class="card card-nav-tabs">
-                    <h4 class="card-header card-header-success">Fatture Attive</h4>
-                    <div class="card-body">
-                        <p class="card-text" th:text="'Nel sistema sono state inserite ' + ${nFattureAttive} + ' fatture attive'">Contenuto.</p>
-                        <p class="card-text" th:text="'di cui  ' + ${nFattureAttiveNR} + ' sono prive di registrazione'">Contenuto.</p>
-                        <a href="/InvoicesOut" class="btn btn-primary">Lista Fatture</a><a href="/InvoicesOut/New"  class="btn btn-info">+</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="card card-nav-tabs">
-                    <h4 class="card-header card-header-warning">Risorse Umane</h4>
-                    <div class="card-body">
-                        <p class="card-text" th:text="'La società ha: '  + ' dipendenti'">Contenuto.</p>
-                        <a href="#" class="btn btn-primary">Lista Dipendenti</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="card card-nav-tabs">                    
-                    <h4 class="card-header card-header-warning">DDT</h4>
-                    <div class="card-body">
-                        <p class="card-text">Naviga per fornitore</p>
-                        <a href="/ProvidersList" class="btn btn-primary">Lista </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="card card-nav-tabs">                    
-                    <h4 class="card-header card-header-warning">Centri di costo</h4>
-                    <div class="card-body">
-                        <h5 class="card-title">Gestione centri di costo</h5>
-                        <p class="card-text">Area in cui si possono gestire i centri di costo.</p>
-                        <a href="/CentroDiCosto" class="btn btn-primary">Lista </a>
-                    </div>
-                </div>
-           </div>
-        </div>
         </div>
     </div>   
 

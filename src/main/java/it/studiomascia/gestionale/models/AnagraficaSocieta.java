@@ -60,6 +60,27 @@ public class AnagraficaSocieta {
         this.listaDDT = listaDDT;
     }
 
+    @OneToMany( mappedBy = "anagraficaSocieta", fetch = FetchType.EAGER, cascade = CascadeType.ALL )
+    private Set<ODA> listaODA;
+    
+    /**
+     * @return the listaODA
+     */
+    public Set<ODA> getListaODA() {
+        return listaODA;
+    }
+
+    /**
+     * @param listaODA the listaODA to set
+     */
+    public void setListaODA(Set<ODA> listaODA) {
+        this.listaODA = listaODA;
+    }
+    
+    
+    
+    
+    
     /**
      * @return the piva
      */

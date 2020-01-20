@@ -2,9 +2,11 @@ package it.studiomascia.gestionale.controllers;
 
 import it.studiomascia.gestionale.models.AnagraficaSocieta;
 import  it.studiomascia.gestionale.models.Ddt;
+import it.studiomascia.gestionale.models.ODA;
 import it.studiomascia.gestionale.repository.AnagraficaSocietaRepository;
 import it.studiomascia.gestionale.repository.DBFileRepository;
 import it.studiomascia.gestionale.repository.DdtRepository;
+import it.studiomascia.gestionale.repository.OdaRepository;
 import it.studiomascia.gestionale.service.AnagraficaSocietaService;
 import it.studiomascia.gestionale.service.DBFileStorageService;
 import java.text.SimpleDateFormat;
@@ -46,6 +48,8 @@ public class ProviderController {
     @Autowired
     private AnagraficaSocietaRepository anagraficaSocietaRepository;
      
+    @Autowired
+    private OdaRepository odaRepository;
      
     @GetMapping("/ProvidersList")
     public String providersList(HttpServletRequest request,Model model){
@@ -112,6 +116,61 @@ public class ProviderController {
         return "redirect:/Provider/"+ idProvider +"/DDT";
     }
     
+ @GetMapping("/Provider/{id}/ODA")
+    public String OdatListByProviderId(Model model, @PathVariable String id){
+
+        Integer idProvider = Integer.valueOf(id);
+        AnagraficaSocieta provider = providerRepository.findById(idProvider).get();
+        
+        ODA x = new ODA();
+        
+        
+        List<String> headers = new  ArrayList<>();
+        headers.add("Id");
+        headers.add("Creatore");
+        headers.add("Numero");
+        headers.add("Data");
+        headers.add("Importo");
+        headers.add("Note");
+        headers.add("Verificato");
+
+        Set<ODA> lista= provider.getListaODA();
+        
+        model.addAttribute("headerProvider", providerService.getHeaders());
+        model.addAttribute("provider", provider);
+        model.addAttribute("headers", headers);
+        model.addAttribute("listaoda", lista);       
+
+        return"lista_oda_fornitore";
+        
+        
+    }
+    
+    
+    @GetMapping("/Provider/{idProvider}/ModalODA")
+    public String ModalAddOdaProvider (ModelMap model,@PathVariable Integer idProvider){
+        
+        AnagraficaSocieta provider = anagraficaSocietaRepository.findById(idProvider).get();
+        ODA x = new ODA();
+        model.addAttribute("oda",x);  
+        model.addAttribute("provider",provider);  
+        return "modalContents :: odaProvider";
+    }
  
+    
+    @PostMapping("/Provider/{idProvider}/ModalODA")
+    public String registraNuovoODA( @ModelAttribute("oda") ODA oda, Model model,@PathVariable Integer idProvider, RedirectAttributes redirectAttributes)
+    {
+        AnagraficaSocieta provider = anagraficaSocietaRepository.findById(idProvider).get();
+        oda.setCreatore(SecurityContextHolder.getContext().getAuthentication().getName());
+        oda.setAnagraficaSocieta(provider);
+        
+        odaRepository.save(oda);
+
+        //provider.getListaDDT().add(ddt);
+        
+        //anagraficaSocietaRepository.save(provider);
+        return "redirect:/Provider/"+ idProvider +"/ODA";
+    }
    
 }
