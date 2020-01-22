@@ -78,7 +78,23 @@ public class AnagraficaSocieta {
     }
     
     
+   @OneToMany( mappedBy = "anagraficaSocieta", fetch = FetchType.EAGER, cascade = CascadeType.ALL )
+    private Set<XmlFatturaBase> listaXmlFatturaBase;
     
+    /**
+     * @return the listaDDT
+     */
+    public Set<XmlFatturaBase> getListaXmlFatturaBase() {
+        return listaXmlFatturaBase;
+    }
+
+    /**
+     * @param listaDDT the listaDDT to set
+     */
+    public void setListaXmlFatturaBase(Set<XmlFatturaBase> listaXmlFatturaBase) {
+        this.listaXmlFatturaBase= listaXmlFatturaBase;
+    }
+   
     
     
     /**

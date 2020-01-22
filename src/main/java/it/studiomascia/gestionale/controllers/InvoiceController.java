@@ -6,19 +6,19 @@
 package it.studiomascia.gestionale.controllers;
 
 import it.studiomascia.gestionale.Utility;
+import it.studiomascia.gestionale.models.AnagraficaSocieta;
 import it.studiomascia.gestionale.models.CentroDiCosto;
 import it.studiomascia.gestionale.models.ControlloFattura;
 import it.studiomascia.gestionale.models.DBFile;
 import it.studiomascia.gestionale.models.Pagamento;
 import it.studiomascia.gestionale.models.XmlFatturaBase;
-import it.studiomascia.gestionale.models.XmlFatturaBasePredicate;
+import it.studiomascia.gestionale.repository.AnagraficaSocietaRepository;
 import it.studiomascia.gestionale.repository.CentroDiCostoRepository;
 import it.studiomascia.gestionale.repository.ControlloFatturaRepository;
 import it.studiomascia.gestionale.repository.PagamentoRepository;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
 import it.studiomascia.gestionale.service.DBFileStorageService;
 import it.studiomascia.gestionale.service.XmlFatturaBaseService;
-import it.studiomascia.gestionale.xml.AnagraficaType;
 import it.studiomascia.gestionale.xml.DettaglioPagamentoType;
 import it.studiomascia.gestionale.xml.FatturaElettronicaType;
 import java.io.ByteArrayInputStream;
@@ -109,6 +109,9 @@ public class InvoiceController {
     
     @Autowired
     private CentroDiCostoRepository centroDiCostoRepository;
+    
+    @Autowired
+    private AnagraficaSocietaRepository  anagraficaSocietaRepository;
     
     /* INIZIO Metodi comuni per tutti i mapping */
     private SimpleDateFormat formattaData = new SimpleDateFormat("dd-MM-yyyy");
@@ -251,6 +254,8 @@ public class InvoiceController {
 		}
                 
                 if (!trovato){
+                    XmlFatturaBase xmlFattura = new XmlFatturaBase();
+
                     Date dataFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime();
                     String numeroFattura= item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero();
                     String importoFattura= "0";
@@ -258,12 +263,35 @@ public class InvoiceController {
                     if (item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento() !=null){
                         importoFattura = item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento().toString();
                     }
-                    String partitaIVA = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice().toString();
+                    String partitaIVA = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice();
+                    
                     String denominazione = item.getFatturaElettronicaHeader().getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
+                    
+
+                    // Aggiungere un controllo sulla partita iva:
+                    // Se nella tabella fornitori non esiste questa partita IVA allora va inserito il nuovo fornitore
+                    // e il relativo id va inserito nella chiave esterna IdFornitore
+                    AnagraficaSocieta var = anagraficaSocietaRepository.findByPiva(partitaIVA);
+                    if ( var== null )
+                    {
+                        var = new AnagraficaSocieta();
+                        var.setPiva(partitaIVA );
+                        var.setDenominazione(denominazione );
+                        var.seFornitore(true);
+                        String indirizzo = item.getFatturaElettronicaHeader().getCedentePrestatore().getSede().getIndirizzo();
+                        String civico = item.getFatturaElettronicaHeader().getCedentePrestatore().getSede().getNumeroCivico();
+                        String cap = item.getFatturaElettronicaHeader().getCedentePrestatore().getSede().getCAP();
+                        String comune = item.getFatturaElettronicaHeader().getCedentePrestatore().getSede().getComune();
+                        var.setIndirizzo(indirizzo +","+ civico+";"+ cap +";"+ comune);
+                        anagraficaSocietaRepository.saveAndFlush(var);
+                        
+                    }
+                    xmlFattura.setAnagraficaSocieta(var);
+                    
+                    
+                    // fine aggiunta 
 
 
-
-                    XmlFatturaBase xmlFattura = new XmlFatturaBase();
                     xmlFattura.setDataInserimento(new Date());
                     xmlFattura.setFileName(files[k].getOriginalFilename());
                     xmlFattura.setCreatore(SecurityContextHolder.getContext().getAuthentication().getName());
