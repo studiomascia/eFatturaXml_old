@@ -3,16 +3,18 @@ package it.studiomascia.gestionale.controllers;
 import it.studiomascia.gestionale.models.AnagraficaSocieta;
 import  it.studiomascia.gestionale.models.Ddt;
 import it.studiomascia.gestionale.models.ODA;
+import it.studiomascia.gestionale.models.XmlFatturaBase;
 import it.studiomascia.gestionale.repository.AnagraficaSocietaRepository;
-import it.studiomascia.gestionale.repository.DBFileRepository;
 import it.studiomascia.gestionale.repository.DdtRepository;
 import it.studiomascia.gestionale.repository.OdaRepository;
+import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
 import it.studiomascia.gestionale.service.AnagraficaSocietaService;
-import it.studiomascia.gestionale.service.DBFileStorageService;
+import it.studiomascia.gestionale.service.XmlFatturaBaseService;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +38,11 @@ public class ProviderController {
     @Autowired
     private AnagraficaSocietaRepository  providerRepository;
 
+       @Autowired
+    private XmlFatturaBaseRepository xmlFatturaBaseRepository;
+    
     @Autowired
-    private DBFileStorageService DBFileStorageService;
-
-    @Autowired
-    private DBFileRepository dbFileRepository;
+    private XmlFatturaBaseService xmlFatturaBaseService;
     
     @Autowired
     private DdtRepository ddtRepository;
@@ -64,9 +66,6 @@ public class ProviderController {
 
         Integer idProvider = Integer.valueOf(id);
         AnagraficaSocieta provider = providerRepository.findById(idProvider).get();
-        
-        Ddt x = new Ddt();
-        
         
         List<String> headers = new  ArrayList<>();
         headers.add("Id");
@@ -116,7 +115,7 @@ public class ProviderController {
         return "redirect:/Provider/"+ idProvider +"/DDT";
     }
     
- @GetMapping("/Provider/{id}/ODA")
+    @GetMapping("/Provider/{id}/ODA")
     public String OdatListByProviderId(Model model, @PathVariable String id){
 
         Integer idProvider = Integer.valueOf(id);
@@ -173,4 +172,35 @@ public class ProviderController {
         return "redirect:/Provider/"+ idProvider +"/ODA";
     }
    
+    @GetMapping("/Provider/{id}/Invoices")
+    public String InvoicestListByProviderId(Model model, @PathVariable String id){
+
+        Integer idProvider = Integer.valueOf(id);
+        AnagraficaSocieta provider = providerRepository.findById(idProvider).get();
+        
+        List<String> headers = new  ArrayList<>();
+        headers.add("Id");
+        headers.add("Creatore");
+        headers.add("Numero");
+        headers.add("Data");
+        headers.add("Importo");
+        headers.add("Note");
+        headers.add("Verificato");
+
+        Set<XmlFatturaBase> lista= provider.getListaXmlFatturaBase();
+
+        model.addAttribute("headerProvider", providerService.getHeaders());
+        model.addAttribute("provider", provider);
+        model.addAttribute("headers", headers);
+        
+
+        model.addAttribute("header2", xmlFatturaBaseService.getHeaders());
+        model.addAttribute("rows", xmlFatturaBaseService.getRows(lista.stream().collect(Collectors.toList())));
+  
+        
+        return"lista_fatture_fornitore";
+        
+        
+    }
+    
 }

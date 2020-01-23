@@ -29,8 +29,15 @@
     <script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.print.min.js"></script>
     
-        <title>Fornitori</title>
-        <style>body { background: white;}</style>
+        <title>Home</title>
+             <style>
+                 body { background: white;} 
+                .tooltip-inner {background-color: #dcdcdc; min-width: 300px }
+                .tooltip.bs-tooltip-right .arrow:before { border-right-color: #dcdcdc !important;}
+                .tooltip.bs-tooltip-left .arrow:before {border-left-color: #dcdcdc !important;}
+                .tooltip.bs-tooltip-bottom .arrow:before {border-bottom-color: #dcdcdc !important;}
+                .tooltip.bs-tooltip-top .arrow:before {border-top-color: #dcdcdc !important;}
+             </style>
 
     <script>
         $(document).ready( function () {
@@ -43,16 +50,47 @@
                     {
                         extend: 'excelHtml5',
                         className: "btn-info btn-xs",
-                        exportOptions: {columns:  [ 0, 1, 2, 3 ]}
+                        exportOptions: {columns:  [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ]}
                     },
                     {
                         extend: 'pdfHtml5',
                         className: "btn-info btn-xs",
-                        exportOptions: {columns:  [ 0, 1, 2, 3 ]}
+                        exportOptions: {columns:  [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ]}
+                    },
+                     {
+                        text: '+',
+                        className: "btn-info btn-xs",
+                        action: function () {
+                            window.location='/InvoicesIn/New';
+                        }
                     }
                 ]
             } );
-          } );
+            
+            
+            
+            $('[data-toggle="tooltip"]').tooltip();
+        } );
+        function openModalRegisterInovice(id){
+            $.ajax({
+                url:"/InvoiceIn/ModalRegister/"+id,
+                success: function(response){
+//                    alert(response);
+                    $("#contenitoreModal").html(response);
+                    $('#contenitoreModal').modal({keyboard:true, show:true});
+                }
+            });
+                     
+//        $('#modalRegisterInvoce').html("/InvoiceIn/ModalRegister/"+id);
+//        $("#modalRegisterInvoce").show();
+        }
+        
+        
+        
+        
+        
+        
+        
     </script>
     
  </head> 
@@ -62,21 +100,36 @@
 
         <div class="container-fluid">
 
-
+  <h2>Fornitore:</h2>
+            
+            <table class="table">
+                <thead>
+                    <tr><th th:each="header: ${headerProvider}" th:text="${header}" /></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td th:text="${provider.id}" />
+                        <td th:text="${provider.piva}" />
+                        <td th:text="${provider.Denominazione}" />
+                        <td th:text="${provider.Indirizzo}" />
+                    </tr>
+                </tbody>
+            </table>   
+  
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header card-header-primary">
-                            <h4 class="card-title ">Elenco fornitori</h4>
+                            <h4 class="card-title ">Elenco fatture passive:</h4>
 <!--                            <p class="card-category"><a class="btn btn-info btn-xs" th:href="@{'/InvoicesIn/New'} "  >+</a></p>-->
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="tabella" data-order='[[ 2, "desc" ]]'  class="table display compact">
+                                <table id="tabella" data-order='[[ 4, "desc" ]]'  class="table display compact">
                                     
                                     <thead>
                                         <tr>
-                                            <th th:each="header: ${headers}"  th:text="${header}" />
+                                            <th th:each="header: ${header2}"  th:text="${header}" />
                             
                                             <th>azione</th>
                                         </tr>
@@ -85,23 +138,28 @@
                                         <tr  th:each="row: ${rows}" id="tablerow">
                                             <!--<td th:each="header: ${headers}" th:text="${row.get(header)}" />-->
                                             <td th:text="${row.get('Id')}" />
+                                            <td th:text="${row.get('TD')}" />
+                                            <td th:text="${row.get('Data Reg.')}" />
+                                            <td th:text="${row.get('N.Reg.')}" />
+                                            <td th:text="${row.get('Data')}" />
+                                            <td th:text="${row.get('Numero')}" />
                                             <td th:text="${row.get('P.IVA')}" />
                                             <td th:text="${row.get('Denominazione')}" th:attr="title=${row.get('Descrizione')}"  data-toggle="tooltip" data-placement="bottom" data-container="body" />
-                                            <td th:text="${row.get('Indirizzo')}" />
+                                            <td th:text="${row.get('Importo')}" />
                                             <td>
-                                                <a  class="btn btn-primary btn-fab btn-fab-mini d" th:href="@{'/Provider/'+${row.get('Id')} + '/DDT'} "  target="_blank" >
-                                                    <i class="material-icons">local_shipping</i>
+                                                <a  class="btn btn-info btn-fab btn-fab-mini btn-round"   th:href="@{'/Invoice/Download/' + ${row.get('Id')}} " target="_blank" >
+                                                    <i class="material-icons">file_download</i>
                                                 </a>
-                                                
-                                           
-                                                <a  class="btn btn-primary btn-fab btn-fab-mini d" th:href="@{'/Provider/'+${row.get('Id')} + '/ODA'} "  target="_blank" >
-                                                    <i class="material-icons">shop</i>
+                                                     <a  class="btn btn-primary btn-fab btn-fab-mini d" th:onclick="'javascript:openModalRegisterInovice(\'' + ${row.get('Id')} +'\');'" >
+                                                    <i class="material-icons">mode_edit</i>
                                                 </a>
-                                                
-                                           
-                                                <a  class="btn btn-primary btn-fab btn-fab-mini d" th:href="@{'/Provider/'+${row.get('Id')} + '/Invoices'} "  target="_blank" >
-                                                    <i class="material-icons">list_alt</i>
+                                                <a  th:classappend="${row.get('Controllata') == true} ? 'btn btn-success btn-fab btn-fab-mini' : 'btn btn-warning btn-fab btn-fab-mini'"  th:href="@{'/InvoiceIn/' + ${row.get('Id')}}+'/Checks' " target="_blank" >
+                                                    <i class="material-icons">check</i>
                                                 </a>
+                                                <a  th:classappend="${row.get('Saldata') == true} ? 'btn btn-success btn-fab btn-fab-mini' : 'btn btn-warning btn-fab btn-fab-mini'" th:href="@{'/InvoiceIn/' + ${row.get('Id')}}+'/Payments' "  target="_blank" >
+                                                    <i class="material-icons">attach_money</i>
+                                                </a>
+
                                                 
                                             </td>
                                         </tr>

@@ -58,12 +58,17 @@ public class XmlFatturaBaseService {
         return headers;
     }
 
-        
-        
     public List<Map<String, Object>> getRows (){
+        List<XmlFatturaBase> listaFatture = xmlFatturaBaseRepository.findByAttivaFalse();
+        return getRows (listaFatture);
+    }
+    
+        
+        
+    public List<Map<String, Object>> getRows (List<XmlFatturaBase> listaFatture){
         
 //        List<XmlFatturaBase> listaFatture = XmlFatturaBasePredicate.filterXmlFatturaBase(xmlFatturaBaseRepository.findAll(), XmlFatturaBasePredicate.isPassiva());
-        List<XmlFatturaBase> listaFatture = xmlFatturaBaseRepository.findByAttivaFalse();
+        
  
         List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
         String  strData = null;

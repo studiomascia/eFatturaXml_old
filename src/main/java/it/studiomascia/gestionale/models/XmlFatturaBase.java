@@ -79,7 +79,7 @@ public class XmlFatturaBase {
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<Ddt> ddt;
     
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn( name="idAnagraficaSocieta" )
     private AnagraficaSocieta anagraficaSocieta;
     
