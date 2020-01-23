@@ -84,6 +84,7 @@
                             <th>note</th>  
                             <th>verificato</th>  
                             <th>allegati</th>
+                            <th>fattura associata</th>  
                         </tr>
                     </thead>
                     <tbody>
@@ -106,7 +107,11 @@
 
                                 </div>
                             </td>
-                            <td></td>
+                            <td>
+                                <th:block th:if="${x.getXmlFatturaBase()}">
+                                    <a th:href="@{'/Invoice/Download/' + ${x.getXmlFatturaBase().id}}" th:text="${x.getXmlFatturaBase().id}">view</a>
+                                </th:block>
+                             </td> 
                         </tr>
                 </tbody>
             </table>

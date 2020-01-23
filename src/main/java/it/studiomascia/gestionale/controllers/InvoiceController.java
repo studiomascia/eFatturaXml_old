@@ -547,14 +547,14 @@ public class InvoiceController {
         
         List<DBFile> listaFile = new ArrayList<DBFile>();
         for (ControlloFattura x : listacontrolli){
-
             listaFile.addAll(x.getFilesControlloFattura());
-        	
         }
         
         List lista = new ArrayList(listacontrolli);
         model.addAttribute("listafiles", listaFile);
         model.addAttribute("listacontrolli", lista);
+        model.addAttribute("listaddt", xmlFattura.getDDT());
+        
         return "lista_controlli_fattura";
     }
     

@@ -71,43 +71,106 @@
                         </td>                        
                     </tr>
                 </tbody>
-            </table>   
-            <h2>Elenco controlli:</h2>
-            <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalCheckInoviceIn(\'' + ${fattura.get('Id')} +'\');'" >
-                <i class="material-icons">add</i>
-            </a>
+            </table>
             
-                <table class="table table-hover">
+            <div class="card">
+                <div class="card-header card-header-primary">
+                    <h4 class="card-title ">Elenco controlli:</h4>
+<!--                            <p class="card-category"><a class="btn btn-info btn-xs" th:href="@{'/InvoicesIn/New'} "  >+</a></p>-->
+                        <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalCheckInoviceIn(\'' + ${fattura.get('Id')} +'\');'" >
+                            <i class="material-icons">add</i>
+                        </a>
+                </div>
+             
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr >
+                                    <th>id</th>  
+                                    <th>data</th>  
+                                    <th>controllato da</th>  
+                                    <th>centro di costo</th>  
+                                    <th>note</th>  
+                                    <th>controllata</th>  
+                                    <th>allegati</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr  th:each="x :${listacontrolli}"  id="table2row">
+                                    <td th:text="${x.id}" />
+                                    <td th:text="${#dates.format(x.dataControllo, 'dd-MM-yyyy')}" />
+                                    <td th:text="${x.creatore}" />
+                                    <td th:text="${x.centroDiCosto.getText()}" />
+                                    <td th:text="${x.note}" />
+                                    <td th:text="${x.isControllata()} ?  'Si' : 'No'">yes</td>
+                                    <td>
+                                        <div class="list-group">
+                                            <a th:each="item : ${x.getListaFilesControlloFattura()}" th:href="@{'/downloadFile/' + ${item.id}}"  th:text="${item.fileDescription}+ ' - ' + ${item.fileName}" class="btn btn-primary btn-xs" >Dapibus ac facilisis in</a>
+                                            <a class="btn btn-secondary btn-xs" th:onclick="'javascript:openModalAttachmentCheck(\'' + ${fattura.get('Id')} + '\',\''+ ${x.id} +  '\');'" >
+                                                <i class="material-icons">add</i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+                        
+            <div class="card">
+                <div class="card-header card-header-primary">
+                    <h4 class="card-title ">Elenco DDT associati alla fattura:</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                         <table class="table table-hover">
                     <thead>
                         <tr >
                             <th>id</th>  
+                            <th>creatore</th>  
                             <th>data</th>  
-                            <th>controllato da</th>  
-                            <th>centro di costo</th>  
+                            <th>numero</th>  
+                            <th>importo</th>  
                             <th>note</th>  
-                            <th>controllata</th>  
+                            <th>verificato</th>  
                             <th>allegati</th>
+                            <th>fattura associata</th>  
                         </tr>
                     </thead>
                     <tbody>
-                        <tr  th:each="x :${listacontrolli}"  id="table2row">
+                        <tr  th:each="x :${listaddt}"  id="table2row">
                             <td th:text="${x.id}" />
-                            <td th:text="${#dates.format(x.dataControllo, 'dd-MM-yyyy')}" />
                             <td th:text="${x.creatore}" />
-                            <td th:text="${x.centroDiCosto.getText()}" />
+                            <td th:text="${#dates.format(x.data, 'dd-MM-yyyy')}" />
+                            <td th:text="${x.numero}" />
+                            <td th:text="${x.importo}" />
                             <td th:text="${x.note}" />
-                            <td th:text="${x.isControllata()} ?  'Si' : 'No'">yes</td>
+                            <td th:text="${x.isVerificato()} ?  'Si' : 'No'">yes</td>
+
                             <td>
                                 <div class="list-group">
-                                    <a th:each="item : ${x.getListaFilesControlloFattura()}" th:href="@{'/downloadFile/' + ${item.id}}"  th:text="${item.fileDescription}+ ' - ' + ${item.fileName}" class="btn btn-primary btn-xs" >Dapibus ac facilisis in</a>
-                                    <a class="btn btn-secondary btn-xs" th:onclick="'javascript:openModalAttachmentCheck(\'' + ${fattura.get('Id')} + '\',\''+ ${x.id} +  '\');'" >
+                                    
+                                    <a th:each="item : ${x.getListaFilesDDT()}" th:href="@{'/downloadFile/' + ${item.id}}"  th:text="${item.fileDescription}+ ' - ' + ${item.fileName}" class="btn btn-primary btn-xs" >Dapibus ac facilisis in</a>
+                                    <a class="btn btn-secondary btn-xs" th:onclick="'javascript:openModalAttachmentDdt(\'' + ${x.id} +  '\');'" >
                                         <i class="material-icons">add</i>
                                     </a>
+
                                 </div>
                             </td>
+                            <td>
+                                <th:block th:if="${x.getXmlFatturaBase()}">
+                                    <a th:href="@{'/Invoice/Download/' + ${x.getXmlFatturaBase().id}}" th:text="${x.getXmlFatturaBase().id}">view</a>
+                                </th:block>
+                             </td> 
                         </tr>
                 </tbody>
             </table>
+                        
+                    </div>
+                </div>
+            </div>
         </div>
     </div> 
 </body>
