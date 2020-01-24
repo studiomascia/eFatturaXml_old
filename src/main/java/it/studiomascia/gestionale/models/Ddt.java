@@ -66,10 +66,18 @@ public class Ddt {
     @JoinColumn( name="idAnagraficaSocieta" )
     private AnagraficaSocieta anagraficaSocieta;
  
+     
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn( name="idXmlFatturaBase" )
     private XmlFatturaBase xmlFatturaBase ;
+
     
+    public XmlFatturaBase getXmlFatturaBase() {
+        return xmlFatturaBase;
+    }
+    public void setXmlFatturaBase(XmlFatturaBase x) {
+        this.xmlFatturaBase = x;
+    }   
     
      /**
      * @return the numero
@@ -92,12 +100,7 @@ public class Ddt {
         this.anagraficaSocieta = provider;
     }
     
-    public XmlFatturaBase getXmlFatturaBase() {
-        return xmlFatturaBase;
-    }
-    public void setXmlFatturaBase(XmlFatturaBase x) {
-        this.xmlFatturaBase = x;
-    }
+
     
     
     /**

@@ -66,9 +66,12 @@ public class XmlFatturaBase {
     @Column(name = "creatore")
     private  String creatore;
     
-    
     @Lob
     private String xmlString;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn( name="idAnagraficaSocieta" )
+    private AnagraficaSocieta anagraficaSocieta;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<Pagamento> pagamenti;
@@ -76,13 +79,18 @@ public class XmlFatturaBase {
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<ControlloFattura> controlli;
     
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy="xmlFatturaBase", orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<Ddt> ddt;
     
-    @ManyToOne(fetch = FetchType.EAGER, optional = true)
-    @JoinColumn( name="idAnagraficaSocieta" )
-    private AnagraficaSocieta anagraficaSocieta;
-    
+    public Set<Ddt> getDDT() {
+        return ddt;
+    }
+     
+    public void setDDT(Set<Ddt> listaDDT) {
+        this.ddt = listaDDT;
+    }
+     
     public AnagraficaSocieta getAnagraficaSocieta() {
         return anagraficaSocieta;
     }
@@ -90,18 +98,6 @@ public class XmlFatturaBase {
         this.anagraficaSocieta = provider;
     }
      
-     /**
-     * @return the Ddt
-     */
-    public Set<Ddt> getDDT() {
-        return ddt;
-    }
-    /**
-     * @param ddt the pagamenti to set
-     */
-    public void setDDT(Set<Ddt> listaDDT) {
-        this.ddt = listaDDT;
-    }
     
     /**
      * @return the pagamenti

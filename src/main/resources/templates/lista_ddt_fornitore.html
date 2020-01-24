@@ -109,7 +109,7 @@
                             </td>
                             <td>
                                 <th:block th:if="${x.getXmlFatturaBase()}">
-                                    <a th:href="@{'/Invoice/Download/' + ${x.getXmlFatturaBase().id}}" th:text="${x.getXmlFatturaBase().id}">view</a>
+                                    <a th:href="@{'/Invoice/Download/' + ${x.getXmlFatturaBase().getId()}}" th:text="${x.getXmlFatturaBase().getId()}">view</a>
                                 </th:block>
                              </td> 
                         </tr>

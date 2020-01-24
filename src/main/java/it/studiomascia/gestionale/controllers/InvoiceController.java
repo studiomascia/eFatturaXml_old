@@ -10,11 +10,13 @@ import it.studiomascia.gestionale.models.AnagraficaSocieta;
 import it.studiomascia.gestionale.models.CentroDiCosto;
 import it.studiomascia.gestionale.models.ControlloFattura;
 import it.studiomascia.gestionale.models.DBFile;
+import it.studiomascia.gestionale.models.Ddt;
 import it.studiomascia.gestionale.models.Pagamento;
 import it.studiomascia.gestionale.models.XmlFatturaBase;
 import it.studiomascia.gestionale.repository.AnagraficaSocietaRepository;
 import it.studiomascia.gestionale.repository.CentroDiCostoRepository;
 import it.studiomascia.gestionale.repository.ControlloFatturaRepository;
+import it.studiomascia.gestionale.repository.DdtRepository;
 import it.studiomascia.gestionale.repository.PagamentoRepository;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
 import it.studiomascia.gestionale.service.DBFileStorageService;
@@ -112,6 +114,9 @@ public class InvoiceController {
     
     @Autowired
     private AnagraficaSocietaRepository  anagraficaSocietaRepository;
+    
+    @Autowired
+    private DdtRepository  ddtRepository;
     
     /* INIZIO Metodi comuni per tutti i mapping */
     private SimpleDateFormat formattaData = new SimpleDateFormat("dd-MM-yyyy");
@@ -484,7 +489,7 @@ public class InvoiceController {
         return "redirect:/InvoiceIn/"+ request.getParameter("IdFattura").toString() +"/Checks";
     }
     
-      @GetMapping("/InvoiceIn/{fatturaId}/Checks")
+    @GetMapping("/InvoiceIn/{fatturaId}/Checks")
     public String ControlliFattura(Model model, @PathVariable String fatturaId){
         List<String> headers = new  ArrayList<>();
             headers.add("Id");
@@ -802,6 +807,14 @@ public class InvoiceController {
     
     /* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */ 
    
-    
+    @GetMapping("/AssociaFatturaTest")
+    public String AssociaFatturaTest() {
+        XmlFatturaBase xml = xmlFatturaBaseRepository.findById(116).get();
+        Ddt ddt = ddtRepository.findById(10).get();
+        ddt.setXmlFatturaBase(xml);
+        ddtRepository.save(ddt);
+        
+        return "fatture_attive_new";
+    }
    
 }

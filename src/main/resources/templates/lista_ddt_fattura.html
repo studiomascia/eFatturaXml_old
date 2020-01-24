@@ -72,11 +72,19 @@
                     </tr>
                 </tbody>
             </table>   
-            <h2>Elenco movimenti:</h2>
+            
+                       <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-primary">
+            
+            <h4>Elenco movimenti:</h4>
             <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalPaymentInovice(\'' + ${fattura.get('Id')} +'\');'" >
                 <i class="material-icons">add</i>
             </a>
-            
+               </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
                         <tr >
@@ -114,6 +122,13 @@
                         </tr>
                 </tbody>
             </table>
+                                                            </div>
+                        </div>    
+                    </div>
+                </div>
+            </div>
+                                
+                                
         </div>
     </div> 
 </body>
