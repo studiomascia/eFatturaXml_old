@@ -53,7 +53,18 @@
         <div class="container-fluid">
             <div class="modal fade" id="contenitoreModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"></div>      
 
-            <h2>Fornitore:</h2>
+            
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header card-header-primary" >
+                                 <h2>Fornitore:</h2>
+                            </div>
+                        <div class="card-body">
+            
+            
+            
+           
             
             <table class="table">
                 <thead>
@@ -68,12 +79,22 @@
                     </tr>
                 </tbody>
             </table>   
-            <h2>Elenco ODA</h2>
-                <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalOdaProvider(\'' + ${provider.id} +'\');'" >
-                    <i class="material-icons">add</i>
-                </a> 
+               
+    
+             <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-primary">
             
-                <table class="table table-hover">
+            
+                            <h4>Elenco ODA</h4>
+                            <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalOdaProvider(\'' + ${provider.id} +'\');'" >
+                                <i class="material-icons">add</i>
+                            </a> 
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                 <table class="table table-hover">
                     <thead>
                         <tr >
                             <th>id</th>  
@@ -110,7 +131,20 @@
                         </tr>
                 </tbody>
             </table>
+                            </div>
+                        </div>    
+                    </div>
+                </div>
+            </div>
+                                
+                                
         </div>
     </div> 
+                        
+                        
+                                                </div>  </div>  </div>
+                        
+                        
+                        
 </body>
 </html>

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>it.studiomascia</groupId>
 	<artifactId>gestionale</artifactId>
-	<version>0.0.3</version>
+	<version>0.1.0</version>
 	<name>gestionale</name>
 	<description>Gestionale project for Spring Boot</description>
 
@@ -26,11 +26,11 @@
                 <version>1.9.21</version>
             </dependency>
             -->
-<!--            <dependency> 
+            <dependency> 
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-tomcat</artifactId>         
                 <scope>provided</scope> 
-            </dependency>-->
+            </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -204,5 +204,5 @@
             </plugin>
         </plugins>
     </build>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 </project>

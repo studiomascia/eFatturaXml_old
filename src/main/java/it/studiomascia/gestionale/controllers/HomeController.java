@@ -5,8 +5,13 @@
  */
 package it.studiomascia.gestionale.controllers;
 
+import java.time.Instant;
+import java.util.Properties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.ui.Model;
 
 /**
  *
@@ -16,6 +21,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeController {
 
+    
+    @Autowired
+    BuildProperties buildProperties;
+    
     
     @GetMapping("/")
     public String home(){
@@ -36,5 +45,15 @@ public class HomeController {
 
             return "testpage";
     }
+    @GetMapping("/version")
+    public String getVersion(Model model){   
 
+       Properties prop = new Properties();
+        //need to explicitly loop over all entries, just returning the BuildProperties object only contains the specific fields (artificact, group, name, time and version)
+        buildProperties.forEach(entry -> prop.put(entry.getKey(),entry.getValue()));
+        //proper date formatting for time
+        prop.put("time", Instant.ofEpochMilli(Long.parseLong(prop.getProperty("time"))).toString());
+        model.addAttribute("testo", prop.toString());
+        return "testpage";
+    }
 }
