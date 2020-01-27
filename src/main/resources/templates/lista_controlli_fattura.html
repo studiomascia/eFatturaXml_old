@@ -46,6 +46,19 @@
                 }
             });
         }
+        
+        
+        
+        function openModalAssignDDT(id){
+            alert(id);
+            $.ajax({
+                url:"/InvoiceIn/"+id+"/ModalAssignDDT",
+                success: function(response){
+                    $("#contenitoreModal").html(response);
+                    $("#contenitoreModal").modal({keyboard:true, show:true});
+                }
+            });
+        }
     </script>
 </head>
 <body>
@@ -122,6 +135,9 @@
             <div class="card">
                 <div class="card-header card-header-primary">
                     <h4 class="card-title ">Elenco DDT associati alla fattura:</h4>
+                     <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalAssignDDT(\'' + ${fattura.get('Id')} +'\');'" >
+                            <i class="material-icons">add</i>
+                        </a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">

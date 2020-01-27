@@ -6,6 +6,7 @@
 package it.studiomascia.gestionale.controllers;
 
 import it.studiomascia.gestionale.models.XmlFatturaBase;
+import it.studiomascia.gestionale.repository.AnagraficaSocietaRepository;
 import it.studiomascia.gestionale.repository.UserRepository;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
 import java.util.List;
@@ -25,12 +26,16 @@ public class UserDashboardController {
    UserRepository utenti_repository;
    
    @Autowired
+   AnagraficaSocietaRepository  fornitori_repository;
+   
+   @Autowired
    XmlFatturaBaseRepository xmlfattura_repository;
    
     @GetMapping("/Dashboard")
     public String Dashboard(Model model){
         
         model.addAttribute("numUtenti", utenti_repository.findAll().size());
+        model.addAttribute("nFornitori", fornitori_repository.findAll().size());
         model.addAttribute("nFatturePassive", xmlfattura_repository.findByAttivaFalse().size());
         model.addAttribute("nFattureAttive", xmlfattura_repository.findByAttivaTrue().size());  
 

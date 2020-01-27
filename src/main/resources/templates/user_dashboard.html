@@ -8,6 +8,7 @@
 </head>
 <body>
     <div layout:fragment="content">
+        <!--DIV MESSAGGIO-->
         <div  th:if="${messaggio}"  class="modal fade show" id="MessageDiv" tabindex="-1" role="dialog" data-show="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
@@ -33,15 +34,20 @@
         <div class="container w-100">
             <h2></h2>
             <div class="row">
+                
+                <!--DIV BLOCCO Fornitori-->
                 <div class="col-sm-4">
-                    <div class="card card-nav-tabs">
-                        <h4 class="card-header card-header-danger">Utenti</h4>
+                    <div class="card card-nav-tabs">                    
+                        <h4 class="card-header card-header-danger">Fornitori</h4>
                         <div class="card-body">
-                            <p class="card-text" th:text="'Nel sistema sono attivi ' + ${numUtenti} + ' utenti'">Contenuto.</p>
-                            <a href="/Utenti" class="btn btn-primary">Lista Utenti</a>
+                            <p class="card-text" th:text="'Nel sistema sono presenti ' + ${nFornitori} + ' fornitori'">Contenuto</p>
+                            <a href="/ProvidersList" class="btn btn-primary">Elenco Fornitori</a>
                         </div>
                     </div>
                 </div>
+                  
+                
+                <!--DIV BLOCCO Fatture Passive-->
                 <div class="col-sm-4">
                     <div class="card card-nav-tabs">
                         <h4 class="card-header card-header-info">Fatture Passive</h4>
@@ -52,6 +58,8 @@
                         </div>                                                               
                     </div>
                 </div>
+                
+                <!--DIV BLOCCO Fatture Attive-->
                 <div class="col-sm-4">
                     <div class="card card-nav-tabs">
                         <h4 class="card-header card-header-success">Fatture Attive</h4>
@@ -62,24 +70,33 @@
                         </div>
                     </div>
                 </div>
+                
+                <!--DIV BLOCCO Utenti-->
                 <div class="col-sm-4">
                     <div class="card card-nav-tabs">
-                        <h4 class="card-header card-header-warning">Risorse Umane</h4>
+                        <h4 class="card-header card-header-danger">Utenti</h4>
+                        <div class="card-body">
+                            <p class="card-text" th:text="'Nel sistema sono attivi ' + ${numUtenti} + ' utenti'">Contenuto.</p>
+                            <a href="/Utenti" class="btn btn-primary">Lista Utenti</a>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <!--DIV BLOCCO Risorse Umane-->
+                <div class="col-sm-4">
+                    <div class="card card-nav-tabs">
+                        <h4 class="card-header card-header-warning">Dipendenti</h4>
                         <div class="card-body">
                             <p class="card-text" th:text="'La società ha: '  + ' dipendenti'">Contenuto.</p>
                             <a href="#" class="btn btn-primary">Lista Dipendenti</a>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-4">
-                    <div class="card card-nav-tabs">                    
-                        <h4 class="card-header card-header-warning">DDT/ODA</h4>
-                        <div class="card-body">
-                            <p class="card-text">Naviga per fornitore</p>
-                            <a href="/ProvidersList" class="btn btn-primary">Lista </a>
-                        </div>
-                    </div>
-                </div>
+                
+              
+                
+                <!--DIV BLOCCO Centri di costo-->
                 <div class="col-sm-4">
                     <div class="card card-nav-tabs">                    
                         <h4 class="card-header card-header-warning">Centri di costo</h4>

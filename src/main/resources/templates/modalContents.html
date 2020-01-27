@@ -395,6 +395,36 @@
 </div>
 
 
+<div th:fragment="assignDDT" class="modal-dialog modal-dialog-centered mw-100 w-75" role="document">
+    <form class="form-horizontal" th:action="@{'/InvoiceIn/'+ ${idFattura}+ '/ModalAssignDDT/' }"  method="POST" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleziona i DDT da assegnare alla fattura:</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label hidden="true" for="txtId" class="control-label">Id Fattura</label>
+                    <input hidden="true" readonly="true" type="text" class="form-control" name="txtId" id="txtId" th:field="${idFattura}">
+                </div>    
+                
+                <div class="form-group">
+                    <ul>
+                        <li th:each="item : ${ddt_non_assegnati}">
+                            <input type="checkbox" th:name="listaId" th:value="${item.id}"  th:text="${'DDT n. ' + item.numero + ' del  ' + item.data}" />
+                        </li>
+                    </ul>
+                </div> 
+                   
+            </div>
+            <div class="modal-footer">
+                <button type="button"  class="btn btn-secondary" data-dismiss="modal" >Chiudi</button>
+                <button type="submit" class="btn btn-primary">Salva</button>
+            </div>
+        </div>
+    </form>
+</div>
 
 </body>    
 </html>

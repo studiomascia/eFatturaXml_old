@@ -807,6 +807,39 @@ public class InvoiceController {
     
     /* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */ 
    
+    @GetMapping("/InvoiceIn/{idFattura}/ModalAssignDDT")
+    public String AssociaDDTaFatturaIn(ModelMap model, @PathVariable Integer idFattura, HttpServletRequest request)
+    {
+        XmlFatturaBase xml = xmlFatturaBaseRepository.findById(idFattura).get();
+
+        List<Ddt> lista = ddtRepository.findByProviderNotAssigned(xml.getAnagraficaSocieta());
+    
+        model.addAttribute("idFattura",idFattura);  
+        model.addAttribute("ddt_non_assegnati",lista);  
+        return "modalContents :: assignDDT";
+    }
+    
+    @PostMapping("/InvoiceIn/{idFattura}/ModalAssignDDT")
+    public String AssociaDDTaFatturaIn( @RequestParam("listaId") List<String> lista, @PathVariable Integer idFattura, HttpServletRequest request)
+    {
+        if(lista != null)
+        {
+            XmlFatturaBase fattura = xmlFatturaBaseRepository.findById(idFattura).get();
+
+            for(String item : lista){
+                int idDDT = Integer.parseInt(item);
+                Ddt ddt= ddtRepository.findById(idDDT).get();
+                ddt.setXmlFatturaBase(fattura);
+                ddtRepository.save(ddt);
+            } 
+        }
+        return "redirect:/InvoiceIn/"+ idFattura +"/Checks";
+    }
+   
+    
+    
+    /* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */ 
+   
     @GetMapping("/AssociaFatturaTest")
     public String AssociaFatturaTest() {
         XmlFatturaBase xml = xmlFatturaBaseRepository.findById(116).get();

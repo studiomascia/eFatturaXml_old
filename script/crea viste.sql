@@ -23,3 +23,16 @@ as SELECT  IdXmlFatturaBase,
   FROM [View_FattureXml]
     CROSS APPLY FatturaXml.nodes('/*/FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA') as T(Nodo), Anagrafica_societa T2
 	Where  T.Nodo.value('(IdCodice)[1]', 'varchar(max)') = piva
+
+
+USE [GestionaleConcreteDB_Svil]
+GO
+UPDATE 
+     t1
+SET 
+     t1.id_anagrafica_societa = t2.idfornitore
+FROM 
+     [dbo].[xmlfatturabase] t1 
+     INNER JOIN [dbo].[View_FattureXml_Fornitori] t2 
+     ON t1.id = t2.idxmlfatturabase;
+go

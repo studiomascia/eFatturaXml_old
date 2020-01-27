@@ -5,13 +5,11 @@
 // */
 package it.studiomascia.gestionale.repository;
 
+import it.studiomascia.gestionale.models.AnagraficaSocieta;
 import it.studiomascia.gestionale.models.Ddt;
 import java.util.List;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 /**
  *
@@ -21,6 +19,6 @@ public interface DdtRepository extends JpaRepository<Ddt, Integer>{
 //    @EntityGraph(value = "Ddt.AnagraficaSocieta", type = EntityGraphType.FETCH)
 //    public List<Ddt> findByIdAnagraficaSocieta(int id);
 //    
-//    @Query("select u from ddt u where u.idAnagraficaSocieta= ?1")
-//  List<Ddt> findByAnagraficaSocieta(int x);
+  @Query("select u from Ddt u where u.anagraficaSocieta = ?1 and  u.xmlFatturaBase is NULL")
+  List<Ddt> findByProviderNotAssigned(AnagraficaSocieta x);
 }

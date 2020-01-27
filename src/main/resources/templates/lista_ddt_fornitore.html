@@ -68,10 +68,23 @@
                     </tr>
                 </tbody>
             </table>   
-            <h2>Elenco DDT</h2>
-                <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalDdtProvider(\'' + ${provider.id} +'\');'" >
+            
+            
+            
+            <div class="card">
+                <div class="card-header card-header-primary">
+                    <h4 class="card-title ">Elenco DDT</h4>
+<!--                            <p class="card-category"><a class="btn btn-info btn-xs" th:href="@{'/InvoicesIn/New'} "  >+</a></p>-->
+                        <a class="btn btn-info btn-xs" th:onclick="'javascript:openModalDdtProvider(\'' + ${provider.id} +'\');'" >
                     <i class="material-icons">add</i>
                 </a> 
+                </div>
+            
+             <div class="card-body">
+                    <div class="table-responsive">
+
+           
+               
             
                 <table class="table table-hover">
                     <thead>
@@ -115,6 +128,11 @@
                         </tr>
                 </tbody>
             </table>
+            
+              </div>
+                </div>
+            
+            
         </div>
     </div> 
 </body>
