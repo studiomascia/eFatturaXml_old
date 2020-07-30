@@ -27,6 +27,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Entity
 public class Pagamento {
     
+     public static final int SALDATA = 2;
+     public static final int SALDATA_AUTO = 3;
+     public static final int PARZ_SALDATA = 1;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -47,11 +51,12 @@ public class Pagamento {
     private  String creatore;
     
     @Column(name = "saldata")
-    private  Boolean saldata;
+    private  Integer saldata;
     
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<DBFile> filePagamenti;
 
+    
     /**
      * @return the id
      */
@@ -104,14 +109,14 @@ public class Pagamento {
     /**
      * @return the saldata
      */
-    public Boolean isSaldata() {
+    public int isSaldata() {
         return this.saldata;
     }
 
     /**
      * @param saldata the saldata to set
      */
-    public void setSaldata(Boolean saldata) {
+    public void setSaldata(int saldata) {
         this.saldata = saldata;
     }
 
@@ -135,7 +140,7 @@ public class Pagamento {
     /**
      * @return the saldata
      */
-    public Boolean getSaldata() {
+    public int getSaldata() {
         return saldata;
     }
 

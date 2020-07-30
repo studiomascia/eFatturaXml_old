@@ -115,9 +115,34 @@ public class XmlFatturaBase {
     public boolean isSaldata() {
         Boolean ret=false;
         for (Pagamento x : pagamenti){
-        	if (x.isSaldata()) ret =true;
+        	if (x.isSaldata()==Pagamento.SALDATA) ret =true;
         }
      return ret;   
+    }
+    public boolean isSaldataParz() {
+        Boolean ret=false;
+        for (Pagamento x : pagamenti){
+        	if (x.isSaldata()==Pagamento.PARZ_SALDATA) ret =true;
+        }
+     return ret;   
+    }
+
+    public boolean isSaldataAuto() {
+        Boolean ret=false;
+        for (Pagamento x : pagamenti){
+        	if (x.isSaldata()==Pagamento.SALDATA_AUTO) ret =true;
+        }
+     return ret;   
+    }
+
+    
+    public int getTipoSaldo(){
+    int ret=0;
+     if (this.isSaldata()) ret = Pagamento.SALDATA; else 
+     if (this.isSaldataParz()) ret = Pagamento.PARZ_SALDATA; else
+     if (this.isSaldataAuto()) ret = Pagamento.SALDATA_AUTO;
+    
+    return ret;
     }
     
     public boolean isControllata() {

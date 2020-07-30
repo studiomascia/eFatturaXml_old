@@ -310,7 +310,7 @@ public class InvoiceController {
                                 p.setImportoVersamento(item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento());
                                 p.setNote("pagamento impostato automaticamente");
                                 p.setCreatore("System");
-                                p.setSaldata(true);
+                                p.setSaldata(Pagamento.SALDATA_AUTO);
                                 setp.add(p);
                                 xmlFattura.setPagamenti(setp);
                         }
@@ -394,10 +394,13 @@ public class InvoiceController {
     }
     
     @PostMapping("/Invoice/{id}/ModalPayment")
-    public String registraNuovoPagamentoFatturaIn( @ModelAttribute("pagamento") Pagamento pagamento, Model model,@PathVariable Integer id, RedirectAttributes redirectAttributes)
+    public String registraNuovoPagamentoFatturaIn( @ModelAttribute("pagamento") Pagamento pagamento, Model model,@PathVariable Integer id, HttpServletRequest request, RedirectAttributes redirectAttributes)
     {
         XmlFatturaBase vecchiaFattura = xmlFatturaBaseRepository.findById(id).get();
         pagamento.setCreatore(SecurityContextHolder.getContext().getAuthentication().getName());
+        int temp = Integer.parseInt(request.getParameterValues("cbSaldata")[0]);
+       
+        pagamento.setSaldata(temp);
         vecchiaFattura.getPagamenti().add(pagamento);
         
         xmlFatturaBaseRepository.save(vecchiaFattura);
@@ -639,7 +642,7 @@ public class InvoiceController {
                 riga.put("Importo", importoFattura);
                 riga.put("Causale", causale);
                 riga.put("Descrizione", descrizione);
-                riga.put("Saldata", xmlFattura.isSaldata());
+                riga.put("Saldata", xmlFattura.getTipoSaldo());
                 righe.add(riga);
                                 
         } catch (JAXBException e) {
