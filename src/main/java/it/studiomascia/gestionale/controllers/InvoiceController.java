@@ -458,6 +458,11 @@ public class InvoiceController {
             //controllo.setCentroDiCosto(centroDiCostoRepository.findById(id2).get().getText());
             controllo.setCentroDiCosto(centroDiCostoRepository.findById(id2).get());
         }
+        if (request.getParameter("cbControllata") != null) {
+            int id3 = Integer.parseInt(request.getParameter("cbControllata"));
+            controllo.setStatoControllo(id3);
+        }
+
 
         vecchiaFattura.getControlli().add(controllo);
         
@@ -806,8 +811,7 @@ public class InvoiceController {
         return "lista_pagamenti_fattura_out";
     }
     
-   
-    
+      
     /* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */ 
    
     @GetMapping("/InvoiceIn/{idFattura}/ModalAssignDDT")

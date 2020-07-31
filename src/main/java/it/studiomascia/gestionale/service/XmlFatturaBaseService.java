@@ -133,7 +133,7 @@ public class XmlFatturaBaseService {
                 riga.put("Descrizione",descrizione );
                 riga.put("Importo", importoFattura);
                 riga.put("Saldata", xmlFattura.getTipoSaldo());
-                riga.put("Controllata", xmlFattura.isControllata());
+                riga.put("Controllata", xmlFattura.getTipoControllo());
                 righe.add(riga); 
             }
         } catch (JAXBException e) {

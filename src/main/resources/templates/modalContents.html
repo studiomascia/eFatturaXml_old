@@ -205,7 +205,12 @@
                 </div> 
                   <div class="form-group">
                     <label for="cbSaldata" class="control-label">Controllata</label>
-                    <input  type="checkbox" class="form-control" name="cbControllata" id="cbControllata" th:field="${controllo.controllata}">
+<!--                    <input  type="checkbox" class="form-control" name="cbControllata" id="cbControllata" th:field="${controllo.controllata}">-->
+                    <select class="form-control" name="cbControllata"  id="cbControllata">
+                        <option value="1" >VALIDATA</option>
+                        <option value="2" >IN CORSO</option>
+                        <option value="3" >BLOCCATA</option>
+                    </select>
                 </div> 
             </div>
             <div class="modal-footer">

@@ -47,7 +47,7 @@ public class ControlloFattura {
 //    private  String centroDiCosto;
       
     @Column(name = "controllata")
-    private  Boolean controllata;
+    private  int controllata;
     
     @Column(name = "creatore")
     private  String creatore;
@@ -59,6 +59,12 @@ public class ControlloFattura {
     @ManyToOne
     @JoinColumn(name="CentroDiCosto", nullable=false)
     private CentroDiCosto centroDiCosto;
+    
+    public static final int VALIDATA = 1;
+    public static final int PENDING  = 2;
+    public static final int BLOCCATA = 3;
+    
+    
     
     /**
      * @return the centroDiCosto
@@ -112,17 +118,39 @@ public class ControlloFattura {
     /**
      * @return the controllata
      */
-    public Boolean isControllata() {
-        return this.getControllata();
-    }
+//    public Boolean isControllata() {
+//        return this.isControllata();
+//    }
 
     /**
      * @param controllata the controllata to set
      */
-    public void setControllata(Boolean x) {
+    public void setStatoControllo(int x) {
         this.controllata = x;
     }
-
+    /**
+     * @return the controllata
+     */
+    public int isControllata() {
+        return controllata;
+    }
+    
+     public Boolean isControlloOK() {
+        Boolean ret=false;
+        if (this.isControllata()== ControlloFattura.VALIDATA) ret =true;
+     return ret;   
+    }
+     public Boolean isControlloNOK() {
+        Boolean ret=false;
+        if (this.isControllata()== ControlloFattura.BLOCCATA) ret =true;
+     return ret;   
+    }
+     public Boolean isControlloWAIT() {
+        Boolean ret=false;
+        if (this.isControllata()== ControlloFattura.PENDING) ret =true;
+     return ret;   
+    }
+    
     /**
      * @return the fileControlloFattura
      */
@@ -140,12 +168,7 @@ public class ControlloFattura {
         this.fileControlloFattura = filesControlloFattura;
     }
 
-    /**
-     * @return the controllata
-     */
-    public Boolean getControllata() {
-        return controllata;
-    }
+
 
     /**
      * @return the creatore

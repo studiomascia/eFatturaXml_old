@@ -136,6 +136,7 @@ public class XmlFatturaBase {
     }
 
     
+    // MODIFICARE I METODI E FARE IN MODO CHE SI VALUTI SOLO IL SALDO PIU RECENTE OVVERO CON ID PIU ALTO
     public int getTipoSaldo(){
     int ret=0;
      if (this.isSaldata()) ret = Pagamento.SALDATA; else 
@@ -145,16 +146,54 @@ public class XmlFatturaBase {
     return ret;
     }
     
-    public boolean isControllata() {
+    // MODIFICARE I METODI E FARE IN MODO CHE SI VALUTI SOLO IL CONTROLLO PIU RECENTE OVVERO CON ID PIU ALTO
+    public int getTipoControllo(){
+        int ret=0;
+        if (this.isControllataOK()) ret = ControlloFattura.VALIDATA; else 
+            if (this.isControllataNOK()) ret = ControlloFattura.BLOCCATA; else
+                if (this.isControllataWAIT()) ret = ControlloFattura.PENDING; 
+    
+        return ret;
+    }
+    
+    // MODIFICARE I METODI E FARE IN MODO CHE SI VALUTI SOLO IL CONTROLLO PIU RECENTE OVVERO CON ID PIU ALTO
+    public boolean isControllataOK() {
         Boolean ret=false;
-        for (ControlloFattura x : controlli){
-        	if (x.isControllata()) ret =true;
+        if (controlli.size()>1)
+            for (ControlloFattura x : controlli){
+                if (x.isControllata()== ControlloFattura.VALIDATA) ret =true;
         }
      return ret;   
     }
+    
+    // MODIFICARE I METODI E FARE IN MODO CHE SI VALUTI SOLO IL CONTROLLO PIU RECENTE OVVERO CON ID PIU ALTO
+    public boolean isControllataNOK() {
+        Boolean ret=false;
+        for (ControlloFattura x : controlli){
+        	if (x.isControllata()== ControlloFattura.BLOCCATA) ret =true;
+        }
+     return ret;   
+    }
+    // MODIFICARE I METODI E FARE IN MODO CHE SI VALUTI SOLO IL CONTROLLO PIU RECENTE OVVERO CON ID PIU ALTO
+    public boolean isControllataWAIT() {
+        Boolean ret=false;
+        for (ControlloFattura x : controlli){
+        	if (x.isControllata()== ControlloFattura.PENDING) ret =true;
+        }
+     return ret;   
+    }
+
+
+    
       /**
      * @return the controlli
      */
+    
+//    private ControlloFattura getLastControlloFattura() {
+//        
+//        return controlli.
+//    }
+     
     public Set<ControlloFattura> getControlli() {
         return controlli;
     }
@@ -168,13 +207,7 @@ public class XmlFatturaBase {
      
    
     
-    public boolean isAutorizzata() {
-        Boolean ret=false;
-        for (ControlloFattura x : getControlli()){
-        	if (x.isControllata()) ret =true;
-        }
-     return ret;   
-    }
+
     
     private boolean attiva;
     

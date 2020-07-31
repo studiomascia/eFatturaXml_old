@@ -105,7 +105,7 @@
                                     <th>controllato da</th>  
                                     <th>centro di costo</th>  
                                     <th>note</th>  
-                                    <th>controllata</th>  
+                                    <th>stato controllo</th>  
                                     <th>allegati</th>
                                 </tr>
                             </thead>
@@ -116,7 +116,8 @@
                                     <td th:text="${x.creatore}" />
                                     <td th:text="${x.centroDiCosto.getText()}" />
                                     <td th:text="${x.note}" />
-                                    <td th:text="${x.isControllata()} ?  'Si' : 'No'">yes</td>
+                                    <td th:text="${(x.isControlloOK() ?  'VALIDATA' : '' ) + (x.isControlloWAIT() ?  'IN CORSO' : '' ) + (x.isControlloNOK() ?  'BLOCCATA' : '' )  } ">yes</td>
+                                    
                                     <td>
                                         <div class="list-group">
                                             <a th:each="item : ${x.getListaFilesControlloFattura()}" th:href="@{'/downloadFile/' + ${item.id}}"  th:text="${item.fileDescription}+ ' - ' + ${item.fileName}" class="btn btn-primary btn-xs" >Dapibus ac facilisis in</a>
