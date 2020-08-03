@@ -149,17 +149,18 @@ public class XmlFatturaBase {
     // MODIFICARE I METODI E FARE IN MODO CHE SI VALUTI SOLO IL CONTROLLO PIU RECENTE OVVERO CON ID PIU ALTO
     public int getTipoControllo(){
         int ret=0;
-        if (this.isControllataOK()) ret = ControlloFattura.VALIDATA; else 
-            if (this.isControllataNOK()) ret = ControlloFattura.BLOCCATA; else
-                if (this.isControllataWAIT()) ret = ControlloFattura.PENDING; 
-    
+        if (controlli.size()>0){
+            if (this.isControllataOK()) ret = ControlloFattura.VALIDATA; else 
+                if (this.isControllataNOK()) ret = ControlloFattura.BLOCCATA; else
+                    if (this.isControllataWAIT()) ret = ControlloFattura.PENDING; 
+        }
         return ret;
     }
     
     // MODIFICARE I METODI E FARE IN MODO CHE SI VALUTI SOLO IL CONTROLLO PIU RECENTE OVVERO CON ID PIU ALTO
     public boolean isControllataOK() {
         Boolean ret=false;
-        if (controlli.size()>1)
+        if (controlli.size()>0)
             for (ControlloFattura x : controlli){
                 if (x.isControllata()== ControlloFattura.VALIDATA) ret =true;
         }

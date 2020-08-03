@@ -29,7 +29,7 @@
     <script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.print.min.js"></script>
     
-        <title>Home</title>
+        <title>Lista fatture passive</title>
              <style>
                  body { background: white;} 
                 .tooltip-inner {background-color: #dcdcdc; min-width: 300px }
@@ -141,7 +141,7 @@
 <!--                                            <a  th:classappend="${row.get('Controllata') == true} ? 'btn btn-success btn-fab btn-fab-mini' : 'btn btn-warning btn-fab btn-fab-mini'"  th:href="@{'/InvoiceIn/' + ${row.get('Id')}}+'/Checks' " target="_blank" >
                                                     <i class="material-icons">check</i>
                                                 </a>-->
-                                                <a  th:classappend="${(row.get('Controllata')  == 3 ? 'btn btn-danger btn-fab btn-fab-mini' :'') + (row.get('Controllata')  == 2 ? 'btn btn-warning btn-fab btn-fab-mini'  : '') + (row.get('Controllata')  == 1 ? 'btn btn-success btn-fab btn-fab-mini'  : '') + (row.get('Controllata')  == 0 ? 'btn btn-info btn-fab btn-fab-mini'  : '')}"   th:href="@{'/InvoiceIn/' + ${row.get('Id')}}+'/Checks' " target="_blank" >
+                                                <a  th:classappend="${(row.get('Controllata')  == 0 ? 'btn btn-default btn-fab btn-fab-mini'  : '') + (row.get('Controllata')  == 1 ? 'btn btn-success btn-fab btn-fab-mini' :'') + (row.get('Controllata')  == 2 ? 'btn btn-warning btn-fab btn-fab-mini'  : '') + (row.get('Controllata')  == 3 ? 'btn btn-danger btn-fab btn-fab-mini'  : '')}"   th:href="@{'/InvoiceIn/' + ${row.get('Id')}}+'/Checks' " target="_blank" >
                                                     <i class="material-icons">check</i>
                                                 </a>
 
@@ -151,7 +151,7 @@
                                                     <i class="material-icons">attach_money</i>
                                                     
                                                 </a>-->
-                                                <a  th:classappend="${(row.get('Saldata') == 3 ? 'btn btn-info btn-fab btn-fab-mini' : '') + (row.get('Saldata') == 2 ? 'btn btn-success btn-fab btn-fab-mini' : '') +(row.get('Saldata') == 1 ? 'btn btn-warning btn-fab btn-fab-mini' : '') + (row.get('Saldata') == 0 ? 'btn btn-danger btn-fab btn-fab-mini' : '')}" th:href="@{'/InvoiceIn/' + ${row.get('Id')}}+'/Payments' "  target="_blank" >
+                                                <a  th:classappend="${(row.get('Saldata') == 3 ? 'btn btn-info btn-fab btn-fab-mini' : '') + (row.get('Saldata') == 2 ? 'btn btn-success btn-fab btn-fab-mini' : '') +(row.get('Saldata') == 1 ? 'btn btn-warning btn-fab btn-fab-mini' : '') + (row.get('Saldata') == 0 ? 'btn btn-default btn-fab btn-fab-mini' : '')}" th:href="@{'/InvoiceIn/' + ${row.get('Id')}}+'/Payments' "  target="_blank" >
                                                     <i class="material-icons">attach_money</i>
                                                 </a> 
                                              </td>
