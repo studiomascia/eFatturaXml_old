@@ -8,6 +8,7 @@ package it.studiomascia.gestionale.controllers;
 import it.studiomascia.gestionale.models.User;
 import it.studiomascia.gestionale.repository.UserRepository;
 import it.studiomascia.gestionale.service.XmlFatturaBaseService;
+import java.awt.BorderLayout;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -41,6 +42,70 @@ public class ReportController
     @Autowired
     private XmlFatturaBaseService xmlFatturaBaseService;
     
+    // Genera un foglio excel a partire dalla "tabella" utilizzando come le colonne nella lista "header"
+    public static ByteArrayInputStream GenerateExcelReport( List<String> header, List<Map<String,Object>> tabella,String reportName) throws IOException {
+
+        Workbook workbook = new HSSFWorkbook(); 
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        CreationHelper createHelper = workbook.getCreationHelper();
+
+        Sheet sheet = workbook.createSheet(reportName);
+
+        org.apache.poi.ss.usermodel.Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setColor(IndexedColors.BLUE.getIndex());
+
+        CellStyle headerCellStyle;
+        headerCellStyle = workbook.createCellStyle();
+        headerCellStyle.setFont(headerFont);
+
+        // Row for Header
+        org.apache.poi.ss.usermodel.Row headerRow = sheet.createRow(0);
+        int rowIdx = 1;
+            
+            
+        // Header
+        for (int col = 0; col < header.size(); col++) {
+            org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(col);
+            cell.setCellValue(header.get(col));
+            cell.setCellStyle(headerCellStyle);
+        }   
+        
+        String strTemp="";
+        // Ciclo che scorre le righe delle fatture 
+        for (Map<String,Object> itemTabella : tabella) 
+        {
+            org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowIdx++);
+            //System.out.println("riga = " + rowIdx);
+            
+            for (int col = 0; col < header.size(); col++) {
+                //System.out.println("    col = " + col);
+                strTemp = header.get(col);
+                //System.out.println("    header.get(col) = " + strTemp);
+
+                if (itemTabella.get(strTemp) == null)
+                    strTemp="";
+                else
+                    strTemp= itemTabella.get(strTemp) .toString();
+                    
+                //System.out.println("    itemFattura.get(strTemp) = " + strTemp);
+                row.createCell(col).setCellValue(strTemp);
+            }
+            // Di ogni fattura si prendono solo i campi di interesse 
+        }
+          
+            // CellStyle for Age
+            CellStyle ageCellStyle = workbook.createCellStyle();
+            ageCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#"));
+            
+            workbook.write(out);
+            
+            return new ByteArrayInputStream(out.toByteArray());
+    
+
+}
+
+
     @RequestMapping(value = "/ReportTest", method = RequestMethod.GET)
     public ResponseEntity<InputStreamResource> excelReport() throws IOException {
         List<User> listaUtenti  = userRepository.findAll();
@@ -111,67 +176,8 @@ HttpHeaders headers = new HttpHeaders();
 
     
 }
-    
+      
     @RequestMapping(value = "/ReportInvoicesIn", method = RequestMethod.GET)
-    public ResponseEntity<InputStreamResource> excelReportInvoicesIn() throws IOException {
-       
-        List<String> COLUMNs = xmlFatturaBaseService.getHeaders();
-        List<Map<String,Object>> listaFatture  = xmlFatturaBaseService.getRows();
-        
-        try (
-            Workbook workbook = new HSSFWorkbook(); 
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ) 
-        {
-            CreationHelper createHelper = workbook.getCreationHelper();
-
-            Sheet sheet = workbook.createSheet("Fatture");
-
-            org.apache.poi.ss.usermodel.Font headerFont = workbook.createFont();
-            headerFont.setBold(true);
-            headerFont.setColor(IndexedColors.BLUE.getIndex());
-
-            CellStyle headerCellStyle = workbook.createCellStyle();
-            headerCellStyle.setFont(headerFont);
-
-            // Row for Header
-            org.apache.poi.ss.usermodel.Row headerRow = sheet.createRow(0);
-            int rowIdx = 1;
-            
-            
-            // Header
-            for (int col = 0; col < COLUMNs.size(); col++) {
-                org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(col);
-                cell.setCellValue(COLUMNs.get(col));
-                cell.setCellStyle(headerCellStyle);
-            }   
-            for (Map<String,Object> item : listaFatture) {
-                org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowIdx++);
-                int indice=0;
-                 for (Map.Entry<String,Object> elemento : item.entrySet())  
-                 {
-                    if (elemento==null) {
-                    } else {
-                        row.createCell(indice++).setCellValue(elemento.getValue().toString());
-                    }
-                 }
-            }
-          
-            // CellStyle for Age
-            CellStyle ageCellStyle = workbook.createCellStyle();
-            ageCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#"));
-            
-            workbook.write(out);
-            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Disposition", "attachment; filename=customers.xlsx");
-
-            return ResponseEntity.ok().headers(headers).body(new InputStreamResource(in));
-        }
-    
-}
-    
-     @RequestMapping(value = "/ReportInvoices", method = RequestMethod.GET)
     public ResponseEntity<InputStreamResource> excelReportInvoices() throws IOException {
        
         List<String> COLUMNs = xmlFatturaBaseService.getHeaders();
@@ -179,81 +185,12 @@ HttpHeaders headers = new HttpHeaders();
 
         HttpHeaders headers = new HttpHeaders();
         // set filename in header
-        headers.add("Content-Disposition", "attachment; filename=users.xls");
+        
+        headers.add("Content-Disposition", "attachment; filename=download.xls");
         return ResponseEntity.ok().headers(headers)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(new InputStreamResource(GenerateExcelReport(COLUMNs,listaFatture )));
-        
-        
-        
-        
-        
-        
+                .body(new InputStreamResource(GenerateExcelReport(COLUMNs,listaFatture,"listaFatture" )));    
     }
  
-    public static ByteArrayInputStream GenerateExcelReport( List<String> COLUMNs, List<Map<String,Object>> listaFatture) throws IOException {
-
-        Workbook workbook = new HSSFWorkbook(); 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        CreationHelper createHelper = workbook.getCreationHelper();
-
-            Sheet sheet = workbook.createSheet("Fatture");
-
-            org.apache.poi.ss.usermodel.Font headerFont = workbook.createFont();
-            headerFont.setBold(true);
-            headerFont.setColor(IndexedColors.BLUE.getIndex());
-
-            CellStyle headerCellStyle;
-            headerCellStyle = workbook.createCellStyle();
-            headerCellStyle.setFont(headerFont);
-
-            // Row for Header
-            org.apache.poi.ss.usermodel.Row headerRow = sheet.createRow(0);
-            int rowIdx = 1;
-            
-            
-            // Header
-            for (int col = 0; col < COLUMNs.size(); col++) {
-                org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(col);
-                cell.setCellValue(COLUMNs.get(col));
-                cell.setCellStyle(headerCellStyle);
-            }   
-            int contanull=0;
-            for (Map<String,Object> item : listaFatture) {
-                org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowIdx++);
-                int indice=0;
-                 for (Map.Entry<String,Object> elemento : item.entrySet())  
-                 {
-                    if (elemento==null) {
-                    } else {
-                        if (elemento.getValue()==null){
-                        contanull++;
-                        }else{
-                        try{
-                        row.createCell(indice++).setCellValue(elemento.getValue().toString());
-                        }
-                        catch (Exception e )
-                        {
-                            String s = e.getMessage();
-                        }
-                        }
-                    }
-                 }
-            }
-          
-            // CellStyle for Age
-            CellStyle ageCellStyle = workbook.createCellStyle();
-            ageCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#"));
-            
-            workbook.write(out);
-            
-            
-            
-            
-            return new ByteArrayInputStream(out.toByteArray());
-    
-
-}
 
 }
