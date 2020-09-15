@@ -6,6 +6,9 @@
 package it.studiomascia.gestionale.models;
 
 
+import it.studiomascia.gestionale.xml.FatturaElettronicaType;
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.Basic;
@@ -24,6 +27,12 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -338,5 +347,34 @@ public class XmlFatturaBase {
         this.creatore = creatore;
     }
 
-  
+    public FatturaElettronicaType getFatturaElettronica()
+    {
+        FatturaElettronicaType item = new FatturaElettronicaType();
+        byte[] byteArr;
+        try 
+        {
+            StringWriter sw = new StringWriter();
+            JAXBContext context = JAXBContext.newInstance(FatturaElettronicaType.class);
+            // Unmarshaller serve per convertire il file in un oggetto
+            Unmarshaller jaxbUnMarshaller = context.createUnmarshaller();
+            // Marshaller serve per convertire l'oggetto ottenuto dal file in una stringa xml
+            Marshaller jaxbMarshaller = context.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+              byteArr = this.getXmlData().getBytes("UTF-8");
+                sw = new StringWriter();
+          
+                JAXBElement<FatturaElettronicaType> root =jaxbUnMarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(byteArr)), FatturaElettronicaType.class);
+                item = root.getValue();
+                //jaxbMarshaller.marshal(root, sw);
+        }
+        catch (JAXBException e) 
+        {
+            e.printStackTrace();
+        }
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        } 
+        return item;
+    }
 }
