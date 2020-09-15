@@ -166,12 +166,6 @@ HttpHeaders headers = new HttpHeaders();
     return ResponseEntity.ok().headers(headers).body(new InputStreamResource(in));
         }
 
-    
-    
-    
-    
-    
-    
     // return IOUtils.toByteArray(in);
 
     
