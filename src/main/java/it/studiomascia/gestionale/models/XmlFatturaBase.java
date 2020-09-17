@@ -203,7 +203,20 @@ public class XmlFatturaBase {
 //        
 //        return controlli.
 //    }
-     
+
+    public ControlloFattura getUltimoControllo() {
+        ControlloFattura ret = new ControlloFattura();
+        int tempId=0;
+        for ( ControlloFattura p : controlli)
+        {
+            if (p.getId() > tempId) ret =p ;
+        }
+        
+        return ret;
+    }
+    
+    
+    
     public Set<ControlloFattura> getControlli() {
         return controlli;
     }

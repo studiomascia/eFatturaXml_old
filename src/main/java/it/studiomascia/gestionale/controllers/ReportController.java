@@ -93,17 +93,15 @@ public class ReportController
             //System.out.println("riga = " + rowIdx);
             
             for (int col = 0; col < header.size(); col++) {
-                //System.out.println("    col = " + col);
                 strTemp = header.get(col);
-                //System.out.println("    header.get(col) = " + strTemp);
 
                 if (itemTabella.get(strTemp) == null)
                     strTemp="";
                 else
                     strTemp= itemTabella.get(strTemp) .toString();
                     
-                //System.out.println("    itemFattura.get(strTemp) = " + strTemp);
                 row.createCell(col).setCellValue(strTemp);
+                
             }
             // Di ogni fattura si prendono solo i campi di interesse 
         }
@@ -139,20 +137,11 @@ public class ReportController
         CellStyle paymentCellStyle;
         paymentCellStyle = workbook.createCellStyle();
         paymentCellStyle.setFont(paymentFont);
-        
-        
 
         // Row for Header
         int indiceRiga = 0;
-        
-        
-        // Header
-         
-        
 
         FatturaElettronicaType fatturaElettronica = new FatturaElettronicaType();
-        
-        
          
         // Ciclo su Lista di tutti i Fornitori
         List<AnagraficaSocieta> listaFornitori = providerRepository.findAll();
@@ -183,6 +172,10 @@ public class ReportController
                 {
                     row.createCell(indiceCella++).setCellValue( df.format(fatturaElettronica.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento()));
                 }
+                
+                
+              
+                
                 if (fattura.isSaldata()){
                     row.createCell(indiceCella++).setCellValue("SALDATA");
                      for (Pagamento itemPagamento :  fattura.getPagamenti())
@@ -198,8 +191,7 @@ public class ReportController
                         
                      }
                 
-                }else 
-                if (fattura.isSaldataParz()){
+                }else if (fattura.isSaldataParz()){
                     row.createCell(indiceCella++).setCellValue("PARZIALMENTE SALDATA");
                     for (Pagamento itemPagamento :  fattura.getPagamenti())
                     {
@@ -212,11 +204,20 @@ public class ReportController
                         row2.createCell(indiceCella2).setCellValue( itemPagamento.getNote());
                         row2.getCell(indiceCella2++).setCellStyle(paymentCellStyle);
                     }
-                } else
-                 if (fattura.isSaldataAuto()){
-                    row.createCell(indiceCella++).setCellValue("AUTOMATICO");}     
+                } 
+                else if (fattura.isSaldataAuto()){
+                    row.createCell(indiceCella++).setCellValue("AUTOMATICO");
+                }   
+                else {
+                    row.createCell(indiceCella++).setCellValue("NESSUN PAGAMENTO");
+                }   
                 
-                    
+                if (fattura.isControllataOK()) 
+                {
+                    row.createCell(indiceCella++).setCellValue(fattura.getUltimoControllo().getCentroDiCosto().getText());
+                    row.createCell(indiceCella++).setCellValue(fattura.getUltimoControllo().getCreatore());
+                    row.createCell(indiceCella++).setCellValue(fattura.getUltimoControllo().getNote());
+                }   
             }
         }
 
