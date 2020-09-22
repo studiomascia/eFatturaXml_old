@@ -5,8 +5,13 @@
  */
 package it.studiomascia.gestionale.models;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -17,6 +22,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  *
@@ -196,9 +204,64 @@ public class AnagraficaSocieta {
     }
     
     public List<XmlFatturaBase> getListaXmlFatturaBaseToPay() {
-        List<XmlFatturaBase>  ret = new ArrayList<XmlFatturaBase> ();
-        for (XmlFatturaBase fattura: listaXmlFatturaBase){
-        if (fattura.isToPay()) ret.add(fattura);
+        List<XmlFatturaBase>  ret = new ArrayList<> ();
+        for (XmlFatturaBase item: listaXmlFatturaBase){
+           if  (item.isToPay() ) ret.add(item);
+        }
+        return ret;
+    }
+    
+    public List<XmlFatturaBase> getListaXmlFatturaBaseToPay(Instant dataStart)   {
+        Instant dataStop = Instant.now();
+        return getListaXmlFatturaBaseToPay(dataStart,dataStop);
+    }
+        
+    public List<XmlFatturaBase> getListaXmlFatturaBaseToPay(Instant dataStart, Instant dataStop) {
+        
+        List<XmlFatturaBase>  ret = new ArrayList<> ();
+        XMLGregorianCalendar dataFattura;
+        for (XmlFatturaBase item: listaXmlFatturaBase){
+              dataFattura = item.getFatturaElettronica().getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData();
+               Calendar calendar = Calendar.getInstance(Locale.ITALY);
+               calendar.set(dataFattura.getYear(), dataFattura.getMonth(), dataFattura.getDay());
+               Instant istantFattura = calendar.getTime().toInstant();
+        
+               if  (istantFattura.compareTo(dataStart)>0 && 
+                       dataStop.compareTo(istantFattura)>0 && 
+                       item.isToPay() ) ret.add(item);
+            
+        }
+        return ret;
+    }
+    
+    public List<XmlFatturaBase> getListaXmlFatturaBase(Instant dataStart) {
+        Instant dataStop = Instant.now();
+        List<XmlFatturaBase>  ret = new ArrayList<> ();
+        XMLGregorianCalendar dataFattura;
+        for (XmlFatturaBase item: listaXmlFatturaBase){
+              dataFattura = item.getFatturaElettronica().getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData();
+               Calendar calendar = Calendar.getInstance(Locale.ITALY);
+               calendar.set(dataFattura.getYear(), dataFattura.getMonth(), dataFattura.getDay());
+               Instant istantFattura = calendar.getTime().toInstant();
+        
+               if  (istantFattura.compareTo(dataStart)>0 && 
+                       dataStop.compareTo(istantFattura)>0) ret.add(item);
+            
+        }
+        return ret;
+    }
+  
+    public List<XmlFatturaBase> getListaXmlFatturaBase(Instant dataStart, Instant dataStop) {
+        List<XmlFatturaBase>  ret = new ArrayList<> ();
+        XMLGregorianCalendar dataFattura;
+        for (XmlFatturaBase item: listaXmlFatturaBase){
+              dataFattura = item.getFatturaElettronica().getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData();
+               Calendar calendar = Calendar.getInstance(Locale.ITALY);
+               calendar.set(dataFattura.getYear(), dataFattura.getMonth(), dataFattura.getDay());
+               Instant istantFattura = calendar.getTime().toInstant();
+        
+               if  (istantFattura.compareTo(dataStart)>0 && 
+                       dataStop.compareTo(istantFattura)>0) ret.add(item);
             
         }
         return ret;
