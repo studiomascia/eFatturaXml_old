@@ -25,7 +25,18 @@
     
     
 <script>
-         
+        
+     function openModalPaymentDelete(IdFattura,id){
+            $.ajax({
+                url:"/Payment/Delete/"+id+"/Invoice/"+IdFattura,
+                success: function(response){
+                    $("#contenitoreModal").html(response);
+                    $("#contenitoreModal").modal({keyboard:true, show:true});
+                }
+            });
+        }
+    
+    
         function openModalPaymentInovice(id){
             $.ajax({
                 url:"/Invoice/"+id+"/ModalPayment",
@@ -88,7 +99,8 @@
                 <table class="table table-hover">
                     <thead>
                         <tr >
-                            <th>id</th>  
+                            <th>id</th> 
+                            <th>elimina</th> 
                             <th>data</th>  
                             <th>creato da</th>  
                             <th>importo</th>  
@@ -100,6 +112,13 @@
                     <tbody>
                         <tr  th:each="x :${listapagamenti}"  id="table2row">
                             <td th:text="${x.id}" />
+                            <td >
+                                <div sec:authorize="hasRole('ROLE_USER')">
+                                     <a class="btn btn-secondary btn-xs" th:onclick="'javascript:openModalPaymentDelete(\'' + ${fattura.get('Id')} + '\',\''+ ${x.id} +  '\');'" >
+                                        <i class="material-icons">delete</i>
+                                    </a>
+                                </div>
+                            </td>
                             <td th:text="${#dates.format(x.dataVersamento, 'dd-MM-yyyy')}" />
                             <td th:text="${x.creatore}" />
                             <td th:text="${x.importoVersamento}" />

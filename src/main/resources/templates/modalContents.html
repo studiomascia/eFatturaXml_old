@@ -438,5 +438,47 @@
     </form>
 </div>
 
+ <div th:fragment="paymentDelete" class="modal-dialog modal-dialog-centered mw-100 w-75" role="document">
+    <form class="form-horizontal" th:action="@{'/Payment/Delete/'+ ${id}+ '/Invoice/' + ${fatturaId} }"   method="POST" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Elimina i dati del pagamento:</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label for="txtId" class="control-label">Id</label>
+                    <input readonly="true" type="text" class="form-control" name="txtId" id="txtId" th:field="${pagamento.id}">
+                </div>    
+                <div class="form-group">
+                    <label for="txtNumero" class="control-label">Importo Versato</label>
+                    <input readonly="true" type="text"   class="form-control" name="txtNumero" id="txtNumero" th:field="${pagamento.importoVersamento}">
+                </div> 
+                <div class="form-group">
+                    <label for="txtDataVersamento" class="control-label">Data Versamento</label>
+                    <input  readonly="true" type="date" class="form-control" name="txtDataVersamento" id="txtDataRegistrazione" th:field="${pagamento.dataVersamento}">
+                </div>
+                <div class="form-group">
+                    <label for="txtNote" class="control-label">Note</label>
+                    <input readonly="true" type="text" class="form-control" name="txtNote" id="txtNumero" th:field="${pagamento.note}">
+                </div> 
+                  <div class="form-group">
+                    <label for="txtSaldata" class="control-label">Saldata</label>
+<!--                    <input  type="checkbox" class="form-control" name="cbSaldata" id="cbSaldata" th:field="${pagamento.saldata}">-->
+                    <input readonly="true" type="text"   class="form-control" name="txtSaldata" id="txtSaldata" th:text="${(pagamento.getStatoPagamento() == 2)||(pagamento.getStatoPagamento() == 3)} ?  'Si' : 'No'" >
+                      
+
+
+                </div> 
+            </div>
+            <div class="modal-footer">
+                <button type="button"  class="btn btn-secondary" data-dismiss="modal" >Chiudi</button>
+                <button type="submit" class="btn btn-primary">Elimina</button>
+            </div>
+        </div>
+    </form>
+</div>
+
 </body>    
 </html>

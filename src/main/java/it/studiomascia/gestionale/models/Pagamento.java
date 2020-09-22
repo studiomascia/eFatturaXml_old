@@ -54,7 +54,7 @@ public class Pagamento {
     @Column(name = "saldata")
     private  Integer saldata;
     
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.REMOVE)
     private Set<DBFile> filePagamenti;
 
     

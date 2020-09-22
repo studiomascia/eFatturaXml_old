@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.text.SimpleDateFormat;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -37,10 +38,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import static org.springframework.ui.ModelExtensionsKt.set;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -140,7 +143,26 @@ public class PagamentoController {
         return "lista_pagamenti_fattura";
     }
     
-   
+    @GetMapping("/Payment/Delete/{id}/Invoice/{fatturaId}")
+    public String ModalDeletePayment(ModelMap model,@PathVariable Integer id,@PathVariable Integer fatturaId){
+        Pagamento x = pagamentoRepository.findById(id).get();
+        model.addAttribute("pagamento",x);  
+        model.addAttribute("fatturaId",fatturaId); 
+        return "modalContents :: paymentDelete";
+    }
+    
+    @PostMapping("/Payment/Delete/{id}/Invoice/{fatturaId}")
+    public String DeletePayment(ModelMap model,@PathVariable Integer id,@PathVariable Integer fatturaId){
+     
+        XmlFatturaBase fatturabase= xmlFatturaRepository.findById(fatturaId).get();
+        fatturabase.getPagamenti().remove(pagamentoRepository.findById(id).get());
+        xmlFatturaRepository.save(fatturabase);
+        //pagamentoRepository.deleteById(id);
+              
+        return "redirect:/InvoiceIn/"+ fatturaId +"/Payments";
+        
+     
+    }
 
 
 }
