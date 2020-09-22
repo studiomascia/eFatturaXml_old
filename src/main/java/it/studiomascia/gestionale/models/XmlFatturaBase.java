@@ -49,7 +49,16 @@ import org.springframework.format.annotation.DateTimeFormat;
 })
 
 public class XmlFatturaBase {
-  
+     public static final int FATTURA_SALDATA_MANUALE = 2;
+     public static final int FATTURA_SALDATA_SISTEMA = 3;
+     public static final int FATTURA_PARZIALMENTE_SALDATA = 1;
+     public static final int FATTURA_NON_PAGATA = 0;
+     
+     public static final String STR_FATTURA_SALDATA_SISTEMA = "Pagamento impostato da sistema";
+     public static final String STR_FATTURA_SALDATA_MANUALE = "Fattura saldata";
+     public static final String STR_FATTURA_PARZIALMENTE_SALDATA = "Fattura parzialmente saldata";
+     public static final String STR_FATTURA_NON_PAGATA = "Fattura non pagata";
+     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -87,8 +96,7 @@ public class XmlFatturaBase {
     
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<ControlloFattura> controlli;
-    
-
+   
     @OneToMany(mappedBy="xmlFatturaBase", orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<Ddt> ddt;
     
@@ -103,57 +111,109 @@ public class XmlFatturaBase {
     public AnagraficaSocieta getAnagraficaSocieta() {
         return anagraficaSocieta;
     }
+    
     public void setAnagraficaSocieta(AnagraficaSocieta provider) {
         this.anagraficaSocieta = provider;
     }
-     
     
     /**
-     * @return the pagamenti
+     *  pagamenti
      */
+    public Pagamento getUltimoPagamento(){
+        Pagamento ret= new Pagamento();
+        int tempId=0;
+        for ( Pagamento p : pagamenti)
+        {
+            if (p.getId()> tempId) ret =p ;
+        }
+        return ret;
+    }
+
     public Set<Pagamento> getPagamenti() {
         return pagamenti;
     }
-    /**
-     * @param pagamenti the pagamenti to set
-     */
+    
     public void setPagamenti(Set<Pagamento> listaPagamenti) {
         this.pagamenti = listaPagamenti;
     }
-     
-    public boolean isSaldata() {
-        Boolean ret=false;
-        for (Pagamento x : pagamenti){
-        	if (x.isSaldata()==Pagamento.SALDATA) ret =true;
+    
+    public int getStatoPagamento(){
+        int ret = FATTURA_NON_PAGATA;
+        Pagamento ultimo = getUltimoPagamento();
+        if (ultimo != null && ultimo.getId()>0){
+            switch (ultimo.getStatoPagamento())
+            {
+                case Pagamento.PAGAMENTO_ACCONTO:
+                    ret = FATTURA_PARZIALMENTE_SALDATA;
+                break;
+                
+                case Pagamento.PAGAMENTO_SALDO:
+                    ret = FATTURA_SALDATA_MANUALE;
+                break;
+                
+                case Pagamento.PAGAMENTO_SISTEMA:
+                    ret = FATTURA_SALDATA_SISTEMA;
+                break;
+            }
         }
-     return ret;   
+    
+        return ret;
     }
-    public boolean isSaldataParz() {
-        Boolean ret=false;
-        for (Pagamento x : pagamenti){
-        	if (x.isSaldata()==Pagamento.PARZ_SALDATA) ret =true;
+    
+     public Boolean isToPay(){
+        Boolean isToPay = true;
+        Pagamento ultimo = getUltimoPagamento();
+        
+        if (ultimo.getId()>0){
+            int statoPagamento = ultimo.getStatoPagamento();
+            if (( statoPagamento== Pagamento.PAGAMENTO_SALDO) || (statoPagamento == Pagamento.PAGAMENTO_SISTEMA))    
+            {
+                isToPay = false;
+            }
         }
-     return ret;   
+        return isToPay;
+     }
+    
+    
+    //eliminare questi metodi
+    
+    public boolean isFatturaSaldataManuale() {
+        Boolean ret=false;
+        Pagamento ultimo = getUltimoPagamento();
+        if (ultimo != null && ultimo.getId()>0){
+           if (ultimo.getStatoPagamento()==Pagamento.PAGAMENTO_SALDO) ret =true; 
+        }
+        return ret;   
+    }
+    
+    public boolean isFatturaSaldataParziale() {
+       Boolean ret=false;
+        Pagamento ultimo = getUltimoPagamento();
+        if (ultimo != null && ultimo.getId()>0){
+           if (ultimo.getStatoPagamento()==Pagamento.PAGAMENTO_ACCONTO) ret =true; 
+        }
+        return ret;      
     }
 
-    public boolean isSaldataAuto() {
-        Boolean ret=false;
-        for (Pagamento x : pagamenti){
-        	if (x.isSaldata()==Pagamento.SALDATA_AUTO) ret =true;
+    public boolean isFatturaSaldataDaSistema() {
+         Boolean ret=false;
+        Pagamento ultimo = getUltimoPagamento();
+        if (ultimo != null && ultimo.getId()>0){
+           if (ultimo.getStatoPagamento()==Pagamento.PAGAMENTO_SISTEMA) ret =true; 
         }
-     return ret;   
+        return ret;   
     }
-
+    public boolean isFatturaNonPagata() {
+        Boolean ret=true;
+        Pagamento ultimo = getUltimoPagamento();
+        if (ultimo != null && ultimo.getId()>0){
+           ret=false;
+        }
+        return ret;   
+    }
     
     // MODIFICARE I METODI E FARE IN MODO CHE SI VALUTI SOLO IL SALDO PIU RECENTE OVVERO CON ID PIU ALTO
-    public int getTipoSaldo(){
-    int ret=0;
-     if (this.isSaldata()) ret = Pagamento.SALDATA; else 
-     if (this.isSaldataParz()) ret = Pagamento.PARZ_SALDATA; else
-     if (this.isSaldataAuto()) ret = Pagamento.SALDATA_AUTO;
-    
-    return ret;
-    }
+
     
     // MODIFICARE I METODI E FARE IN MODO CHE SI VALUTI SOLO IL CONTROLLO PIU RECENTE OVVERO CON ID PIU ALTO
     public int getTipoControllo(){

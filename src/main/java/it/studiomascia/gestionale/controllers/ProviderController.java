@@ -187,7 +187,7 @@ public class ProviderController {
         headers.add("Note");
         headers.add("Verificato");
 
-        Set<XmlFatturaBase> lista= provider.getListaXmlFatturaBase();
+        List<XmlFatturaBase> lista= provider.getListaXmlFatturaBase();
 
         model.addAttribute("headerProvider", providerService.getHeaders());
         model.addAttribute("provider", provider);

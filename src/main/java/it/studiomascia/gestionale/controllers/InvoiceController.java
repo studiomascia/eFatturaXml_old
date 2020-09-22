@@ -310,7 +310,7 @@ public class InvoiceController {
                                 p.setImportoVersamento(item.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento());
                                 p.setNote("pagamento impostato automaticamente");
                                 p.setCreatore("System");
-                                p.setSaldata(Pagamento.SALDATA_AUTO);
+                                p.setStatoPagamento(Pagamento.PAGAMENTO_SISTEMA);
                                 setp.add(p);
                                 xmlFattura.setPagamenti(setp);
                         }
@@ -400,7 +400,7 @@ public class InvoiceController {
         pagamento.setCreatore(SecurityContextHolder.getContext().getAuthentication().getName());
         int temp = Integer.parseInt(request.getParameterValues("cbSaldata")[0]);
        
-        pagamento.setSaldata(temp);
+        pagamento.setStatoPagamento(temp);
         vecchiaFattura.getPagamenti().add(pagamento);
         
         xmlFatturaBaseRepository.save(vecchiaFattura);
@@ -647,7 +647,7 @@ public class InvoiceController {
                 riga.put("Importo", importoFattura);
                 riga.put("Causale", causale);
                 riga.put("Descrizione", descrizione);
-                riga.put("Saldata", xmlFattura.getTipoSaldo());
+                riga.put("Saldata", xmlFattura.getStatoPagamento());
                 righe.add(riga);
                                 
         } catch (JAXBException e) {

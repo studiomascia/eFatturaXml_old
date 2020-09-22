@@ -5,6 +5,8 @@
  */
 package it.studiomascia.gestionale.models;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -79,19 +81,19 @@ public class AnagraficaSocieta {
     
     
    @OneToMany( mappedBy = "anagraficaSocieta", fetch = FetchType.EAGER, cascade = CascadeType.ALL )
-    private Set<XmlFatturaBase> listaXmlFatturaBase;
+    private List<XmlFatturaBase> listaXmlFatturaBase;
     
     /**
      * @return the listaDDT
      */
-    public Set<XmlFatturaBase> getListaXmlFatturaBase() {
+    public List<XmlFatturaBase> getListaXmlFatturaBase() {
         return listaXmlFatturaBase;
     }
 
     /**
      * @param listaDDT the listaDDT to set
      */
-    public void setListaXmlFatturaBase(Set<XmlFatturaBase> listaXmlFatturaBase) {
+    public void setListaXmlFatturaBase(List<XmlFatturaBase> listaXmlFatturaBase) {
         this.listaXmlFatturaBase= listaXmlFatturaBase;
     }
    
@@ -181,4 +183,25 @@ public class AnagraficaSocieta {
         this.id = id;
     }
     
+    //Metodo che restituisce un valore booleano che descrive se ci sono fatture
+    //da pagare per questo fornitore
+    public Boolean isToPay() {
+        Boolean ret =false;
+        for (XmlFatturaBase fattura: listaXmlFatturaBase){
+        if (fattura.isToPay())ret = true;
+            break;
+        }
+        
+        return ret;
+    }
+    
+    public List<XmlFatturaBase> getListaXmlFatturaBaseToPay() {
+        List<XmlFatturaBase>  ret = new ArrayList<XmlFatturaBase> ();
+        for (XmlFatturaBase fattura: listaXmlFatturaBase){
+        if (fattura.isToPay()) ret.add(fattura);
+            
+        }
+        return ret;
+    }
 }
+

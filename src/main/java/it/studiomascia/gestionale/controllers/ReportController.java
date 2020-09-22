@@ -12,6 +12,7 @@ import it.studiomascia.gestionale.models.XmlFatturaBase;
 import it.studiomascia.gestionale.repository.AnagraficaSocietaRepository;
 import it.studiomascia.gestionale.repository.UserRepository;
 import it.studiomascia.gestionale.service.XmlFatturaBaseService;
+import it.studiomascia.gestionale.xml.DettaglioPagamentoType;
 import it.studiomascia.gestionale.xml.FatturaElettronicaType;
 import java.awt.BorderLayout;
 import java.io.ByteArrayInputStream;
@@ -60,6 +61,8 @@ public class ReportController
     
     @Autowired
     private AnagraficaSocietaRepository  providerRepository;
+    
+    // INIZIO METODI DI LOGICA
     
     // Genera un foglio excel a partire dalla "tabella" utilizzando come le colonne nella lista "header"
     public ByteArrayInputStream GenerateExcelReport( List<String> header, List<Map<String,Object>> tabella,String reportName) throws IOException {
@@ -117,7 +120,7 @@ public class ReportController
         return new ByteArrayInputStream(out.toByteArray());
     }
 
-    public ByteArrayInputStream GenerateExcelReportCompleto(Boolean soloDaSaldare) throws IOException {
+    public ByteArrayInputStream GenerateExcelReportCompleto(Boolean soloDaSaldare,int anno) throws IOException {
         
         
         // Inizializzo Foglio Excel
@@ -143,26 +146,27 @@ public class ReportController
 
         // Row for Header
         int indiceRiga = 0;
-
+        String strTemp="";
         FatturaElettronicaType fatturaElettronica = new FatturaElettronicaType();
          
         // Ciclo su Lista di tutti i Fornitori
         List<AnagraficaSocieta> listaFornitori = providerRepository.findAll();
-        // Elenco delle fatture per ogni fornitore
         for (AnagraficaSocieta fornitore : listaFornitori) 
         {
-            org.apache.poi.ss.usermodel.Row headerFornitore = sheet.createRow(indiceRiga++);
-            
-            //org.apache.poi.ss.usermodel.Cell cell = headerFornitore.createCell(0);
-            headerFornitore.createCell(0).setCellValue(fornitore.getDenominazione() + " - " +fornitore.getPiva());
-            headerFornitore.getCell(0).setCellStyle(headerCellStyle);
-//            headerFornitore.createCell(1).setCellValue(fornitore.getPiva());
-//            headerFornitore.getCell(1).setCellStyle(headerCellStyle);
-            
-            Set<XmlFatturaBase> listaFatture = fornitore.getListaXmlFatturaBase();
             int indiceCella=1;
+            // Elenco delle fatture per ogni fornitore
+            List<XmlFatturaBase> listaFatture;
+            if (soloDaSaldare){
+                listaFatture = fornitore.getListaXmlFatturaBaseToPay();
+            }else{
+                listaFatture = fornitore.getListaXmlFatturaBase();
+            }
             if (listaFatture.size()>0)
             {
+                org.apache.poi.ss.usermodel.Row headerFornitore = sheet.createRow(indiceRiga++);
+                headerFornitore.createCell(0).setCellValue(fornitore.getDenominazione() + " - " +fornitore.getPiva());
+                headerFornitore.getCell(0).setCellStyle(headerCellStyle);
+
                 org.apache.poi.ss.usermodel.Row header2 = sheet.createRow(indiceRiga++);
                 header2.setRowStyle(headerCellStyle);
                 header2.createCell(indiceCella).setCellValue("Numero");
@@ -172,6 +176,8 @@ public class ReportController
                 header2.createCell(indiceCella).setCellValue("Importo");
                 header2.getCell(indiceCella++).setCellStyle(headerCellStyle);
                 header2.createCell(indiceCella).setCellValue("Stato/Note Pagamento");
+                header2.getCell(indiceCella++).setCellStyle(headerCellStyle);
+                header2.createCell(indiceCella).setCellValue("Scadenza");
                 header2.getCell(indiceCella++).setCellStyle(headerCellStyle);
                 header2.createCell(indiceCella).setCellValue("WBS");
                 header2.getCell(indiceCella++).setCellStyle(headerCellStyle);
@@ -185,77 +191,106 @@ public class ReportController
             {
                 indiceCella=1;
                 fatturaElettronica = fattura.getFatturaElettronica();
-                if  (soloDaSaldare && (fattura.isSaldata() || fattura.isSaldataAuto()))
+                
+                org.apache.poi.ss.usermodel.Row row = sheet.createRow(indiceRiga++);
+                row.setRowStyle(headerCellStyle);
+                row.createCell(indiceCella++).setCellValue(fatturaElettronica.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero());
+                row.createCell(indiceCella++).setCellValue(formattaData.format(fatturaElettronica.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime()));
+
+                if (fatturaElettronica.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento() !=null)
                 {
-                    
-                }else {
-                    org.apache.poi.ss.usermodel.Row row = sheet.createRow(indiceRiga++);
-                    row.setRowStyle(headerCellStyle);
-                    row.createCell(indiceCella++).setCellValue(fatturaElettronica.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero());
-                    row.createCell(indiceCella++).setCellValue(formattaData.format(fatturaElettronica.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().toGregorianCalendar().getTime()));
-
-                    if (fatturaElettronica.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento() !=null)
-                    {
-                        row.createCell(indiceCella++).setCellValue( df.format(fatturaElettronica.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento()));
-                    }
-
-                    if (fattura.isSaldata()){
-                        row.createCell(indiceCella++).setCellValue("SALDATA");
-                         for (Pagamento itemPagamento :  fattura.getPagamenti())
-                         {
-                            int indiceCella2=2;
-                            org.apache.poi.ss.usermodel.Row row2 = sheet.createRow(indiceRiga++);
-                            row2.createCell(indiceCella2).setCellValue( formattaData.format(itemPagamento.getDataVersamento()));
-                            row2.getCell(indiceCella2++).setCellStyle(paymentCellStyle);
-                            row2.createCell(indiceCella2).setCellValue( df.format(itemPagamento.getImportoVersamento()));
-                            row2.getCell(indiceCella2++).setCellStyle(paymentCellStyle);
-                            row2.createCell(indiceCella2).setCellValue( itemPagamento.getNote());
-                            row2.getCell(indiceCella2++).setCellStyle(paymentCellStyle);
-                         }
-                    }else if (fattura.isSaldataParz()){
-                        row.createCell(indiceCella++).setCellValue("PARZIALMENTE SALDATA");
-                        for (Pagamento itemPagamento :  fattura.getPagamenti())
-                        {
-                            int indiceCella2=2;
-                            org.apache.poi.ss.usermodel.Row row2 = sheet.createRow(indiceRiga++);
-                            row2.createCell(indiceCella2).setCellValue( formattaData.format(itemPagamento.getDataVersamento()));
-                            row2.getCell(indiceCella2++).setCellStyle(paymentCellStyle);
-                            row2.createCell(indiceCella2).setCellValue(df.format( itemPagamento.getImportoVersamento()));
-                            row2.getCell(indiceCella2++).setCellStyle(paymentCellStyle);
-                            row2.createCell(indiceCella2).setCellValue( itemPagamento.getNote());
-                            row2.getCell(indiceCella2++).setCellStyle(paymentCellStyle);
-                        }
-                    } 
-                    else if (fattura.isSaldataAuto()){
-                        row.createCell(indiceCella++).setCellValue("AUTOMATICO");
-                    }   
-                    else {
-                        row.createCell(indiceCella++).setCellValue("NESSUN PAGAMENTO");
-                    }   
-
-                    if (fattura.isControllataOK()) 
-                    {
-                        row.createCell(indiceCella++).setCellValue(fattura.getUltimoControllo().getCentroDiCosto().getText());
-                        row.createCell(indiceCella++).setCellValue(fattura.getUltimoControllo().getCreatore());
-                        row.createCell(indiceCella++).setCellValue(fattura.getUltimoControllo().getNote());
-                    }   
+                    row.createCell(indiceCella++).setCellValue( df.format(fatturaElettronica.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento()));
                 }
+                
+               
+                
+                strTemp="";
+                switch (fattura.getStatoPagamento())
+                {
+                    case XmlFatturaBase.FATTURA_SALDATA_MANUALE:
+                        strTemp=XmlFatturaBase.STR_FATTURA_SALDATA_MANUALE;
+                        break;
+                    case XmlFatturaBase.FATTURA_PARZIALMENTE_SALDATA:
+                        strTemp=XmlFatturaBase.STR_FATTURA_PARZIALMENTE_SALDATA;
+                        break;
+                    case XmlFatturaBase.FATTURA_SALDATA_SISTEMA:
+                        strTemp=XmlFatturaBase.STR_FATTURA_SALDATA_SISTEMA;
+                        break;
+                    case XmlFatturaBase.FATTURA_NON_PAGATA:
+                        strTemp=XmlFatturaBase.STR_FATTURA_NON_PAGATA;
+                        break;
+                        
+                }
+                row.createCell(indiceCella++).setCellValue(strTemp);
+                 
+                strTemp="";
+                if(fatturaElettronica.getFatturaElettronicaBody().get(0).getDatiPagamento().size()>0)
+                {
+                    if (fatturaElettronica.getFatturaElettronicaBody().get(0).getDatiPagamento().get(0).getDettaglioPagamento().size()>0)
+                    {
+                        List<DettaglioPagamentoType>  dettaglioPagamento =  fatturaElettronica.getFatturaElettronicaBody().get(0).getDatiPagamento().get(0).getDettaglioPagamento();
+                        for (DettaglioPagamentoType p :dettaglioPagamento){
+                            if (p.getDataScadenzaPagamento()!=null) strTemp += formattaData.format(p.getDataScadenzaPagamento().toGregorianCalendar().getTime()) + " - ";
+                        }
+                    }
+                }
+                row.createCell(indiceCella++).setCellValue(strTemp);
+                
+                
+                for (Pagamento itemPagamento :  fattura.getPagamenti())
+                {
+                   int indiceCella2=2;
+                   org.apache.poi.ss.usermodel.Row row2 = sheet.createRow(indiceRiga++);
+                   row2.createCell(indiceCella2).setCellValue( formattaData.format(itemPagamento.getDataVersamento()));
+                   row2.getCell(indiceCella2++).setCellStyle(paymentCellStyle);
+                   row2.createCell(indiceCella2).setCellValue( df.format(itemPagamento.getImportoVersamento()));
+                   row2.getCell(indiceCella2++).setCellStyle(paymentCellStyle);
+                   row2.createCell(indiceCella2).setCellValue( itemPagamento.getNote());
+                   row2.getCell(indiceCella2++).setCellStyle(paymentCellStyle);
+                }
+                
+//                if (fattura.isFatturaSaldataManuale()){
+//                    row.createCell(indiceCella++).setCellValue("SALDATA");
+//                     for (Pagamento itemPagamento :  fattura.getPagamenti())
+//                     {
+//                        int indiceCella2=2;
+//                        org.apache.poi.ss.usermodel.Row row2 = sheet.createRow(indiceRiga++);
+//                        row2.createCell(indiceCella2).setCellValue( formattaData.format(itemPagamento.getDataVersamento()));
+//                        row2.getCell(indiceCella2++).setCellStyle(paymentCellStyle);
+//                        row2.createCell(indiceCella2).setCellValue( df.format(itemPagamento.getImportoVersamento()));
+//                        row2.getCell(indiceCella2++).setCellStyle(paymentCellStyle);
+//                        row2.createCell(indiceCella2).setCellValue( itemPagamento.getNote());
+//                        row2.getCell(indiceCella2++).setCellStyle(paymentCellStyle);
+//                     }
+//                }else if (fattura.isFatturaSaldataParziale()){
+//                    row.createCell(indiceCella++).setCellValue("PARZIALMENTE SALDATA");
+//                    for (Pagamento itemPagamento :  fattura.getPagamenti())
+//                    {
+//                        int indiceCella2=2;
+//                        org.apache.poi.ss.usermodel.Row row2 = sheet.createRow(indiceRiga++);
+//                        row2.createCell(indiceCella2).setCellValue( formattaData.format(itemPagamento.getDataVersamento()));
+//                        row2.getCell(indiceCella2++).setCellStyle(paymentCellStyle);
+//                        row2.createCell(indiceCella2).setCellValue(df.format( itemPagamento.getImportoVersamento()));
+//                        row2.getCell(indiceCella2++).setCellStyle(paymentCellStyle);
+//                        row2.createCell(indiceCella2).setCellValue( itemPagamento.getNote());
+//                        row2.getCell(indiceCella2++).setCellStyle(paymentCellStyle);
+//                    }
+//                }else if (fattura.isFatturaSaldataDaSistema()){
+//                    row.createCell(indiceCella++).setCellValue("AUTOMATICO");
+//                }else {
+//                    row.createCell(indiceCella++).setCellValue("NESSUN PAGAMENTO");
+//                }   
+
+                if (fattura.isControllataOK()) 
+                {
+                    row.createCell(indiceCella++).setCellValue(fattura.getUltimoControllo().getCentroDiCosto().getText());
+                    row.createCell(indiceCella++).setCellValue(fattura.getUltimoControllo().getCreatore());
+                    row.createCell(indiceCella++).setCellValue(fattura.getUltimoControllo().getNote());
+                }   
+                
             }
         }
 
-
-
-         
-            
-            
-            
-    
-        
-        
-        
-        
-        
-        
         // Chiusura foglio excel 
         // CellStyle for Age
         CellStyle ageCellStyle = workbook.createCellStyle();
@@ -266,6 +301,8 @@ public class ReportController
         return new ByteArrayInputStream(out.toByteArray());
     }
 
+    
+    // INIZIO REQUEST
     
     @RequestMapping(value = "/ReportTest", method = RequestMethod.GET)
     public ResponseEntity<InputStreamResource> excelReport() throws IOException {
@@ -348,7 +385,8 @@ HttpHeaders headers = new HttpHeaders();
     }
  
     @RequestMapping(value = "/ReportCompleto", method = RequestMethod.GET)
-    public ResponseEntity<InputStreamResource> excelReportCompleto(@RequestParam("soloDaSaldare") Boolean soloDaSaldare) throws IOException {
+    public ResponseEntity<InputStreamResource> excelReportCompleto(@RequestParam(required = false) Boolean soloDaSaldare, @RequestParam(defaultValue = "2020") int annoSolare  ) throws IOException {
+
         HttpHeaders headers = new HttpHeaders();
         // set filename in header
         if (soloDaSaldare == null) soloDaSaldare=false;
@@ -356,6 +394,6 @@ HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=download.xls");
         return ResponseEntity.ok().headers(headers)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(new InputStreamResource(GenerateExcelReportCompleto(soloDaSaldare)));  
+                .body(new InputStreamResource(GenerateExcelReportCompleto(soloDaSaldare,annoSolare)));  
     }
 }

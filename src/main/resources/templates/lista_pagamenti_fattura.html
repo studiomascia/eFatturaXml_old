@@ -104,7 +104,7 @@
                             <td th:text="${x.creatore}" />
                             <td th:text="${x.importoVersamento}" />
                             <td th:text="${x.note}" />
-                            <td th:text="${(x.isSaldata() == 2)||(x.isSaldata() == 3)} ?  'Si' : 'No'">yes</td>
+                            <td th:text="${(x.getStatoPagamento() == 2)||(x.getStatoPagamento() == 3)} ?  'Si' : 'No'">yes</td>
 
                             <td>
 
