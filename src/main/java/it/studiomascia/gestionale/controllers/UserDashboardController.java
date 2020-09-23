@@ -10,6 +10,7 @@ import it.studiomascia.gestionale.repository.AnagraficaSocietaRepository;
 import it.studiomascia.gestionale.repository.UserRepository;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,8 +33,11 @@ public class UserDashboardController {
    XmlFatturaBaseRepository xmlfattura_repository;
    
     @GetMapping("/Dashboard")
-    public String Dashboard(Model model){
+    public String Dashboard(Model model,HttpServletRequest request){
+//        System.out.println("currentUser: is ADMIN: "+ request.isUserInRole("ROLE_ADMIN") );
+//        System.out.println("currentUser: is USER: "+ request.isUserInRole("ROLE_USER") );
         
+
         model.addAttribute("numUtenti", utenti_repository.findAll().size());
         model.addAttribute("nFornitori", fornitori_repository.findAll().size());
         model.addAttribute("nFatturePassive", xmlfattura_repository.findByAttivaFalse().size());

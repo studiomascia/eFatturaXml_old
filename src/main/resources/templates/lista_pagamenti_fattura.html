@@ -100,7 +100,7 @@
                     <thead>
                         <tr >
                             <th>id</th> 
-                            <th>elimina</th> 
+                            <div sec:authorize="hasRole('ROLE_ADMIN')"></div><th>elimina</th> </div>
                             <th>data</th>  
                             <th>creato da</th>  
                             <th>importo</th>  
@@ -113,7 +113,7 @@
                         <tr  th:each="x :${listapagamenti}"  id="table2row">
                             <td th:text="${x.id}" />
                             <td >
-                                <div sec:authorize="hasRole('ROLE_USER')">
+                                <div sec:authorize="hasRole('ROLE_ADMIN')">
                                      <a class="btn btn-secondary btn-xs" th:onclick="'javascript:openModalPaymentDelete(\'' + ${fattura.get('Id')} + '\',\''+ ${x.id} +  '\');'" >
                                         <i class="material-icons">delete</i>
                                     </a>

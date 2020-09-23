@@ -25,12 +25,12 @@
                 <artifactId>nekohtml</artifactId>
                 <version>1.9.21</version>
             </dependency>
-            -->
             <dependency> 
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-tomcat</artifactId>         
                 <scope>provided</scope> 
             </dependency>
+            -->
             <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -70,7 +70,7 @@
             </dependency>
             <dependency>
               <groupId>org.thymeleaf.extras</groupId>
-              <artifactId>thymeleaf-extras-springsecurity4</artifactId>
+              <artifactId>thymeleaf-extras-springsecurity5</artifactId>
               <version>3.0.4.RELEASE</version>
             </dependency>                
             <dependency>
@@ -204,5 +204,5 @@
             </plugin>
         </plugins>
     </build>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 </project>

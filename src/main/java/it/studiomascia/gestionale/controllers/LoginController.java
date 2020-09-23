@@ -49,12 +49,13 @@ public class LoginController {
     @PostMapping("/login")   
     public String doLogin(Model model, HttpSession session)
     { 
-        // read principal out of security context and set it to session
+         // read principal out of security context and set it to session
         UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         validatePrinciple(authentication.getPrincipal());
         User loggedInUser = ((UtenteDetails) authentication.getPrincipal()).getUserDetails();
         model.addAttribute("currentUser", loggedInUser.getUsername());
         session.setAttribute("userId", loggedInUser.getId());
+      
         log.info("Login : Username = " + loggedInUser.getUsername());
         return "/Dashboard";
 
@@ -69,6 +70,8 @@ public class LoginController {
     @PostMapping("/perform_login")
     public String perform_login(HttpServletRequest request, Model model)
     {
+  
+       
         return "DashboardLogin";
     }
 

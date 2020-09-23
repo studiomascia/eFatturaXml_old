@@ -6,7 +6,9 @@
 package it.studiomascia.gestionale.models;
 
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 
@@ -70,6 +72,18 @@ public class User {
     /**
      * @return the authorities
      */
+    public List<String> getRolesAsString() {
+        List<String> ret;
+        ret = new ArrayList();
+        for (Authority aut :authorities)
+        {
+            ret.add(aut.getName()+" ");
+        }
+        
+        return ret;
+    }
+
+
     public Set<Authority> getAuthorities() {
         return authorities;
     }
