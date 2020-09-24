@@ -111,7 +111,7 @@
                             <thead>
                                 <tr >
                                     <th>id</th>  
-                                    <div sec:authorize="hasRole('ROLE_ADMIN')"></div><th>elimina</th> </div>
+                                    <div sec:authorize="hasAnyRole('ROLE_ADMIN' , 'ROLE_EDIT_CHECK')"><th>elimina</th> </div>
                                     <th>data</th>  
                                     <th>controllato da</th>  
                                     <th>centro di costo</th>  
@@ -124,7 +124,7 @@
                                 <tr  th:each="x :${listacontrolli}"  id="table2row">
                                     <td th:text="${x.id}" />
                                      <td>
-                                        <div sec:authorize="hasRole('ROLE_ADMIN')">
+                                        <div sec:authorize="hasAnyRole('ROLE_ADMIN' , 'ROLE_EDIT_CHECK')">
                                              <a class="btn btn-secondary btn-xs" th:onclick="'javascript:openModalCheckDelete(\'' + ${fattura.get('Id')} + '\',\''+ ${x.id} +  '\');'" >
                                                 <i class="material-icons">delete</i>
                                             </a>
