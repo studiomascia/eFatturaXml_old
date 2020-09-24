@@ -19,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import org.apache.poi.hssf.record.PageBreakRecord;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -70,6 +71,7 @@ public class ControlloFattura {
      * @return the centroDiCosto
      */
     public CentroDiCosto getCentroDiCosto() {
+
         return centroDiCosto;
     }
 
@@ -115,41 +117,54 @@ public class ControlloFattura {
         this.note = note;
     }
 
-    /**
-     * @return the controllata
-     */
-//    public Boolean isControllata() {
-//        return this.isControllata();
-//    }
+
 
     /**
      * @param controllata the controllata to set
      */
-    public void setStatoControllo(int x) {
-        this.controllata = x;
+    public void setEsitoControllo(int x) {
+        this.setControllata(x);
     }
     /**
      * @return the controllata
      */
-    public int isControllata() {
-        return controllata;
+    public int getEsitoControllo() {
+        return getControllata();
     }
     
      public Boolean isControlloOK() {
         Boolean ret=false;
-        if (this.isControllata()== ControlloFattura.VALIDATA) ret =true;
+        if (getControllata()== ControlloFattura.VALIDATA) ret =true;
      return ret;   
     }
      public Boolean isControlloNOK() {
         Boolean ret=false;
-        if (this.isControllata()== ControlloFattura.BLOCCATA) ret =true;
+        if (getControllata()== ControlloFattura.BLOCCATA) ret =true;
      return ret;   
     }
      public Boolean isControlloWAIT() {
         Boolean ret=false;
-        if (this.isControllata()== ControlloFattura.PENDING) ret =true;
+        if (getControllata() == ControlloFattura.PENDING) ret =true;
      return ret;   
     }
+     public String getDescrizioneEsitoControllo()
+     {
+         String ret="";
+         int esito = getEsitoControllo();
+         switch (esito)
+         {
+            case VALIDATA:
+               ret="VALIDATA";
+               break;
+            case BLOCCATA:
+               ret="BLOCCATA";
+               break;
+            case PENDING:
+               ret="PENDING";
+               break;
+         }
+         return ret;
+     }
     
     /**
      * @return the fileControlloFattura
@@ -182,6 +197,20 @@ public class ControlloFattura {
      */
     public void setCreatore(String creatore) {
         this.creatore = creatore;
+    }
+
+    /**
+     * @return the controllata
+     */
+    public int getControllata() {
+        return controllata;
+    }
+
+    /**
+     * @param controllata the controllata to set
+     */
+    public void setControllata(int controllata) {
+        this.controllata = controllata;
     }
 
     

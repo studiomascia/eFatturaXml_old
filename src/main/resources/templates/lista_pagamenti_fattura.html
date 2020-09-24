@@ -28,7 +28,7 @@
         
      function openModalPaymentDelete(IdFattura,id){
             $.ajax({
-                url:"/Payment/Delete/"+id+"/Invoice/"+IdFattura,
+                url:"/InvoiceIn/"+IdFattura+"/Payment/"+id+"/Delete",
                 success: function(response){
                     $("#contenitoreModal").html(response);
                     $("#contenitoreModal").modal({keyboard:true, show:true});

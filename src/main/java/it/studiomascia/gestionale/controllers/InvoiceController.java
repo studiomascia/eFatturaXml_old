@@ -92,8 +92,6 @@ public class InvoiceController {
     @Value("${max.rows.table}")
     private int MAX_ROWS_TABLE;
     
-    
-    
     @Autowired
     private XmlFatturaBaseRepository xmlFatturaBaseRepository;
     
@@ -460,7 +458,7 @@ public class InvoiceController {
         }
         if (request.getParameter("cbControllata") != null) {
             int id3 = Integer.parseInt(request.getParameter("cbControllata"));
-            controllo.setStatoControllo(id3);
+            controllo.setEsitoControllo(id3);
         }
 
 

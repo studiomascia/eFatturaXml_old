@@ -48,7 +48,7 @@ public class UserController {
 //        System.out.println("GetMapping(/Admin/Users) INIZIO");
         //INIZIO:: BLOCCO PER LA PAGINAZIONE
         int page = 0; //default page number is 0 (yes it is weird)
-        int size = 20; //default page size is 20
+        int size = 100; //default page size is 100
         
         if (request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
             page = Integer.parseInt(request.getParameter("page")) - 1;

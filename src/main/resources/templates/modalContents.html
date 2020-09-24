@@ -439,7 +439,7 @@
 </div>
 
  <div th:fragment="paymentDelete" class="modal-dialog modal-dialog-centered mw-100 w-75" role="document">
-    <form class="form-horizontal" th:action="@{'/Payment/Delete/'+ ${id}+ '/Invoice/' + ${fatturaId} }"   method="POST" >
+    <form class="form-horizontal" th:action="@{'/InvoiceIn/'+ ${fatturaId}+ '/Payment/' + ${id}+ '/Delete'  }"   method="POST" >
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Elimina i dati del pagamento:</h5>
@@ -465,11 +465,7 @@
                 </div> 
                   <div class="form-group">
                     <label for="txtSaldata" class="control-label">Saldata</label>
-<!--                    <input  type="checkbox" class="form-control" name="cbSaldata" id="cbSaldata" th:field="${pagamento.saldata}">-->
-                    <input readonly="true" type="text"   class="form-control" name="txtSaldata" id="txtSaldata" th:text="${(pagamento.getStatoPagamento() == 2)||(pagamento.getStatoPagamento() == 3)} ?  'Si' : 'No'" >
-                      
-
-
+                    <input readonly="true" type="text"   class="form-control" name="txtSaldata" id="txtSaldata" th:field="${(pagamento.getStatoPagamento() == 2)||(pagamento.getStatoPagamento() == 3)} ?  'Si' : 'No'" >
                 </div> 
             </div>
             <div class="modal-footer">
@@ -479,6 +475,41 @@
         </div>
     </form>
 </div>
+<div th:fragment="checkDelete" class="modal-dialog modal-dialog-centered mw-100 w-75" role="document">
+    <form class="form-horizontal" th:action="@{'/InvoiceIn/'+ ${fatturaId}+ '/Check/' + ${id}+ '/Delete'  }"   method="POST" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Elimina i dati del controllo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
 
+                <div class="form-group">
+                    <label for="txtId" class="control-label">Id</label>
+                    <input readonly="true" type="text" class="form-control" name="txtId" id="txtId" th:field="${controllo.id}">
+                </div>    
+                 <div class="form-group">
+                    <label for="txtProva" class="control-label">Centro di costo</label>
+                    <div readonly="true" type="text" class="form-control" name="txtProva" id="txtProva" th:text="${controllo.getDescrizioneEsitoControllo()}"></div>
+
+                </div>
+                 
+                <div class="form-group">
+                    <label for="txtNote" class="control-label">Note</label>
+                    <input readonly="true" type="text" class="form-control" name="txtNote" id="txtNote" th:field="${controllo.note}">
+                </div>
+                <div class="form-group">
+                    <label for="txtCentro" class="control-label">Centro di costo</label>
+                    <div readonly="true" type="text"   class="form-control" name="txtCentro" id="txtCentro" th:text="${controllo.centroDiCosto.getText()}"></div>
+                </div>
+            
+            </div>
+            <div class="modal-footer">
+                <button type="button"  class="btn btn-secondary" data-dismiss="modal" >Chiudi</button>
+                <button type="submit" class="btn btn-primary">Elimina</button>
+            </div>
+        </div>
+    </form>
+</div>
 </body>    
 </html>

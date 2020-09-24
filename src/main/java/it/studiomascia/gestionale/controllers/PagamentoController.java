@@ -5,9 +5,11 @@
  */
 package it.studiomascia.gestionale.controllers;
 
+import it.studiomascia.gestionale.models.ControlloFattura;
 import it.studiomascia.gestionale.models.DBFile;
 import it.studiomascia.gestionale.models.Pagamento;
 import it.studiomascia.gestionale.models.XmlFatturaBase;
+import it.studiomascia.gestionale.repository.ControlloFatturaRepository;
 import it.studiomascia.gestionale.repository.DBFileRepository;
 import it.studiomascia.gestionale.repository.PagamentoRepository;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
@@ -67,6 +69,9 @@ public class PagamentoController {
     
     @Autowired
     private PagamentoRepository pagamentoRepository;
+    
+    @Autowired
+    private ControlloFatturaRepository controlloRepository;
     
     @Autowired
     private XmlFatturaBaseRepository xmlFatturaRepository;
@@ -143,7 +148,7 @@ public class PagamentoController {
         return "lista_pagamenti_fattura";
     }
     
-    @GetMapping("/Payment/Delete/{id}/Invoice/{fatturaId}")
+    @GetMapping("/InvoiceIn/{fatturaId}/Payment/{id}/Delete")
     public String ModalDeletePayment(ModelMap model,@PathVariable Integer id,@PathVariable Integer fatturaId){
         Pagamento x = pagamentoRepository.findById(id).get();
         model.addAttribute("pagamento",x);  
@@ -151,18 +156,31 @@ public class PagamentoController {
         return "modalContents :: paymentDelete";
     }
     
-    @PostMapping("/Payment/Delete/{id}/Invoice/{fatturaId}")
+    @PostMapping("/InvoiceIn/{fatturaId}/Payment/{id}/Delete")
     public String DeletePayment(ModelMap model,@PathVariable Integer id,@PathVariable Integer fatturaId){
      
         XmlFatturaBase fatturabase= xmlFatturaRepository.findById(fatturaId).get();
         fatturabase.getPagamenti().remove(pagamentoRepository.findById(id).get());
         xmlFatturaRepository.save(fatturabase);
-        //pagamentoRepository.deleteById(id);
               
         return "redirect:/InvoiceIn/"+ fatturaId +"/Payments";
-        
-     
     }
-
+    
+    @GetMapping("/InvoiceIn/{fatturaId}/Check/{id}/Delete")
+    public String ModalDeleteCeck(ModelMap model,@PathVariable Integer id,@PathVariable Integer fatturaId){
+        ControlloFattura x = controlloRepository.findById(id).get();
+        model.addAttribute("controllo",x);  
+        model.addAttribute("fatturaId",fatturaId); 
+        return "modalContents :: checkDelete";
+    }
+        
+    @PostMapping("/InvoiceIn/{fatturaId}/Check/{id}/Delete")
+    public String DeleteCheck(ModelMap model,@PathVariable Integer id,@PathVariable Integer fatturaId){
+        XmlFatturaBase fatturabase= xmlFatturaRepository.findById(fatturaId).get();
+        fatturabase.getControlli().remove(controlloRepository.findById(id).get());
+        xmlFatturaRepository.save(fatturabase);
+        
+        return "redirect:/InvoiceIn/"+ fatturaId +"/Checks";
+    }
 
 }

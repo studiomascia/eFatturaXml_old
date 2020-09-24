@@ -26,6 +26,16 @@
     
 <script>
          
+        function openModalCheckDelete(IdFattura,id){
+            $.ajax({
+                url:"/InvoiceIn/"+IdFattura +"/Check/"+id+"/Delete",
+                success: function(response){
+                    $("#contenitoreModal").html(response);
+                    $("#contenitoreModal").modal({keyboard:true, show:true});
+                }
+            });
+        }
+        
         function openModalCheckInoviceIn(id){
             $.ajax({
                 url:"/InvoiceIn/"+id+"/ModalCheck",
@@ -101,6 +111,7 @@
                             <thead>
                                 <tr >
                                     <th>id</th>  
+                                    <div sec:authorize="hasRole('ROLE_ADMIN')"></div><th>elimina</th> </div>
                                     <th>data</th>  
                                     <th>controllato da</th>  
                                     <th>centro di costo</th>  
@@ -112,6 +123,13 @@
                             <tbody>
                                 <tr  th:each="x :${listacontrolli}"  id="table2row">
                                     <td th:text="${x.id}" />
+                                     <td>
+                                        <div sec:authorize="hasRole('ROLE_ADMIN')">
+                                             <a class="btn btn-secondary btn-xs" th:onclick="'javascript:openModalCheckDelete(\'' + ${fattura.get('Id')} + '\',\''+ ${x.id} +  '\');'" >
+                                                <i class="material-icons">delete</i>
+                                            </a>
+                                        </div>
+                                    </td>
                                     <td th:text="${#dates.format(x.dataControllo, 'dd-MM-yyyy')}" />
                                     <td th:text="${x.creatore}" />
                                     <td th:text="${x.centroDiCosto.getText()}" />
