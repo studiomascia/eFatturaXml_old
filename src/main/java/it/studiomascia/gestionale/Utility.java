@@ -48,7 +48,9 @@ public class Utility {
                                 ( y == ModalitaPagamentoType.MP_11) || 
                                 ( y == ModalitaPagamentoType.MP_12) || 
                                 ( y == ModalitaPagamentoType.MP_16) || 
-                                ( y == ModalitaPagamentoType.MP_17 ) 
+                                ( y == ModalitaPagamentoType.MP_17) || 
+                                ( y == ModalitaPagamentoType.MP_19) || 
+                                ( y == ModalitaPagamentoType.MP_20 ) 
             ))  ret = true;
          }
         return ret;
