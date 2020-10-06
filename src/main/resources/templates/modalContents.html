@@ -465,8 +465,14 @@
                 </div> 
                   <div class="form-group">
                     <label for="txtSaldata" class="control-label">Saldata</label>
-                    <input readonly="true" type="text"   class="form-control" name="txtSaldata" id="txtSaldata" th:field="${(pagamento.getStatoPagamento() == 2)||(pagamento.getStatoPagamento() == 3)} ?  'Si' : 'No'" >
-                </div> 
+                    <!--<input readonly="true" type="text"   class="form-control" name="txtSaldata" id="txtSaldata" th:field="${pagamento.saldata == 2 or  pagamento.saldata == 3} ?  'Si' : 'No'" >-->
+                    <div th:if="${pagamento.getStatoPagamento()} == 2 or ${pagamento.getStatoPagamento()} == 3" class="form-control" >
+                        <input readonly="true" type="text"   class="form-control" name="txtSaldata" id="txtSaldata" value="Si">
+                    </div>
+                    <div th:unless="${pagamento.getStatoPagamento()} == 2 or ${pagamento.getStatoPagamento()} == 3" class="form-control"  >
+                        <input readonly="true" type="text"   class="form-control" name="txtSaldata" id="txtSaldata" value="No">
+                    </div>
+                  </div> 
             </div>
             <div class="modal-footer">
                 <button type="button"  class="btn btn-secondary" data-dismiss="modal" >Chiudi</button>
