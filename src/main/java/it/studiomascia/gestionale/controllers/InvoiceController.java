@@ -198,10 +198,25 @@ public class InvoiceController {
          
     @GetMapping("/InvoicesIn")
     public String FatturePassiveList(HttpServletRequest request,Model model){
-        
+ 
         model.addAttribute("headers", xmlFatturaBaseService.getHeaders());
         model.addAttribute("rows", xmlFatturaBaseService.getRows());
+        
+        return "fatture_passive_lista";
+        //return FatturePassiveList(request, model, 2020);
+    }
 
+    @GetMapping("/InvoicesIn/{anno}")
+    public String FatturePassiveList(HttpServletRequest request,Model model, @PathVariable(required = false) Integer anno){
+ 
+        model.addAttribute("headers", xmlFatturaBaseService.getHeaders());
+        
+        if (anno != null) {
+            model.addAttribute("rows", xmlFatturaBaseService.getRows(anno));
+        } else {
+            model.addAttribute("rows", xmlFatturaBaseService.getRows());
+        }
+        
         return "fatture_passive_lista";
     }
     

@@ -5,6 +5,7 @@
  */
 package it.studiomascia.gestionale.service;
 
+import it.studiomascia.gestionale.models.Pagamento;
 import it.studiomascia.gestionale.models.XmlFatturaBase;
 import it.studiomascia.gestionale.models.XmlFatturaBasePredicate;
 import it.studiomascia.gestionale.repository.XmlFatturaBaseRepository;
@@ -12,6 +13,7 @@ import it.studiomascia.gestionale.xml.AnagraficaType;
 import it.studiomascia.gestionale.xml.FatturaElettronicaType;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,12 +60,24 @@ public class XmlFatturaBaseService {
         return headers;
     }
 
+    public List<Map<String, Object>> getRows (int anno){
+        List<XmlFatturaBase> listaFatture = xmlFatturaBaseRepository.findByAttivaFalse();
+        List<XmlFatturaBase> listaFiltrata = new ArrayList<XmlFatturaBase>();
+        for (XmlFatturaBase xmlFattura : listaFatture){
+              
+            // controlla se la fattura è passiva, se non è pagata e se è stata emessa nel 2019
+            if (xmlFattura.getFatturaElettronica().getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getData().getYear()==anno)
+            {
+                listaFiltrata.add(xmlFattura);
+            }
+        }  
+        return getRows (listaFiltrata);
+    }
+    
     public List<Map<String, Object>> getRows (){
         List<XmlFatturaBase> listaFatture = xmlFatturaBaseRepository.findByAttivaFalse();
         return getRows (listaFatture);
-    }
-    
-        
+    }    
         
     public List<Map<String, Object>> getRows (List<XmlFatturaBase> listaFatture){
         

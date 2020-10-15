@@ -11,6 +11,7 @@ import it.studiomascia.gestionale.xml.FatturaElettronicaType;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class Services {
         
         
         List<Map<String, Object>> righe = new ArrayList<Map<String, Object>>();
-        
+        BigDecimal importo  = new BigDecimal("0.00");        
         for (XmlFatturaBase xmlFattura : listaEsistenti){
               
             // controlla se la fattura è passiva, se non è pagata e se è stata emessa nel 2019
@@ -62,7 +63,9 @@ public class Services {
             {
                 Pagamento p = new Pagamento();
                 p.setDataVersamento(dataPagamentoFittizio);
-                p.setImportoVersamento(xmlFattura.getFatturaElettronica().getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento());
+                
+                if (xmlFattura.getFatturaElettronica().getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento() !=null) importo = xmlFattura.getFatturaElettronica().getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getImportoTotaleDocumento();
+                p.setImportoVersamento(importo);
                 p.setNote("pagamento impostato automaticamente");
                 p.setCreatore("System");
                 p.setStatoPagamento(Pagamento.PAGAMENTO_SISTEMA);
